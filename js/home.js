@@ -1,30 +1,10 @@
 import { apiGet } from "./api.js";
+import { card } from "./ui-utils.js";
 
 const promoMeta = document.getElementById("promoMeta");
 const promoBanner = document.getElementById("promoBanner");
 const productsGrid = document.getElementById("productsGrid");
 const recMeta = document.getElementById("recMeta");
-
-function card(p) {
-  const tagClass = p.availability === "OUT" ? "out" : (p.availability === "LOW" ? "low" : "");
-  const price = p.price_bs ? `Bs ${p.price_bs}` : "Precio a confirmar";
-  const img = p.image_url ? `<img src="${p.image_url}" alt="">` : "";
-  const desc = (p.description || "").slice(0, 90);
-
-  return `
-    <div class="card">
-      <div class="cardImg">${img}</div>
-      <div class="cardBody">
-        <h4 class="cardTitle">${p.name}</h4>
-        <p class="cardDesc">${desc}${desc.length>=90?'…':''}</p>
-        <div class="meta">
-          <div class="price">${price}</div>
-          <div class="tag ${tagClass}">${p.availability}</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
 
 async function loadPromos() {
   try {

@@ -1,17 +1,30 @@
 import { apiPost } from "./api.js";
+import { validatePhone, getMinDate } from "./ui-utils.js";
 
 const msg = document.getElementById("msg");
+const typeEl = document.getElementById("type");
+const dateEl = document.getElementById("date");
 
 function qp(name) {
   return new URLSearchParams(location.search).get(name);
 }
 
+function updateMinDate() {
+  if (dateEl && typeEl) {
+    dateEl.min = getMinDate(typeEl.value);
+  }
+}
+
 // si viene ?type=PACK o CUSTOM desde catálogo
 const typeFromUrl = (qp("type") || "").toUpperCase();
 if (typeFromUrl === "PACK" || typeFromUrl === "CUSTOM") {
-  const typeEl = document.getElementById("type");
   if (typeEl) typeEl.value = typeFromUrl;
 }
+
+if (typeEl) {
+  typeEl.addEventListener("change", updateMinDate);
+}
+updateMinDate();
 
 document.getElementById("btnSend").addEventListener("click", async ()=>{
   msg.style.display = "block";
@@ -31,10 +44,13 @@ document.getElementById("btnSend").addEventListener("click", async ()=>{
   const qty = document.getElementById("qty").value.trim();
   const notes = document.getElementById("notes").value.trim();
 
-  if (!phone) { msg.textContent = "Tu WhatsApp es obligatorio."; return; }
+  if (!phone || !validatePhone(phone)) { 
+    msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos)."; 
+    return; 
+  }
   if (!qty) { msg.textContent = "Indica una cantidad."; return; }
 
-  const custom_json = {
+  const details = {
     people: people ? Number(people) : null,
     flavor: flavor || null,
     size: size || null,
@@ -44,18 +60,6 @@ document.getElementById("btnSend").addEventListener("click", async ()=>{
     notes: notes || null,
   };
 
-  // texto resumen (por si el backend arma WhatsApp desde json)
-  custom_json.summary =
-    `Tipo: ${type}\n` +
-    (date ? `Recojo: ${date}${time ? " "+time : ""}\n` : "") +
-    (people ? `Personas: ${people}\n` : "") +
-    `Cantidad: ${qty}\n` +
-    (flavor ? `Sabor: ${flavor}\n` : "") +
-    (size ? `Tamaño: ${size}\n` : "") +
-    (theme ? `Tema: ${theme}\n` : "") +
-    (messageCake ? `Mensaje: ${messageCake}\n` : "") +
-    (notes ? `Notas: ${notes}\n` : "");
-
   try {
     const data = await apiPost("/orders_request.php", {
       type,
@@ -63,7 +67,7 @@ document.getElementById("btnSend").addEventListener("click", async ()=>{
       customer_phone: phone,
       pickup_date: date,
       pickup_time: time,
-      custom_json
+      details
     });
 
     msg.textContent = "Solicitud enviada ✅ abriendo WhatsApp…";

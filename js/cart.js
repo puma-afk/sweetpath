@@ -1,15 +1,16 @@
 import { apiPost } from "./api.js";
+import { getCart, setCart, clearCart } from "./cart-manager.js";
+import { validatePhone, getMinDate } from "./ui-utils.js";
 
 const cartBox = document.getElementById("cartBox");
 const msg = document.getElementById("msg");
+const dateEl = document.getElementById("date");
 
-function getCart() {
-  return JSON.parse(localStorage.getItem("sp_cart") || "[]");
+// Set min date for EXPRESS (today)
+if (dateEl) {
+  dateEl.min = getMinDate("EXPRESS");
 }
-function setCart(items) {
-  localStorage.setItem("sp_cart", JSON.stringify(items));
-  render();
-}
+
 function render() {
   const cart = getCart();
   if (!cart.length) {
@@ -37,6 +38,7 @@ function render() {
       const c = getCart();
       c[i].qty = Math.max(1, c[i].qty - 1);
       setCart(c);
+      render();
     });
   });
   cartBox.querySelectorAll("[data-plus]").forEach(b=>{
@@ -45,6 +47,7 @@ function render() {
       const c = getCart();
       c[i].qty += 1;
       setCart(c);
+      render();
     });
   });
   cartBox.querySelectorAll("[data-del]").forEach(b=>{
@@ -53,12 +56,13 @@ function render() {
       const c = getCart();
       c.splice(i,1);
       setCart(c);
+      render();
     });
   });
 }
 
 document.getElementById("btnClear").addEventListener("click", ()=>{
-  localStorage.removeItem("sp_cart");
+  clearCart();
   render();
 });
 
@@ -76,8 +80,8 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
     msg.textContent = "Carrito vacío.";
     return;
   }
-  if (!phone) {
-    msg.textContent = "Tu WhatsApp es obligatorio.";
+  if (!phone || !validatePhone(phone)) {
+    msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos).";
     return;
   }
 
@@ -95,7 +99,7 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
 
     msg.textContent = "Listo ✅ abriendo WhatsApp…";
     // Limpiamos carrito (pedido ya creado)
-    localStorage.removeItem("sp_cart");
+    clearCart();
 
     if (data.whatsapp_link) {
       window.location.href = data.whatsapp_link;

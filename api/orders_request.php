@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../db.php';
+require __DIR__ . '/../lib/store_status.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -58,6 +59,18 @@ function check_lead_time(?string $pickup_date, ?string $pickup_time, int $minLea
 
 // ---------------- MAIN ----------------
 $data = json_body();
+
+/**
+ * ✅ Bloqueo por horario/pausa para CUSTOM y PACK
+ */
+$st = store_status($pdo);
+if (!$st['is_open']) {
+  respond(403, [
+    "ok" => false,
+    "error" => $st['reason'] ?: "CLOSED",
+    "message" => $st['message'] ?: "No estamos aceptando solicitudes en este momento."
+  ]);
+}
 
 /**
  * Expected payload:
