@@ -35,17 +35,18 @@
       <div class="pill" id="cartMini">Carrito: 0</div>
     </div>
 
-    <div class="bar" style="margin-top:14px">
-      <input id="q" placeholder="Buscar (ej: brownie, torta…)" />
-      <select id="type">
-        <option value="">Todos</option>
-        <option value="EXPRESS">EXPRESS</option>
-        <option value="CUSTOM">CUSTOM</option>
-        <option value="PACK">PACK</option>
-      </select>
-      <button class="btn primary" id="btnSearch">Buscar</button>
-      <button class="btn" id="btnClear">Limpiar</button>
-    </div>
+    <div class="filters">
+  <input id="q" class="input" placeholder="Buscar (ej: brownie, torta…)" />
+  <select id="type" class="select">
+    <option value="">Todos</option>
+    <option value="EXPRESS">EXPRESS</option>
+    <option value="CUSTOM">CUSTOM</option>
+    <option value="PACK">PACK</option>
+  </select>
+  <button class="btn primary" id="btnSearch">Buscar</button>
+  <button class="btn" id="btnClear">Limpiar</button>
+  <a class="btn" href="./cart.html">Ir al carrito</a>
+</div>
 
     <div id="meta" class="notice" style="display:none"></div>
   </div>

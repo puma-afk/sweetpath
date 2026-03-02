@@ -27,35 +27,54 @@
 
 <main class="container" style="margin-top:16px">
   <div class="panel">
-    <h2 style="margin:0">Solicitar pedido</h2>
+    <h2 style="margin:0">Solicitud (CUSTOM / PACK)</h2>
     <p class="hSub" style="margin-top:8px">
-      Para <b>CUSTOM</b> y <b>PACK</b>: envías la solicitud, la dueña confirma disponibilidad y precio por WhatsApp,
-      y recién luego pagas adelanto desde la web.
+      Envíanos tu solicitud. La dueña confirma disponibilidad y precio por WhatsApp.
+      Luego podrás pagar adelanto desde la web cuando esté aprobado.
     </p>
 
-    <div class="row" style="margin-top:12px">
-      <select id="type" class="pill" style="flex:1;min-width:220px">
+    <div class="filters">
+      <select id="type" class="select" style="min-width:240px">
         <option value="CUSTOM">CUSTOM (Personalizado)</option>
         <option value="PACK">PACK (Evento)</option>
       </select>
-      <input id="phone" class="pill" style="flex:1;min-width:220px" placeholder="Tu WhatsApp (obligatorio)">
+
+      <input id="phone" class="input" placeholder="Tu WhatsApp (obligatorio)" />
+      <input id="name" class="input" placeholder="Tu nombre (opcional)" />
     </div>
 
-    <div class="row" style="margin-top:10px">
-      <input id="name" class="pill" style="flex:1;min-width:220px" placeholder="Tu nombre (opcional)">
-      <input id="date" class="pill" type="date" style="flex:1;min-width:220px">
-      <input id="time" class="pill" type="time" style="flex:1;min-width:220px">
+    <div class="filters">
+      <input id="date" class="input" type="date" />
+      <input id="time" class="input" type="time" />
+      <input id="people" class="input" type="number" min="1" step="1" placeholder="¿Para cuántas personas?" />
     </div>
 
-    <div class="notice" style="margin-top:12px">
-      <b>Detalles</b><br>
-      <small style="color:var(--muted)">Escribe lo que necesitas (tamaño, sabor, temática, cantidad, notas…)</small>
-      <textarea id="details" style="width:100%;margin-top:10px;min-height:120px;background:rgba(255,255,255,.02);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:12px"></textarea>
-    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="cardBody">
+        <div class="kicker">Detalles</div>
 
-    <div class="row" style="margin-top:12px">
-      <button class="btn primary" id="btnSend">Enviar solicitud por WhatsApp</button>
-      <div id="msg" class="notice" style="display:none"></div>
+        <div class="filters" style="margin-top:10px">
+          <input id="flavor" class="input" placeholder="Sabor (ej: chocolate, vainilla…)" />
+          <input id="size" class="input" placeholder="Tamaño (ej: 20cm, 1kg…)" />
+          <input id="theme" class="input" placeholder="Temática (ej: cumpleaños, oficina…)" />
+        </div>
+
+        <div class="filters" style="margin-top:10px">
+          <input id="messageCake" class="input" placeholder="Mensaje (si aplica)" />
+          <input id="qty" class="input" type="number" min="1" step="1" placeholder="Cantidad (unidades o packs)" />
+        </div>
+
+        <div class="notice" style="margin-top:10px">
+          <b>Notas extra</b><br>
+          <small style="color:var(--muted)">Colores, restricciones, entrega, etc.</small>
+          <textarea id="notes" style="width:100%;margin-top:10px;min-height:110px;background:rgba(255,255,255,.02);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:12px"></textarea>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="btnSend">Enviar solicitud por WhatsApp</button>
+          <div id="msg" class="notice" style="display:none"></div>
+        </div>
+      </div>
     </div>
   </div>
 </main>

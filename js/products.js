@@ -34,31 +34,42 @@ function tagClass(av) {
 
 function card(p) {
   const img = p.image_url ? `<img src="${p.image_url}" alt="">` : "";
-  const price = p.price_bs ? `Bs ${p.price_bs}` : "Precio a confirmar";
-  const desc = (p.description || "").slice(0, 90);
+  const priceMain = p.price_bs ? `Bs ${p.price_bs}` : "Precio a confirmar";
+  const priceSub = p.price_bs ? "precio referencial" : "se cotiza por WhatsApp";
+  const desc = (p.description || "").slice(0, 92);
+
+  const typeBadge =
+    p.type === "EXPRESS" ? "express" :
+    p.type === "CUSTOM" ? "custom" : "pack";
+
+  const outBadge = p.availability === "OUT" ? " out" : "";
+  const badgeText = `${p.type} • ${p.availability}`;
 
   const canAdd = p.type === "EXPRESS" && p.availability !== "OUT";
 
+  const actionBtn = canAdd
+    ? `<button class="btn primary small" data-add="${p.id}">Agregar</button>`
+    : (p.type === "EXPRESS"
+        ? `<button class="btn small" disabled>No disponible</button>`
+        : `<a class="btn primary small" href="./custom.html?type=${p.type}">Solicitar</a>`);
+
   return `
     <div class="card">
-      <div class="cardImg">${img}</div>
+      <div class="cardImg">
+        ${img}
+        <div class="badge ${typeBadge}${outBadge}">${badgeText}</div>
+      </div>
       <div class="cardBody">
+        <div class="kicker">Pastelería</div>
         <h4 class="cardTitle">${p.name}</h4>
-        <p class="cardDesc">${desc}${desc.length>=90?'…':''}</p>
+        <p class="cardDesc">${desc}${desc.length>=92?'…':''}</p>
+
         <div class="meta">
-          <div>
-            <div class="price">${price}</div>
-            <div class="tag ${tagClass(p.availability)}" style="margin-top:8px">${p.type} • ${p.availability}</div>
+          <div class="price">
+            ${priceMain}
+            <small>${priceSub}</small>
           </div>
-          <div>
-            ${
-              canAdd
-                ? `<button class="btn primary" data-add="${p.id}">Agregar</button>`
-                : (p.type === "EXPRESS"
-                    ? `<button class="btn" disabled>No disponible</button>`
-                    : `<a class="btn" href="./custom.html">Solicitar</a>`)
-            }
-          </div>
+          <div>${actionBtn}</div>
         </div>
       </div>
     </div>
