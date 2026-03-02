@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Test Solicitud CUSTOM/PACK</title>
+</head>
+<body>
+  <h2>Test Solicitud</h2>
+
+  <button id="btnCustom">Crear solicitud CUSTOM</button>
+  <button id="btnPack">Crear solicitud PACK</button>
+
+  <pre id="out"></pre>
+
+<script>
+async function send(payload) {
+  const res = await fetch('/sweetpath/api/orders_request.php', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const json = await res.json();
+  document.getElementById('out').textContent = JSON.stringify(json, null, 2);
+
+  if (json.whatsapp_link) {
+    const a = document.createElement('a');
+    a.href = json.whatsapp_link;
+    a.target = "_blank";
+    a.textContent = "\nAbrir WhatsApp";
+    document.getElementById('out').appendChild(a);
+  }
+}
+
+document.getElementById('btnCustom').onclick = () => {
+  send({
+    type: "CUSTOM",
+    customer_name: "Joel Andres",
+    customer_phone: "71234567",
+    pickup_date: "2026-03-05",
+    pickup_time: "16:00",
+    details: {
+      personas: "20",
+      masa: "Chocolate",
+      relleno: "Manjar",
+      cobertura: "Ganache",
+      estilo: "Elegante",
+      mensaje: "Feliz Cumple!",
+      notas: "Colores negro y dorado"
+    }
+  });
+};
+
+document.getElementById('btnPack').onclick = () => {
+  send({
+    type: "PACK",
+    customer_name: "Joel Andres",
+    customer_phone: "71234567",
+    pickup_date: "2026-03-02",
+    pickup_time: "10:00",
+    details: {
+      paquete: "Coffee Break 50u",
+      cantidad_packs: "2",
+      total_unidades: "100",
+      surtido: "50 brownie / 50 galleta",
+      notas: "Evento oficina"
+    }
+  });
+};
+</script>
+</body>
+</html>
