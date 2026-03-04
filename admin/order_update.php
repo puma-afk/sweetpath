@@ -41,7 +41,18 @@ if ($action === 'approve_with_quote') {
 
   if ($total_cents <= 0) back("Total inválido. Debe ser mayor a 0.");
 
-  // Set total and approve
+  // Validar que el pedido esté en un estado aprobable
+  $cur = $pdo->prepare("SELECT status FROM orders WHERE id=? LIMIT 1");
+  $cur->execute([$id]);
+  $curRow = $cur->fetch();
+  if (!$curRow) back("Pedido no encontrado.");
+
+  $curStatus = strtoupper($curRow['status'] ?? '');
+  $approveableFrom = ['CREATED', 'SOLICITADO'];
+  if (!in_array($curStatus, $approveableFrom, true)) {
+    back("No se puede aprobar: el pedido está en estado '{$curStatus}'. Solo se puede aprobar desde CREATED o SOLICITADO.");
+  }
+
   $stmt = $pdo->prepare("UPDATE orders
                          SET total_final_cents = ?,
                              status = 'APROBADO_PARA_PAGO',
@@ -52,22 +63,37 @@ if ($action === 'approve_with_quote') {
   back("Aprobado. Total Bs " . number_format($total_cents/100, 2, '.', '') . " (habilitado para pago)");
 }
 
-// Normal status update (fallback)
-$allowed = [
-  'SOLICITADO',
-  'APROBADO_PARA_PAGO',
-  'RECHAZADO',
-  'EN_PRODUCCION',
-  'LISTO',
-  'ENTREGADO',
-  'CANCELADO',
-  'VENCIDO',
-  'CREATED'
+// Actualización de estado con máquina de estados estricta
+// Mapa de transiciones válidas: estado_actual => [estados_a_los_que_puede_ir]
+$transitions = [
+  'CREATED'            => ['APROBADO_PARA_PAGO', 'RECHAZADO', 'CANCELADO'],
+  'SOLICITADO'         => ['APROBADO_PARA_PAGO', 'RECHAZADO', 'CANCELADO'],
+  'APROBADO_PARA_PAGO' => ['EN_PRODUCCION', 'RECHAZADO', 'CANCELADO'],
+  'EN_PRODUCCION'      => ['LISTO', 'CANCELADO'],
+  'LISTO'              => ['ENTREGADO', 'CANCELADO'],
+  'ENTREGADO'          => [], // estado final — no se puede mover
+  'RECHAZADO'          => [], // estado final — no se puede mover
+  'CANCELADO'          => [], // estado final — no se puede mover
+  'VENCIDO'            => [], // estado final — no se puede mover
 ];
 
-if (!in_array($status, $allowed, true)) back("Estado no permitido");
+// Obtener estado actual
+$cur = $pdo->prepare("SELECT status FROM orders WHERE id=? LIMIT 1");
+$cur->execute([$id]);
+$curRow = $cur->fetch();
+if (!$curRow) back("Pedido no encontrado.");
+
+$currentStatus = strtoupper($curRow['status'] ?? '');
+$allowedNext = $transitions[$currentStatus] ?? [];
+
+if (!in_array($status, $allowedNext, true)) {
+  if (empty($allowedNext)) {
+    back("El pedido está en estado final '{$currentStatus}' y no puede cambiar de estado.");
+  }
+  back("Transición no permitida: '{$currentStatus}' → '{$status}'. Opciones válidas: " . implode(', ', $allowedNext));
+}
 
 $stmt = $pdo->prepare("UPDATE orders SET status=?, updated_at=NOW() WHERE id=?");
 $stmt->execute([$status, $id]);
 
-back("Pedido actualizado a $status");
+back("Pedido actualizado a {$status}");

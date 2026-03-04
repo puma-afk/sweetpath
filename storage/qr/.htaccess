@@ -1,0 +1,3 @@
+# Carpeta pública para imágenes QR de pago
+# Acceso permitido (los clientes necesitan ver el QR para pagar)
+Options -Indexes

@@ -89,6 +89,7 @@ $msg = trim($_GET['msg'] ?? '');
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <a href="/sweetpath/admin/payments.php"><button type="button">Ver pagos</button></a>
+    <a href="/sweetpath/admin/estadisticas.php"><button type="button">📊 Estadísticas</button></a>
     <a href="/sweetpath/admin/products.php"><button type="button">🧁 Productos</button></a>
     <a href="/sweetpath/admin/promos.php"><button type="button">📣 Promos</button></a>
     <a href="/sweetpath/admin/change_password.php"><button type="button">Cambiar contraseña</button></a>

@@ -1,4 +1,4 @@
-const API_BASE = "../api";
+const API_BASE = "/sweetpath/api";
 
 export async function apiGet(path) {
   const res = await fetch(`${API_BASE}${path}`, { method: "GET" });

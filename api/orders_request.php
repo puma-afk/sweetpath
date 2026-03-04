@@ -145,7 +145,8 @@ try {
   $pdo->commit();
 } catch (Throwable $e) {
   $pdo->rollBack();
-  respond(500, ["ok"=>false, "error"=>"Error guardando solicitud: " . $e->getMessage()]);
+  error_log('[SweetPath] orders_request error: ' . $e->getMessage());
+  respond(500, ["ok"=>false, "error"=>"DB_ERROR", "message"=>"Error guardando solicitud. Intenta de nuevo."]);
 }
 
 // Build WhatsApp message (request + confirm availability + quote)

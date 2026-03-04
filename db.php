@@ -16,6 +16,7 @@ $options = [
 try {
   $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
+  error_log('[SweetPath] DB connection failed: ' . $e->getMessage());
   http_response_code(500);
-  exit('DB connection failed: ' . $e->getMessage());
+  exit('Error interno del servidor. Intenta de nuevo más tarde.');
 }

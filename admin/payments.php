@@ -35,6 +35,11 @@ function bs($c){ return number_format(((int)$c)/100, 2, '.', ''); }
 </head>
 <body>
 <h2>💰 Admin — Pagos</h2>
+<p>
+  <a href="/sweetpath/admin/orders.php">← Pedidos</a>
+  &nbsp;|&nbsp;
+  <a href="/sweetpath/admin/limpiar_archivos.php">🗑️ Limpiar archivos viejos</a>
+</p>
 
 <?php foreach($rows as $r): ?>
   <div class="card">
@@ -49,7 +54,7 @@ function bs($c){ return number_format(((int)$c)/100, 2, '.', ''); }
 
     <?php if (!empty($r['proof_url'])): ?>
       <div style="margin-top:8px">
-        <a href="<?= h($r['proof_url']) ?>" target="_blank">📎 Ver comprobante</a>
+        <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($r['payment_id']) ?>" target="_blank">📎 Ver comprobante</a>
       </div>
     <?php endif; ?>
 

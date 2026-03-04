@@ -35,6 +35,13 @@ $o->execute([$order_id]);
 $order = $o->fetch();
 if (!$order) back("Pedido no encontrado");
 
+// Solo se puede registrar pago en efectivo en estados activos/pendientes
+$payableStatuses = ['CREATED', 'SOLICITADO', 'APROBADO_PARA_PAGO', 'EN_PRODUCCION', 'LISTO'];
+$curStatus = strtoupper($order['status'] ?? '');
+if (!in_array($curStatus, $payableStatuses, true)) {
+  back("No se puede registrar pago: el pedido está en estado '{$curStatus}'.");
+}
+
 $ins = $pdo->prepare("INSERT INTO payments (order_id, method, amount_cents, proof_asset_id, verified)
                       VALUES (?, 'CASH', ?, NULL, 1)");
 $ins->execute([$order_id, $amount_cents]);

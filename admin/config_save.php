@@ -63,9 +63,9 @@ if ($action === 'upload_qr') {
   $allowed = ['image/jpeg','image/png','image/webp'];
   if (!in_array($mime, $allowed, true)) back_err("Formato no permitido (JPG/PNG/WebP)");
 
-  $uploadDirFs = __DIR__ . '/../storage/uploads';
-  $uploadDirWeb = '/sweetpath/storage/uploads';
-  if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0777, true);
+  $uploadDirFs = __DIR__ . '/../storage/qr';
+  $uploadDirWeb = '/sweetpath/storage/qr';
+  if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0755, true);
 
   $ext = ($mime === 'image/png') ? 'png' : (($mime === 'image/webp') ? 'webp' : 'jpg');
   $filename = 'qr_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;

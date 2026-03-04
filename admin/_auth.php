@@ -1,11 +1,13 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
-  header('X-Frame-Options: DENY');
+}
+
+// Headers de seguridad SIEMPRE se envían (no solo al iniciar sesión)
+header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
-}
 
 /**
  * Config

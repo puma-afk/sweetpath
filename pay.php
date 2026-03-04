@@ -24,7 +24,7 @@ if (!$o) { http_response_code(404); exit("Pedido no encontrado."); }
 
 $status = strtoupper($o['status'] ?? '');
 $total = $o['total_final_cents'] !== null ? (int)$o['total_final_cents'] : null;
-$min_adv = ($total !== null) ? (int)floor($total * 0.5) : null;
+$min_adv = ($total !== null) ? (int)floor($total * 0.3) : null;
 
 // Load QR asset (if configured)
 $qrUrl = null;
@@ -69,7 +69,7 @@ if (!empty($o['qr_asset_id'])) {
     </div>
   <?php else: ?>
     <p>Total final: <b>Bs <?= h(bs($total)) ?></b></p>
-    <p>Adelanto sugerido (50%): <b>Bs <?= h(bs($min_adv)) ?></b></p>
+    <p>Adelanto sugerido (30%): <b>Bs <?= h(bs($min_adv)) ?></b></p>
     <p class="muted">Tip: en el concepto del pago escribe tu código <b><?= h($o['order_code']) ?></b>.</p>
 
     <hr>

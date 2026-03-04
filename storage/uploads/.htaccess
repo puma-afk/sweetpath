@@ -1,0 +1,11 @@
+# Bloquear acceso HTTP directo a comprobantes de pago (datos sensibles de clientes)
+# Sirve los archivos SOLO a través de admin/ver_comprobante.php
+
+# Apache 2.2
+Order Deny,Allow
+Deny from all
+
+# Apache 2.4
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>

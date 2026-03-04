@@ -142,7 +142,7 @@ if ($e === 'notlogged') $info = "Debes iniciar sesión para entrar al admin.";
     name="password"
     type="password"
     placeholder="Contraseña"
-    autocomplete="new-password"
+    autocomplete="current-password"
     required
   >
   <button type="submit">Entrar</button>

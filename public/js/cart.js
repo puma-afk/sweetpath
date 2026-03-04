@@ -4,6 +4,16 @@ import { validatePhone, getMinDate } from "./ui-utils.js";
 
 bindCartCounters();
 
+// ---- Advertencia si el cliente intenta salir con carrito con productos ----
+let orderSubmitted = false;
+
+window.addEventListener('beforeunload', (e) => {
+  if (!orderSubmitted && getCart().length > 0) {
+    e.preventDefault();
+    e.returnValue = '¿Seguro que quieres salir? Tu pedido aún no fue enviado.';
+  }
+});
+
 const cartBox = document.getElementById("cartBox");
 const msg = document.getElementById("msg");
 const dateEl = document.getElementById("date");
@@ -107,15 +117,19 @@ document.getElementById("btnConfirm")?.addEventListener("click", async () => {
       items,
     });
 
-    msg.textContent = "Listo ✅ abriendo WhatsApp…";
-
-    // Limpiamos carrito (pedido ya creado)
+    // Pedido guardado — desactivar advertencia y limpiar carrito
+    orderSubmitted = true;
     clearCart();
 
     if (data.whatsapp_link) {
-      window.location.href = data.whatsapp_link;
+      msg.textContent = `✅ Pedido #${data.order_code} creado. Abriendo WhatsApp…`;
+      window.open(data.whatsapp_link, '_blank');
+      setTimeout(() => {
+        msg.textContent = `✅ Pedido #${data.order_code} guardado. Confirma por WhatsApp con la dueña.`;
+        document.getElementById("btnConfirm").disabled = true;
+      }, 1500);
     } else {
-      msg.textContent = "Pedido creado, pero falta configurar WhatsApp en admin/config.";
+      msg.textContent = `✅ Pedido #${data.order_code} creado. Falta configurar WhatsApp en admin.`;
     }
   } catch (e) {
     msg.textContent = e?.message || "No se pudo crear el pedido.";

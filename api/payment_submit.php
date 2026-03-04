@@ -36,6 +36,26 @@ if ($status !== 'APROBADO_PARA_PAGO') {
   http_response_code(403); exit("Este pedido no está habilitado para pago");
 }
 
+// Verificar si ya existe un comprobante pendiente para este pedido
+$dup = $pdo->prepare("SELECT id FROM payments WHERE order_id=? AND verified=0 LIMIT 1");
+$dup->execute([(int)$o['id']]);
+if ($dup->fetch()) {
+  http_response_code(409);
+  exit("Ya tienes un comprobante enviado pendiente de verificación. Espera la confirmación de la dueña.");
+}
+
+// Validar monto mínimo del 50% del total del pedido
+$total_cents = $o['total_final_cents'] !== null ? (int)$o['total_final_cents'] : null;
+if ($total_cents !== null && $total_cents > 0) {
+  $min_adelanto = (int)floor($total_cents * 0.3);
+  if ($amount_cents < $min_adelanto) {
+    $min_bs = number_format($min_adelanto / 100, 2, '.', '');
+    http_response_code(400);
+    exit("El adelanto mínimo es Bs {$min_bs} (30% del total). Ingresa un monto igual o mayor.");
+  }
+}
+
+
 $allowed = ['image/jpeg','image/png','image/webp'];
 $mime = mime_content_type($proof['tmp_name']);
 if (!in_array($mime, $allowed, true)) {
@@ -75,8 +95,9 @@ try {
   $pdo->commit();
 } catch (Throwable $e) {
   $pdo->rollBack();
+  error_log('[SweetPath] payment_submit error: ' . $e->getMessage());
   http_response_code(500);
-  exit("Error registrando pago: " . $e->getMessage());
+  exit("Error registrando pago. Intenta de nuevo.");
 }
 
 header("Location: /sweetpath/pay_thanks.php?code=" . rawurlencode($order_code));
