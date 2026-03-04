@@ -21,6 +21,7 @@
       <a class="pill" href="./index.html">Inicio</a>
       <a class="pill" href="./products.html">Catálogo</a>
       <a class="pill" href="./custom.html">Personalizados</a>
+      <a class="pill primary" id="cartBadge" href="./cart.html">Carrito (0)</a>
     </nav>
   </div>
 </header>
@@ -66,5 +67,9 @@
 </footer>
 
 <script type="module" src="./js/cart.js"></script>
+<script type="module">
+  import { bindCartBadge } from "./js/ui.js";
+  bindCartBadge("cartBadge");
+</script>
 </body>
 </html>

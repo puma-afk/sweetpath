@@ -20,7 +20,7 @@
     <nav class="navlinks">
       <a class="pill" href="./index.html">Inicio</a>
       <a class="pill" href="./products.html">Catálogo</a>
-      <a class="pill primary" href="./cart.html">Carrito</a>
+      <a class="pill primary" id="cartBadge" href="./cart.html">Carrito (0)</a>
     </nav>
   </div>
 </header>
@@ -87,5 +87,9 @@
 </footer>
 
 <script type="module" src="./js/custom.js"></script>
+<script type="module">
+  import { bindCartBadge } from "./js/ui.js";
+  bindCartBadge("cartBadge");
+</script>
 </body>
 </html>

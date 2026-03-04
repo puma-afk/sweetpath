@@ -1,6 +1,8 @@
 import { apiPost } from "./api.js";
-import { getCart, setCart, clearCart } from "./cart-manager.js";
+import { getCart, setCart, clearCart, bindCartCounters } from "./cart-manager.js";
 import { validatePhone, getMinDate } from "./ui-utils.js";
+
+bindCartCounters();
 
 const cartBox = document.getElementById("cartBox");
 const msg = document.getElementById("msg");
@@ -13,12 +15,15 @@ if (dateEl) {
 
 function render() {
   const cart = getCart();
+
   if (!cart.length) {
     cartBox.textContent = "Tu carrito está vacío.";
     return;
   }
 
-  cartBox.innerHTML = cart.map((it, idx) => `
+  cartBox.innerHTML = cart
+    .map(
+      (it, idx) => `
     <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
       <div>
         <b>${it.name}</b><br>
@@ -30,43 +35,47 @@ function render() {
         <button class="btn danger" data-del="${idx}">Quitar</button>
       </div>
     </div>
-  `).join("");
+  `
+    )
+    .join("");
 
-  cartBox.querySelectorAll("[data-minus]").forEach(b=>{
-    b.addEventListener("click", ()=>{
+  cartBox.querySelectorAll("[data-minus]").forEach((b) => {
+    b.addEventListener("click", () => {
       const i = Number(b.getAttribute("data-minus"));
       const c = getCart();
-      c[i].qty = Math.max(1, c[i].qty - 1);
+      c[i].qty = Math.max(1, (Number(c[i].qty) || 1) - 1);
       setCart(c);
       render();
     });
   });
-  cartBox.querySelectorAll("[data-plus]").forEach(b=>{
-    b.addEventListener("click", ()=>{
+
+  cartBox.querySelectorAll("[data-plus]").forEach((b) => {
+    b.addEventListener("click", () => {
       const i = Number(b.getAttribute("data-plus"));
       const c = getCart();
-      c[i].qty += 1;
+      c[i].qty = (Number(c[i].qty) || 0) + 1;
       setCart(c);
       render();
     });
   });
-  cartBox.querySelectorAll("[data-del]").forEach(b=>{
-    b.addEventListener("click", ()=>{
+
+  cartBox.querySelectorAll("[data-del]").forEach((b) => {
+    b.addEventListener("click", () => {
       const i = Number(b.getAttribute("data-del"));
       const c = getCart();
-      c.splice(i,1);
+      c.splice(i, 1);
       setCart(c);
       render();
     });
   });
 }
 
-document.getElementById("btnClear").addEventListener("click", ()=>{
+document.getElementById("btnClear")?.addEventListener("click", () => {
   clearCart();
   render();
 });
 
-document.getElementById("btnConfirm").addEventListener("click", async ()=>{
+document.getElementById("btnConfirm")?.addEventListener("click", async () => {
   msg.style.display = "block";
   msg.textContent = "Procesando…";
 
@@ -80,12 +89,13 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
     msg.textContent = "Carrito vacío.";
     return;
   }
+
   if (!phone || !validatePhone(phone)) {
     msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos).";
     return;
   }
 
-  const items = cart.map(it => ({ product_id: it.id, qty: it.qty }));
+  const items = cart.map((it) => ({ product_id: it.id, qty: it.qty }));
 
   try {
     const data = await apiPost("/orders_create.php", {
@@ -94,10 +104,11 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
       customer_phone: phone,
       pickup_date: date,
       pickup_time: time,
-      items
+      items,
     });
 
     msg.textContent = "Listo ✅ abriendo WhatsApp…";
+
     // Limpiamos carrito (pedido ya creado)
     clearCart();
 
@@ -107,8 +118,7 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
       msg.textContent = "Pedido creado, pero falta configurar WhatsApp en admin/config.";
     }
   } catch (e) {
-    // 403 por fuera de horario o pausa
-    msg.textContent = e.message || "No se pudo crear el pedido.";
+    msg.textContent = e?.message || "No se pudo crear el pedido.";
   }
 });
 

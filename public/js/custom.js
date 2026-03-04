@@ -1,5 +1,7 @@
 import { apiPost } from "./api.js";
 import { validatePhone, getMinDate } from "./ui-utils.js";
+import { bindCartCounters } from "./cart-manager.js";
+bindCartCounters();
 
 const msg = document.getElementById("msg");
 const typeEl = document.getElementById("type");
