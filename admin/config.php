@@ -19,12 +19,12 @@ $err = trim($_GET['err'] ?? '');
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin - Configuración</title>
+  <title>ESENCIA · Configuración</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .card{background:#fff;border:1px solid #ddd;border-radius:14px;padding:14px;max-width:720px}
     input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin:8px 0}
-    button{padding:12px 14px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+    button{padding:12px 14px;border-radius:10px;border:1px solid #004f39;background:#004f39;color:#fffaca;cursor:pointer}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .col{flex:1;min-width:220px}
     .ok{background:#e9ffe8;border:1px solid #b6ffb3;padding:10px;border-radius:10px;margin:10px 0}
@@ -36,9 +36,9 @@ $err = trim($_GET['err'] ?? '');
 <body>
 
 <div class="card">
-  <h2>⚙️ Configuración</h2>
+  <h2>⚙️ ESENCIA — Configuración</h2>
   <p>
-    <a href="/sweetpath/admin/orders.php">← Volver</a>
+    <a href="/sweetpath/admin/orders.php">← Volver a Pedidos</a>
     &nbsp;|&nbsp;
     <a href="/sweetpath/admin/logout.php">Cerrar sesión</a>
   </p>

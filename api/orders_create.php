@@ -35,12 +35,12 @@ function wa_link(string $phone, string $text): string {
 $data = json_body();
 
 $type = strtoupper(trim($data['type'] ?? ''));
-if ($type !== 'EXPRESS') {
-  respond(400, ["ok"=>false, "error"=>"BAD_TYPE", "message"=>"Este endpoint solo crea pedidos EXPRESS."]);
+if ($type !== 'EXPRESS' && $type !== 'MIXED') {
+  respond(400, ["ok"=>false, "error"=>"BAD_TYPE", "message"=>"Este endpoint solo crea pedidos EXPRESS o Mixtos."]);
 }
 
 /**
- * ✅ Bloqueo por horario/pausa SOLO para EXPRESS
+ * ✅ Bloqueo por horario/pausa SOLO para EXPRESS / MIXTOS rápidos
  */
 $st = store_status($pdo);
 if (!$st['is_open']) {
@@ -60,6 +60,8 @@ $customer_name  = trim((string)($data['customer_name'] ?? ''));
 $customer_phone = trim((string)($data['customer_phone'] ?? ''));
 $pickup_date    = trim((string)($data['pickup_date'] ?? ''));
 $pickup_time    = trim((string)($data['pickup_time'] ?? ''));
+$customer_note  = trim((string)($data['customer_note'] ?? ''));
+$payment_method = strtoupper(trim((string)($data['payment_method'] ?? 'QR')));
 
 if ($customer_phone === '') {
   respond(400, ["ok"=>false, "error"=>"MISSING_PHONE", "message"=>"Falta customer_phone (WhatsApp)."]);
@@ -82,7 +84,7 @@ if (count($productIds) === 0) {
 }
 
 $in = implode(',', array_fill(0, count($productIds), '?'));
-$stmt = $pdo->prepare("SELECT id, name, type, availability, stock_internal, max_per_order, price_cents
+$stmt = $pdo->prepare("SELECT id, name, type, availability, stock_internal, max_per_order, price_cents, min_lead_hours
                        FROM products
                        WHERE id IN ($in) AND is_active=1");
 $stmt->execute($productIds);
@@ -97,8 +99,8 @@ $lines = [];
 $total_est_cents = 0;
 
 foreach ($products as $p) {
-  if ($p['type'] !== 'EXPRESS') {
-    respond(400, ["ok"=>false, "error"=>"NOT_EXPRESS", "message"=>"Producto {$p['id']} no es EXPRESS."]);
+  if ($p['type'] !== 'EXPRESS' && $p['type'] !== 'PACK') {
+    respond(400, ["ok"=>false, "error"=>"NOT_EXPRESS_NOR_PACK", "message"=>"Producto {$p['id']} no se puede agregar al carrito rápido (es {$p['type']})."]);
   }
   if ($p['availability'] === 'OUT') {
     respond(400, ["ok"=>false, "error"=>"OUT_OF_STOCK", "message"=>"El producto '{$p['name']}' está agotado."]);
@@ -112,12 +114,18 @@ foreach ($products as $p) {
     respond(400, ["ok"=>false, "error"=>"LIMIT_PER_ORDER", "message"=>"Cantidad no disponible para '{$p['name']}'. (Límite por pedido)"]);
   }
 
-  if ($p['stock_internal'] !== null) {
-    $stock = (int)$p['stock_internal'];
-    if ($qty > $stock) {
-      // IMPORTANT: do not reveal stock number
-      respond(400, ["ok"=>false, "error"=>"INSUFFICIENT_STOCK", "message"=>"Cantidad no disponible para '{$p['name']}'. Reduce la cantidad y confirmamos por WhatsApp."]);
-    }
+  if ($p['type'] === 'EXPRESS') {
+      if ($p['stock_internal'] !== null) {
+        $stock = (int)$p['stock_internal'];
+        if ($qty > $stock) {
+          respond(400, ["ok"=>false, "error"=>"INSUFFICIENT_STOCK", "message"=>"Cantidad no disponible para '{$p['name']}'. Reduce la cantidad y confirmamos por WhatsApp."]);
+        }
+      }
+  }
+
+  // Find maximum lead time in hours needed for the order
+  if ($p['min_lead_hours'] !== null) {
+      $maxLeadHoursNeeded = max($maxLeadHoursNeeded, (int)$p['min_lead_hours']);
   }
 
   $unit = $p['price_cents'] !== null ? (int)$p['price_cents'] : null;
@@ -131,6 +139,27 @@ foreach ($products as $p) {
   ];
 }
 
+// Validate Lead Time based on Max Lead Time found in Cart
+if ($maxLeadHoursNeeded > 0) {
+    // We expect pickup_time in format like "Mañana (10:00 - 13:00)"
+    // It's a bit tricky to parse exact time. Let's assume start of range or midday.
+    $time_str = "12:00"; 
+    if (strpos($pickup_time, "10:00") !== false) $time_str = "10:00";
+    if (strpos($pickup_time, "14:00") !== false) $time_str = "14:00";
+
+    $dt = DateTime::createFromFormat('Y-m-d H:i', "{$pickup_date} {$time_str}", new DateTimeZone('America/La_Paz'));
+    if (!$dt) {
+        respond(400, ["ok"=>false, "error"=>"BAD_DATE", "message"=>"Fecha/hora inválida."]);
+    }
+
+    $now = now_la_paz();
+    $diffHours = (int)floor(($dt->getTimestamp() - $now->getTimestamp()) / 3600);
+
+    if ($diffHours < $maxLeadHoursNeeded) {
+        respond(400, ["ok"=>false, "error"=>"LEAD_TIME", "message"=>"Por los productos en tu carrito, necesitamos mínimo {$maxLeadHoursNeeded}h de anticipación para prepararlos."]);
+    }
+}
+
 // Create order_code
 $now = now_la_paz();
 $order_code = "SP-" . $now->format('Ymd') . "-" . random_int(1000, 9999);
@@ -139,9 +168,15 @@ $order_code = "SP-" . $now->format('Ymd') . "-" . random_int(1000, 9999);
 try {
   $pdo->beginTransaction();
 
-  $o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time)
-                      VALUES (?, 'EXPRESS', 'WEB', 'CREATED', ?, ?, NULLIF(?,''), NULLIF(?,''))");
-  $o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time]);
+  $customJson = [];
+  if ($customer_note !== '') $customJson['note'] = $customer_note;
+  if ($payment_method !== '') $customJson['payment_method'] = $payment_method;
+  $jsonStr = empty($customJson) ? null : json_encode($customJson, JSON_UNESCAPED_UNICODE);
+
+  // Status starts as CREATED (unconfirmed by owner for payment)
+  $o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json)
+                      VALUES (?, 'MIXED', 'WEB', 'CREATED', ?, ?, NULLIF(?,''), NULLIF(?,''), ?)");
+  $o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time, $jsonStr]);
   $order_id = (int)$pdo->lastInsertId();
 
   $itStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price_cents)
@@ -162,7 +197,9 @@ $bizPhone = $cfg ? (string)$cfg['whatsapp_number'] : '';
 
 $msg = "Hola! Quiero confirmar un pedido (EXPRESS)\n";
 $msg .= "Pedido: {$order_code}\n";
-if ($pickup_date !== '') $msg .= "Recojo: {$pickup_date}" . ($pickup_time ? " {$pickup_time}" : "") . "\n";
+if ($pickup_date !== '') $msg .= "Recojo: {$pickup_date}" . ($pickup_time ? " ({$pickup_time})" : "") . "\n";
+if ($customer_note !== '') $msg .= "Nota: {$customer_note}\n";
+$msg .= "Método Pago: " . ($payment_method === 'TIENDA' ? 'En Tienda (Reserva 4h)' : 'QR') . "\n";
 $msg .= "Items:\n";
 foreach ($lines as $ln) {
   $msg .= "- {$ln['qty']} x {$ln['name']}";

@@ -9,8 +9,7 @@ let orderSubmitted = false;
 
 window.addEventListener('beforeunload', (e) => {
   if (!orderSubmitted && getCart().length > 0) {
-    e.preventDefault();
-    e.returnValue = '¿Seguro que quieres salir? Tu pedido aún no fue enviado.';
+    e.returnValue = '¿Estás seguro de que quieres salir? Tu pedido aún no fue enviado.';
   }
 });
 
@@ -18,9 +17,41 @@ const cartBox = document.getElementById("cartBox");
 const msg = document.getElementById("msg");
 const dateEl = document.getElementById("date");
 
-// Set min date for EXPRESS (today)
-if (dateEl) {
+// Set min date depending on cart contents (if mixed packs, then 24 hours)
+function updateMinDateForCart() {
+  if (!dateEl) return;
+  const cart = getCart();
+  // We need to know if any item is a PACK, but cart only has IDs. 
+  // For now, let's keep the backend valid date logic or default to today + check in backend.
   dateEl.min = getMinDate("EXPRESS");
+}
+updateMinDateForCart();
+
+// --- Lógica del selector de horario (Pills) ---
+document.querySelectorAll('.time-pill').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    document.getElementById('time').value = e.currentTarget.getAttribute('data-val');
+  });
+});
+
+// --- Lógica de Acordeón "Añadir mensaje..." ---
+const toggleMessage = document.getElementById("toggleMessage");
+if (toggleMessage) {
+  toggleMessage.addEventListener("click", (e) => {
+    e.preventDefault();
+    const msgInput = document.getElementById("customerNote");
+    if (msgInput.style.display === "none") {
+      msgInput.style.display = "block";
+      msgInput.focus();
+      toggleMessage.textContent = "- Ocultar mensaje, indicación o nota";
+    } else {
+      msgInput.style.display = "none";
+      msgInput.value = "";
+      toggleMessage.textContent = "+ Añadir mensaje, indicación o nota al pedido (Opcional)";
+    }
+  });
 }
 
 function render() {
@@ -40,9 +71,9 @@ function render() {
         <small style="color:var(--muted)">Cantidad: ${it.qty}</small>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn" data-minus="${idx}">-</button>
-        <button class="btn" data-plus="${idx}">+</button>
-        <button class="btn danger" data-del="${idx}">Quitar</button>
+        <button class="btn" style="min-height: 44px" data-minus="${idx}">-</button>
+        <button class="btn" style="min-height: 44px" data-plus="${idx}">+</button>
+        <button class="btn danger" style="min-height: 44px" data-del="${idx}">Eliminar</button>
       </div>
     </div>
   `
@@ -93,6 +124,8 @@ document.getElementById("btnConfirm")?.addEventListener("click", async () => {
   const name = document.getElementById("name").value.trim();
   const date = document.getElementById("date").value.trim();
   const time = document.getElementById("time").value.trim();
+  const note = (document.getElementById("customerNote")?.value || "").trim();
+  const paymentMethod = document.getElementById("paymentMethod").value;
 
   const cart = getCart();
   if (!cart.length) {
@@ -102,6 +135,10 @@ document.getElementById("btnConfirm")?.addEventListener("click", async () => {
 
   if (!phone || !validatePhone(phone)) {
     msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos).";
+    return;
+  }
+  if (!time || !date) {
+    msg.textContent = "Por favor selecciona una fecha y un horario para el retiro.";
     return;
   }
 
@@ -114,6 +151,8 @@ document.getElementById("btnConfirm")?.addEventListener("click", async () => {
       customer_phone: phone,
       pickup_date: date,
       pickup_time: time,
+      customer_note: note,
+      payment_method: paymentMethod,
       items,
     });
 

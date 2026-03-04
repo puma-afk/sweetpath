@@ -34,11 +34,11 @@ function dt_local_value(?string $dt): string {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title><?= $id>0 ? 'Editar' : 'Nueva' ?> promo</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;max-width:720px}
     input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin:8px 0}
     button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    button.primary{background:#111;color:#fff;border-color:#111}
+    button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .col{flex:1;min-width:220px}
     .img{width:100%;max-width:520px;height:180px;object-fit:cover;border-radius:12px;border:1px solid #ddd;background:#fff}

@@ -7,18 +7,25 @@ export function card(p) {
 
   const typeBadge =
     p.type === "EXPRESS" ? "express" :
-    p.type === "CUSTOM" ? "custom" : "pack";
+      p.type === "CUSTOM" ? "custom" : "pack";
 
   const outBadge = p.availability === "OUT" ? " out" : "";
-  const badgeText = `${p.type} • ${p.availability}`;
+  let typeDisplay = p.type;
+  if (p.type === "EXPRESS") typeDisplay = "RÁPIDO";
+  else if (p.type === "CUSTOM") typeDisplay = "PERSONALIZADO";
+  else if (p.type === "PACK") typeDisplay = "PACK";
 
-  const canAdd = p.type === "EXPRESS" && p.availability !== "OUT";
+  const availDisplay = p.availability === "OUT" ? "AGOTADO" : p.availability;
+  const badgeText = `${typeDisplay} • ${availDisplay}`;
+
+  // Se permite agregar EXPRESS y PACK directamente al carrito (Carrito Mixto)
+  const canAdd = (p.type === "EXPRESS" || p.type === "PACK") && p.availability !== "OUT";
 
   const actionBtn = canAdd
-    ? `<button class="btn primary small" data-add="${p.id}">Agregar</button>`
-    : (p.type === "EXPRESS"
-        ? `<button class="btn small" disabled>No disponible</button>`
-        : `<a class="btn primary small" href="./custom.html?type=${p.type}">Solicitar</a>`);
+    ? `<button class="btn primary small" style="min-height: 44px;" data-add="${p.id}">Agregar</button>`
+    : ((p.type === "EXPRESS" || p.type === "PACK")
+      ? `<button class="btn small" style="min-height: 44px;" disabled>Agotado</button>`
+      : `<a class="btn primary small" style="min-height: 44px; display:inline-flex; align-items:center;" href="./custom.html?type=${p.type}">Solicitar</a>`);
 
   return `
     <div class="card">
@@ -29,7 +36,7 @@ export function card(p) {
       <div class="cardBody">
         <div class="kicker">Pastelería</div>
         <h4 class="cardTitle">${p.name}</h4>
-        <p class="cardDesc">${desc}${desc.length>=92?'…':''}</p>
+        <p class="cardDesc">${desc}${desc.length >= 92 ? '…' : ''}</p>
 
         <div class="meta">
           <div class="price">
@@ -51,17 +58,17 @@ export function validatePhone(phone) {
 export function getMinDate(type) {
   const now = new Date();
   let hoursToAdd = 0;
-  
+
   if (type === "PACK") hoursToAdd = 24;
   else if (type === "CUSTOM") hoursToAdd = 72;
   // EXPRESS = 0 hours
-  
+
   now.setHours(now.getHours() + hoursToAdd);
-  
+
   // Format to YYYY-MM-DD
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, '0');
   const dd = String(now.getDate()).padStart(2, '0');
-  
+
   return `${yyyy}-${mm}-${dd}`;
 }

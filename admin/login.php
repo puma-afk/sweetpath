@@ -107,12 +107,12 @@ if ($e === 'notlogged') $info = "Debes iniciar sesión para entrar al admin.";
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Login</title>
+  <title>ESENCIA · Login de Admin</title>
   <style>
-    body{font-family:system-ui,Arial;background:#fafafa;margin:0;padding:24px}
+    body{font-family:system-ui,Arial;background:#fffaca;color:#151613;margin:0;padding:24px}
     .card{max-width:380px;margin:0 auto;background:#fff;border:1px solid #ddd;border-radius:14px;padding:16px}
     input{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin:8px 0}
-    button{width:100%;padding:12px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+    button{width:100%;padding:12px;border-radius:10px;border:1px solid #004f39;background:#004f39;color:#fffaca;cursor:pointer}
     .err{background:#ffe8e8;border:1px solid #ffb3b3;padding:10px;border-radius:10px;margin:10px 0}
     .info{background:#e7f3ff;border:1px solid #b3d7ff;padding:10px;border-radius:10px;margin:10px 0}
     .muted{color:#666;font-size:13px}
@@ -120,7 +120,7 @@ if ($e === 'notlogged') $info = "Debes iniciar sesión para entrar al admin.";
 </head>
 <body>
   <div class="card">
-    <h2>🔒 Admin</h2>
+    <h2>🔒 ESENCIA · Admin</h2>
     <p class="muted">solo personal autorizado.</p>
 
     <?php if ($info): ?>

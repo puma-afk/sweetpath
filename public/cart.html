@@ -1,75 +1,98 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SweetPath — Carrito</title>
+  <title>ESENCIA — Mi pedido</title>
   <link rel="stylesheet" href="./css/app.css" />
 </head>
+
 <body>
 
-<header class="nav">
-  <div class="container navbar">
-    <div class="brand">
-      <div class="logo"></div>
-      <div>
-        <h1>SWEETPATH</h1>
-        <small>Carrito EXPRESS</small>
+  <header class="nav">
+    <div class="container navbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>ESENCIA</h1>
+          <small>Mi pedido</small>
+        </div>
+      </div>
+      <nav class="navlinks">
+        <a class="pill" href="./index.html">Inicio</a>
+        <a class="pill" href="./products.html">Productos</a>
+        <a class="pill" href="./custom.html">Personalizados</a>
+        <a class="pill primary" id="cartBadge" href="./cart.html">Mi pedido (0)</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="margin-top:16px">
+    <div class="panel">
+      <h2 style="margin:0">Mi carrito</h2>
+      <p class="hSub" style="margin-top:8px">
+        Aquí puedes realizar la compra rápida de nuestra vitrina o packs.
+      </p>
+
+      <div id="cartBox" class="notice">Cargando…</div>
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="btnClear">Vaciar carrito</button>
+        <a class="btn" href="./products.html">Seguir comprando</a>
       </div>
     </div>
-    <nav class="navlinks">
-      <a class="pill" href="./index.html">Inicio</a>
-      <a class="pill" href="./products.html">Catálogo</a>
-      <a class="pill" href="./custom.html">Personalizados</a>
-      <a class="pill primary" id="cartBadge" href="./cart.html">Carrito (0)</a>
-    </nav>
-  </div>
-</header>
 
-<main class="container" style="margin-top:16px">
-  <div class="panel">
-    <h2 style="margin:0">Carrito (EXPRESS)</h2>
-    <p class="hSub" style="margin-top:8px">
-      Tu pedido se confirmará por WhatsApp antes de mostrar QR/pago.
-    </p>
+    <div class="panel" style="margin-top:14px">
+      <h3 style="margin:0">Finalizar pedido</h3>
+      <div class="row" style="margin-top:10px">
+        <input id="name" class="pill" style="flex:1;min-width:220px" placeholder="Tu nombre (opcional)">
+        <input id="phone" class="pill" style="flex:1;min-width:220px" placeholder="Tu WhatsApp (obligatorio)">
+      </div>
+      <div class="row" style="margin-top:10px">
+        <input id="date" class="pill" type="date" title="¿Cuándo vas a retirar?" style="flex:1;min-width:220px">
+        <div class="time-selector" title="Elige horario de retiro" style="display:flex;gap:8px;flex:1;min-width:220px">
+          <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)">☀️ Mañana</button>
+          <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)">🌆 Tarde</button>
+          <input type="hidden" id="time" value="">
+        </div>
+      </div>
 
-    <div id="cartBox" class="notice">Cargando…</div>
+      <div style="margin-top:12px">
+        <a href="#" id="toggleMessage"
+          style="color:var(--primary);text-decoration:none;font-weight:bold;font-size:14px;">+ Añadir mensaje o
+          referencia (Opcional)</a>
+        <textarea id="customerNote" class="input" placeholder="Ej: Es para regalo, poner nombre en la caja..."
+          style="display:none;width:100%;margin-top:10px;min-height:70px;"></textarea>
+      </div>
 
-    <div class="row" style="margin-top:12px">
-      <button class="btn" id="btnClear">Vaciar carrito</button>
-      <a class="btn" href="./products.html">Seguir comprando</a>
+      <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
+        <label style="font-size:14px;font-weight:bold;display:block;margin-bottom:8px">Método de Pago</label>
+        <select id="paymentMethod" class="select" style="width:100%">
+          <option value="QR">Pagar ahora por QR (Descuenta stock inmediatamente)</option>
+          <option value="TIENDA">Pagar al retirar en tienda (Reserva por 4 horas)</option>
+        </select>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="btnConfirm">ENVIAR PEDIDO POR WHATSAPP</button>
+        <div id="msg" class="notice" style="display:none"></div>
+      </div>
     </div>
-  </div>
+  </main>
 
-  <div class="panel" style="margin-top:14px">
-    <h3 style="margin:0">Datos para el pedido</h3>
-    <div class="row" style="margin-top:10px">
-      <input id="name" class="pill" style="flex:1;min-width:220px" placeholder="Tu nombre (opcional)">
-      <input id="phone" class="pill" style="flex:1;min-width:220px" placeholder="Tu WhatsApp (obligatorio)">
+  <footer class="container footer">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>© ESENCIA</div>
+      <div>Mi pedido</div>
     </div>
-    <div class="row" style="margin-top:10px">
-      <input id="date" class="pill" type="date" style="flex:1;min-width:220px">
-      <input id="time" class="pill" type="time" style="flex:1;min-width:220px">
-    </div>
+  </footer>
 
-    <div class="row" style="margin-top:12px">
-      <button class="btn primary" id="btnConfirm">Confirmar por WhatsApp</button>
-      <div id="msg" class="notice" style="display:none"></div>
-    </div>
-  </div>
-</main>
-
-<footer class="container footer">
-  <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-    <div>© SweetPath</div>
-    <div>Carrito</div>
-  </div>
-</footer>
-
-<script type="module" src="./js/cart.js"></script>
-<script type="module">
-  import { bindCartBadge } from "./js/ui.js";
-  bindCartBadge("cartBadge");
-</script>
+  <script type="module" src="./js/cart.js"></script>
+  <script type="module">
+    import { bindCartBadge } from "./js/ui.js";
+    bindCartBadge("cartBadge");
+  </script>
 </body>
+
 </html>

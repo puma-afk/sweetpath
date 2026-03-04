@@ -46,14 +46,14 @@ $err = trim($_GET['err'] ?? '');
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin - Productos</title>
+  <title>ESENCIA · Panel de control</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
     .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
     input,select{padding:10px;border-radius:10px;border:1px solid #ccc}
     button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    button.primary{background:#111;color:#fff;border-color:#111}
+    button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
     button.danger{background:#b00020;color:#fff;border-color:#b00020}
     .ok{background:#e9ffe8;border:1px solid #b6ffb3;padding:10px;border-radius:10px;margin:10px 0}
     .err{background:#ffe8e8;border:1px solid #ffb3b3;padding:10px;border-radius:10px;margin:10px 0}
@@ -70,7 +70,7 @@ $err = trim($_GET['err'] ?? '');
 
 <div class="bar" style="justify-content:space-between">
   <div>
-    <h2 style="margin:0">🧁 Admin — Productos</h2>
+    <h2 style="margin:0">🧁 ESENCIA — Productos</h2>
     <small><a href="/sweetpath/admin/orders.php">← Pedidos</a> | <a href="/sweetpath/admin/config.php">Config</a></small>
   </div>
   <div class="row">

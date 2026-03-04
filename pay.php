@@ -24,7 +24,17 @@ if (!$o) { http_response_code(404); exit("Pedido no encontrado."); }
 
 $status = strtoupper($o['status'] ?? '');
 $total = $o['total_final_cents'] !== null ? (int)$o['total_final_cents'] : null;
-$min_adv = ($total !== null) ? (int)floor($total * 0.3) : null;
+
+// Reglas de pago: MIXED paga 100%, CUSTOM/PACK adelanto del 30%
+$min_adv = null;
+if ($total !== null) {
+  if (in_array(strtoupper($o['type']), ['CUSTOM', 'PACK'])) {
+    $min_adv = (int)floor($total * 0.3);
+  } else {
+    // EXPRESS or MIXED (carrito) -> Pago Completo
+    $min_adv = $total;
+  }
+}
 
 // Load QR asset (if configured)
 $qrUrl = null;
@@ -44,12 +54,12 @@ if (!empty($o['qr_asset_id'])) {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Pagar <?= h($code) ?></title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .card{background:#fff;border:1px solid #ddd;border-radius:14px;padding:14px;max-width:560px}
     .muted{color:#666}
     .warn{background:#fff3cd;border:1px solid #ffeeba;padding:10px;border-radius:10px}
     input{padding:10px;border-radius:10px;border:1px solid #ccc;width:100%}
-    button{padding:12px 14px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;width:100%}
+    button{padding:12px 14px;border-radius:10px;border:1px solid #004f39;background:#004f39;color:#fffaca;cursor:pointer;width:100%}
     img{max-width:100%;border-radius:12px;border:1px solid #ddd}
     .row{display:flex;gap:10px;flex-wrap:wrap}
     .half{flex:1;min-width:180px}
@@ -68,8 +78,14 @@ if (!empty($o['qr_asset_id'])) {
       Te confirmaremos por WhatsApp cuando esté aprobado ✅
     </div>
   <?php else: ?>
-    <p>Total final: <b>Bs <?= h(bs($total)) ?></b></p>
-    <p>Adelanto sugerido (30%): <b>Bs <?= h(bs($min_adv)) ?></b></p>
+    <p>Total a Pagar: <b>Bs <?= h(bs($total)) ?></b></p>
+    <?php if (in_array(strtoupper($o['type']), ['CUSTOM', 'PACK'])): ?>
+      <p style="color:var(--danger);font-weight:bold;">Adelanto sugerido (Mínimo 30%): Bs <?= h(bs($min_adv)) ?></p>
+      <p class="muted" style="font-size:14px">El 70% restante se paga al contra-entrega (efectivo o transferencia al retirar).</p>
+    <?php else: ?>
+      <p style="color:var(--danger);font-weight:bold;">Total (Pago Completo 100%): Bs <?= h(bs($min_adv)) ?></p>
+      <p class="muted" style="font-size:14px">Por favor cancela el monto total para confirmar tu pedido en vitrina o packs.</p>
+    <?php endif; ?>
     <p class="muted">Tip: en el concepto del pago escribe tu código <b><?= h($o['order_code']) ?></b>.</p>
 
     <hr>
@@ -102,10 +118,10 @@ if (!empty($o['qr_asset_id'])) {
       </div>
 
       <p class="muted" style="margin-top:10px">
-        Tu comprobante será revisado por la dueña antes de confirmar el adelanto ✅
+        Tu comprobante será revisado antes de confirmar el pago ✅
       </p>
 
-      <button type="submit">Enviar comprobante</button>
+      <button type="submit">Subir comprobante</button>
     </form>
   <?php endif; ?>
 </div>

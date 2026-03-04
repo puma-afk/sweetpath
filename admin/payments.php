@@ -24,17 +24,17 @@ function bs($c){ return number_format(((int)$c)/100, 2, '.', ''); }
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin - Pagos</title>
+  <title>ESENCIA · Pagos</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
     .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eee;font-size:12px}
-    button{padding:10px 12px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
-    a{color:#111}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #004f39;background:#004f39;color:#fffaca;cursor:pointer}
+    a{color:#151613}
   </style>
 </head>
 <body>
-<h2>💰 Admin — Pagos</h2>
+<h2>💰 ESENCIA — Pagos</h2>
 <p>
   <a href="/sweetpath/admin/orders.php">← Pedidos</a>
   &nbsp;|&nbsp;

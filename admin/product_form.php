@@ -35,11 +35,11 @@ $err = trim($_GET['err'] ?? '');
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title><?= $id>0 ? 'Editar' : 'Nuevo' ?> producto</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;max-width:720px}
     input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin:8px 0}
     button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    button.primary{background:#111;color:#fff;border-color:#111}
+    button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .col{flex:1;min-width:220px}
     .img{width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #ddd;background:#fff}
@@ -77,8 +77,8 @@ $err = trim($_GET['err'] ?? '');
           <label><small>Tipo</small></label>
           <select name="type" required>
             <?php $t = $p['type'] ?? 'EXPRESS'; ?>
-            <option value="EXPRESS" <?= $t==='EXPRESS'?'selected':'' ?>>EXPRESS</option>
-            <option value="CUSTOM" <?= $t==='CUSTOM'?'selected':'' ?>>CUSTOM</option>
+            <option value="EXPRESS" <?= $t==='EXPRESS'?'selected':'' ?>>RÁPIDO (EXPRESS)</option>
+            <option value="CUSTOM" <?= $t==='CUSTOM'?'selected':'' ?>>PERSONALIZADO (CUSTOM)</option>
             <option value="PACK" <?= $t==='PACK'?'selected':'' ?>>PACK</option>
           </select>
         </div>
@@ -87,9 +87,9 @@ $err = trim($_GET['err'] ?? '');
           <label><small>Disponibilidad (lo que verá el cliente)</small></label>
           <?php $av = $p['availability'] ?? 'AVAILABLE'; ?>
           <select name="availability" required>
-            <option value="AVAILABLE" <?= $av==='AVAILABLE'?'selected':'' ?>>AVAILABLE</option>
-            <option value="LOW" <?= $av==='LOW'?'selected':'' ?>>LOW</option>
-            <option value="OUT" <?= $av==='OUT'?'selected':'' ?>>OUT</option>
+            <option value="AVAILABLE" <?= $av==='AVAILABLE'?'selected':'' ?>>DISPONIBLE</option>
+            <option value="LOW" <?= $av==='LOW'?'selected':'' ?>>POCO STOCK</option>
+            <option value="OUT" <?= $av==='OUT'?'selected':'' ?>>AGOTADO</option>
           </select>
         </div>
 

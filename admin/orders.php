@@ -21,7 +21,7 @@ if ($status !== '') {
 
 $sql = "
 SELECT
-  o.id, o.order_code, o.type, o.channel, o.status,
+  o.id, o.order_code, o.type, o.channel, o.status, o.custom_json,
   o.customer_name, o.customer_phone,
   o.pickup_date, o.pickup_time,
   o.total_final_cents,
@@ -61,15 +61,15 @@ $msg = trim($_GET['msg'] ?? '');
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin - Pedidos</title>
+  <title>ESENCIA · Panel de control</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fafafa}
+    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
     .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
     .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
     .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eee;font-size:12px}
     button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    button.primary{background:#111;color:#fff;border-color:#111}
+    button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
     button.danger{background:#b00020;color:#fff;border-color:#b00020}
     input,select{padding:10px;border-radius:10px;border:1px solid #ccc}
     .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -81,7 +81,7 @@ $msg = trim($_GET['msg'] ?? '');
 </head>
 <body>
 
-<h2>📦 Admin — Pedidos</h2>
+<h2>🏠 ESENCIA · Panel de control</h2>
 
 <div class="bar" style="justify-content:space-between">
   <div class="muted">
@@ -157,7 +157,6 @@ $msg = trim($_GET['msg'] ?? '');
       <?= $o['pickup_time'] ? ('<b>'.h($o['pickup_time']).'</b>') : '' ?>
     </div>
 
-    <div class="moneyline">
       Total final: <b>Bs <?= h(bs($total)) ?></b><br>
       Pagado (verificado): <b>Bs <?= h(bs($paidV)) ?></b>
       <?php if ($paidP > 0): ?>
@@ -166,6 +165,21 @@ $msg = trim($_GET['msg'] ?? '');
       <br>
       Falta: <b>Bs <?= $remaining !== null ? h(bs($remaining)) : '-' ?></b>
     </div>
+
+    <?php 
+    $cjson = json_decode($o['custom_json'] ?? '{}', true) ?: [];
+    if (!empty($cjson)): 
+    ?>
+    <div class="note" style="margin-top:10px; font-size:13px">
+      <b>Detalles / Mensaje:</b>
+      <ul style="margin:5px 0 0 -15px;">
+        <?php foreach ($cjson as $k => $v): ?>
+          <?php if (is_array($v) || $v === '') continue; ?>
+          <li><b><?= h(ucfirst($k)) ?>:</b> <?= nl2br(h($v)) ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php endif; ?>
 
     <div style="margin-top:10px" class="muted">
       Link de pago:

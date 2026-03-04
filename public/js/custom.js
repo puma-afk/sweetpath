@@ -17,8 +17,7 @@ function hasFormData() {
 window.addEventListener('beforeunload', (e) => {
   if (!formSubmitted && hasFormData()) {
     e.preventDefault();
-    // Mensaje estándar del navegador (no se puede personalizar en Chrome moderno)
-    e.returnValue = '¿Seguro que quieres salir? Tu solicitud aún no fue enviada.';
+    e.returnValue = '¿Estás seguro de que quieres salir? Tu solicitud aún no fue enviada.';
   }
 });
 
@@ -47,6 +46,36 @@ if (typeEl) {
 }
 updateMinDate();
 
+// --- Lógica del selector de horario (Pills) ---
+document.querySelectorAll('.time-pill').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    // Quitar clase activa de todos
+    document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('active'));
+    // Agregar a este
+    e.currentTarget.classList.add('active');
+    // Guardar en el input oculto
+    document.getElementById('time').value = e.currentTarget.getAttribute('data-val');
+  });
+});
+
+// --- Lógica de Acordeón "Añadir mensaje..." ---
+const toggleMessage = document.getElementById("toggleMessage");
+if (toggleMessage) {
+  toggleMessage.addEventListener("click", (e) => {
+    e.preventDefault();
+    const msgInput = document.getElementById("messageCake");
+    if (msgInput.style.display === "none") {
+      msgInput.style.display = "block";
+      msgInput.focus();
+      toggleMessage.textContent = "- Ocultar mensaje/referencia";
+    } else {
+      msgInput.style.display = "none";
+      msgInput.value = ""; // Limpiar si lo ocultan
+      toggleMessage.textContent = "+ Añadir dedicatoria extra (Opcional)";
+    }
+  });
+}
+
 document.getElementById("btnSend").addEventListener("click", async () => {
   msg.style.display = "block";
   msg.className = "";
@@ -66,11 +95,16 @@ document.getElementById("btnSend").addEventListener("click", async () => {
   const qty = document.getElementById("qty").value.trim();
   const notes = document.getElementById("notes").value.trim();
 
+  const referenceImageInput = document.getElementById("referenceImage");
+  const hasImage = referenceImageInput && referenceImageInput.files.length > 0;
+
   if (!phone || !validatePhone(phone)) {
     msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos).";
     return;
   }
+  if (!time) { msg.textContent = "Por favor selecciona un rango horario de retiro."; return; }
   if (!qty) { msg.textContent = "Indica una cantidad."; return; }
+  if (!hasImage) { msg.textContent = "Por favor, sube una imagen de referencia."; return; }
 
   const details = {
     people: people ? Number(people) : null,
@@ -95,6 +129,30 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     // Pedido guardado con éxito — desactivar advertencia de salida
     formSubmitted = true;
 
+    // Subir imagen de referencia
+    if (hasImage) {
+      try {
+        msg.textContent = "Subiendo imagen adjunta...";
+        const formData = new FormData();
+        formData.append('order_id', data.order_id);
+        formData.append('file', referenceImageInput.files[0]);
+
+        const req = await fetch('/api/order_image_upload.php', {
+          method: 'POST',
+          body: formData
+        });
+        const res = await req.json();
+        if (!req.ok || !res.ok) {
+          console.error("Error upload:", res.message);
+          throw new Error("No pudimos subir la foto de referencia, pero tu solicitud fue recibida.");
+        }
+      } catch (uploadErr) {
+        msg.textContent = uploadErr.message || "Error al subir la imagen.";
+        // Aún así, permitimos que continúe al WhatsApp, porque el formulario principal sí se guardó.
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+
     if (data.whatsapp_link) {
       msg.textContent = "✅ Solicitud enviada. Abriendo WhatsApp para confirmar con la dueña…";
       // Abrir WhatsApp inmediatamente
@@ -109,6 +167,6 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     }
 
   } catch (e) {
-    msg.textContent = e.message || "No se pudo enviar la solicitud. Intenta de nuevo.";
+    msg.textContent = e.message || "No se pudo enviar el pedido. Intenta de nuevo.";
   }
 });

@@ -107,11 +107,11 @@ $chartDaysJson    = json_encode($chartDays);
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin — Estadísticas</title>
+  <title>ESENCIA · Estadísticas</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *{box-sizing:border-box}
-    body{font-family:system-ui,Arial;margin:0;padding:16px;background:#f4f4f6;color:#111}
+    body{font-family:system-ui,Arial;margin:0;padding:16px;background:#fffaca;color:#151613}
     h2{margin:0 0 4px}
     .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
@@ -147,8 +147,8 @@ $chartDaysJson    = json_encode($chartDays);
 
 <div class="topbar">
   <div>
-    <h2>📊 Estadísticas</h2>
-    <small style="color:#666">SweetPath · <?= h($validRanges[$range]) ?></small>
+    <h2>📊 ESENCIA — Estadísticas</h2>
+    <small style="color:#666">Panel · <?= h($validRanges[$range]) ?></small>
   </div>
   <nav>
     <a href="/sweetpath/admin/orders.php" class="btn">← Pedidos</a>
