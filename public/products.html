@@ -20,9 +20,8 @@
         </div>
       </div>
       <nav class="navlinks">
-        <a class="pill" href="./index.html">Inicio</a>
+        <a class="pill" href="./products.html">Productos</a>
         <a class="pill" href="./custom.html">Personalizados</a>
-        <a class="pill primary" id="cartBadge" href="./cart.html">Mi pedido (0)</a>
       </nav>
     </div>
   </header>
@@ -57,12 +56,18 @@
     <div id="grid" class="grid" style="margin-top:14px"></div>
   </main>
 
-  <footer class="container footer">
+  <footer class="container footer" style="margin-bottom:60px">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div>© ESENCIA</div>
       <div>Catálogo y Vitrina</div>
     </div>
   </footer>
+
+  <!-- Carrito Flotante -->
+  <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
+    🛍️
+    <div id="floatingCartBadge" class="floating-cart-badge">0</div>
+  </a>
 
   <script type="module" src="./js/products.js"></script>
   <script type="module">

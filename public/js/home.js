@@ -1,6 +1,6 @@
 import { apiGet } from "./api.js";
 import { card } from "./ui-utils.js";
-import { bindCartCounters } from "./cart-manager.js";
+import { bindCartCounters, addToCart } from "./cart-manager.js";
 bindCartCounters();
 
 const promoMeta = document.getElementById("promoMeta");
@@ -29,6 +29,19 @@ async function loadRecommended() {
     const data = await apiGet("/products_list.php?limit=6");
     recMeta.textContent = `${data.count} producto(s)`;
     productsGrid.innerHTML = (data.products || []).slice(0, 6).map(card).join("");
+
+    // Bindear botones agregar al carrito del index
+    productsGrid.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-add]");
+      if (!btn) return;
+
+      const id = btn.getAttribute("data-add");
+      const product = data.products.find((p) => String(p.id) === id);
+      if (product) {
+        addToCart(product);
+      }
+    });
+
   } catch (e) {
     recMeta.textContent = "Error cargando";
     productsGrid.innerHTML = `<div class="notice">No se pudo cargar el catálogo.</div>`;

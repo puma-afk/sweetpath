@@ -23,7 +23,6 @@
         <a class="pill" href="./index.html">Inicio</a>
         <a class="pill" href="./products.html">Productos</a>
         <a class="pill" href="./custom.html">Personalizados</a>
-        <a class="pill primary" id="cartBadge" href="./cart.html">Mi pedido (0)</a>
       </nav>
     </div>
   </header>
@@ -44,49 +43,67 @@
     </div>
 
     <div class="panel" style="margin-top:14px">
-      <h3 style="margin:0">Finalizar pedido</h3>
-      <div class="row" style="margin-top:10px">
-        <input id="name" class="pill" style="flex:1;min-width:220px" placeholder="Tu nombre (opcional)">
-        <input id="phone" class="pill" style="flex:1;min-width:220px" placeholder="Tu WhatsApp (obligatorio)">
-      </div>
-      <div class="row" style="margin-top:10px">
-        <input id="date" class="pill" type="date" title="¿Cuándo vas a retirar?" style="flex:1;min-width:220px">
-        <div class="time-selector" title="Elige horario de retiro" style="display:flex;gap:8px;flex:1;min-width:220px">
-          <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)">☀️ Mañana</button>
-          <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)">🌆 Tarde</button>
-          <input type="hidden" id="time" value="">
+      <h3 style="margin:0 0 16px 0">Finalizar pedido</h3>
+
+      <div class="card" style="padding:16px;">
+        <div class="row" style="margin-top:0">
+          <input id="name" class="input" style="flex:1;min-width:100%" placeholder="Tu nombre (opcional)">
+          <input id="phone" class="input" style="flex:1;min-width:100%;margin-top:8px"
+            placeholder="Tu WhatsApp (obligatorio)">
         </div>
-      </div>
 
-      <div style="margin-top:12px">
-        <a href="#" id="toggleMessage"
-          style="color:var(--primary);text-decoration:none;font-weight:bold;font-size:14px;">+ Añadir mensaje o
-          referencia (Opcional)</a>
-        <textarea id="customerNote" class="input" placeholder="Ej: Es para regalo, poner nombre en la caja..."
-          style="display:none;width:100%;margin-top:10px;min-height:70px;"></textarea>
-      </div>
+        <div class="row" style="margin-top:12px">
+          <input id="date" class="input" type="date" title="¿Cuándo vas a retirar?" style="flex:1;min-width:100%">
+          <div class="time-selector" title="Elige horario de retiro"
+            style="display:flex;gap:8px;flex:1;min-width:100%;margin-top:8px">
+            <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)" style="flex:1">☀️
+              Mañana</button>
+            <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)" style="flex:1">🌆
+              Tarde</button>
+            <input type="hidden" id="time" value="">
+          </div>
+        </div>
 
-      <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">
-        <label style="font-size:14px;font-weight:bold;display:block;margin-bottom:8px">Método de Pago</label>
-        <select id="paymentMethod" class="select" style="width:100%">
-          <option value="QR">Pagar ahora por QR (Descuenta stock inmediatamente)</option>
-          <option value="TIENDA">Pagar al retirar en tienda (Reserva por 4 horas)</option>
-        </select>
-      </div>
+        <div style="margin-top:16px">
+          <a href="#" id="toggleMessage"
+            style="color:var(--primary);text-decoration:none;font-weight:bold;font-size:14px;display:block;text-align:center;padding:8px;background:var(--soft);border-radius:8px;">+
+            Añadir mensaje o
+            referencia (Opcional)</a>
+          <textarea id="customerNote" class="input" placeholder="Ej: Es para regalo, poner nombre en la caja..."
+            style="display:none;width:100%;margin-top:10px;min-height:70px;"></textarea>
+        </div>
 
-      <div class="row" style="margin-top:12px">
-        <button class="btn primary" id="btnConfirm">ENVIAR PEDIDO POR WHATSAPP</button>
-        <div id="msg" class="notice" style="display:none"></div>
+        <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line);">
+          <label style="font-size:14px;font-weight:bold;display:block;margin-bottom:8px">Método de Pago</label>
+          <select id="paymentMethod" class="select" style="width:100%">
+            <option value="QR">Pagar ahora por QR (Descuenta stock inmediatamente)</option>
+            <option value="TIENDA">Pagar al retirar en tienda (Reserva por 4 horas)</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:20px">
+          <button class="btn primary" id="btnConfirm"
+            style="width:100%;font-size:16px;padding:16px;background:#25D366;border-color:#25D366;box-shadow:0 4px 12px rgba(37,211,102,0.3)">
+            <b style="font-size:18px;">📲 ENVIAR PEDIDO POR WHATSAPP</b>
+          </button>
+          <div id="msg" class="notice" style="display:none;width:100%"></div>
+        </div>
       </div>
     </div>
   </main>
 
-  <footer class="container footer">
+  <footer class="container footer" style="margin-bottom:60px">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div>© ESENCIA</div>
       <div>Mi pedido</div>
     </div>
   </footer>
+
+  <!-- Carrito Flotante -->
+  <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
+    🛍️
+    <div id="floatingCartBadge" class="floating-cart-badge">0</div>
+  </a>
 
   <script type="module" src="./js/cart.js"></script>
   <script type="module">

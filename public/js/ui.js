@@ -17,22 +17,10 @@ export function notifyCartUpdated() {
   window.dispatchEvent(new Event("sp_cart_updated"));
 }
 
-export function bindCartBadge(badgeId = "cartBadge") {
-  const el = document.getElementById(badgeId);
-  if (!el) return;
+import { bindCartCounters } from "./cart-manager.js";
 
-  const render = () => {
-    const n = cartCount();
-    el.textContent = `Carrito (${n})`;
-  };
-
-  render();
-  window.addEventListener("sp_cart_updated", render);
-
-  // por si abres otra pestaña
-  window.addEventListener("storage", (e) => {
-    if (e.key === "sp_cart") render();
-  });
+export function bindCartBadge() {
+  bindCartCounters();
 }
 
 // Mensajitos bonitos según error común

@@ -21,8 +21,7 @@
       </div>
       <nav class="navlinks">
         <a class="pill" href="./products.html">Productos</a>
-        <a class="pill" href="./custom.html">Pasteles personalizados</a>
-        <a class="pill primary" id="cartBadge" href="./cart.html">Mi pedido (0)</a>
+        <a class="pill" href="./custom.html">Personalizados</a>
       </nav>
     </div>
   </header>
@@ -75,12 +74,18 @@
     <div id="productsGrid" class="grid" style="margin-top:12px"></div>
   </main>
 
-  <footer class="container footer">
+  <footer class="container footer" style="margin-bottom:60px">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div>© ESENCIA</div>
       <div>Minimalista • Artesanal • Repostería</div>
     </div>
   </footer>
+
+  <!-- Carrito Flotante -->
+  <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
+    🛍️
+    <div id="floatingCartBadge" class="floating-cart-badge">0</div>
+  </a>
 
   <script type="module" src="./js/home.js"></script>
   <script type="module">

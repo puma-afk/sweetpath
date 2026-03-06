@@ -14,9 +14,14 @@ if (in_array($type, ['EXPRESS','CUSTOM','PACK'], true)) {
   $where[] = "o.type = ?";
   $params[] = $type;
 }
-if ($status !== '') {
+if ($status === 'ALL') {
+  // Sin filtro adicional de estado
+} elseif ($status !== '') {
   $where[] = "UPPER(o.status) = ?";
   $params[] = $status;
+} else {
+  // Por defecto, ocultar los completados y rechazados
+  $where[] = "UPPER(o.status) NOT IN ('ENTREGADO', 'RECHAZADO')";
 }
 
 $sql = "
@@ -111,7 +116,8 @@ $msg = trim($_GET['msg'] ?? '');
   </select>
 
   <select name="status">
-    <option value="">Todos los estados</option>
+    <option value="">Pendientes / En Curso</option>
+    <option value="ALL" <?= $status==='ALL'?'selected':''; ?>>Historial Completo (Todos)</option>
     <option value="SOLICITADO" <?= $status==='SOLICITADO'?'selected':''; ?>>SOLICITADO</option>
     <option value="APROBADO_PARA_PAGO" <?= $status==='APROBADO_PARA_PAGO'?'selected':''; ?>>APROBADO_PARA_PAGO</option>
     <option value="EN_PRODUCCION" <?= $status==='EN_PRODUCCION'?'selected':''; ?>>EN_PRODUCCION</option>
@@ -187,62 +193,66 @@ $msg = trim($_GET['msg'] ?? '');
     </div>
 
     <div class="actions">
-      <!-- Aprobar + Cotizar -->
-      <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
-        <?= csrf_input() ?>
-        <input type="hidden" name="id" value="<?= h($o['id']) ?>">
-        <input type="hidden" name="action" value="approve_with_quote">
-        <input
-          type="number"
-          name="total_bs"
-          step="0.01"
-          min="0"
-          placeholder="Total Bs"
-          style="width:110px"
-          required
-        >
-        <button class="primary" type="submit">✅ Aprobar + Cotizar</button>
-      </form>
-
-      <!-- Registrar CASH -->
-      <form method="post" action="/sweetpath/admin/cash_payment.php" style="display:inline">
-        <?= csrf_input() ?>
-        <input type="hidden" name="order_id" value="<?= h($o['id']) ?>">
-        <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Efectivo Bs" style="width:120px" required>
-        <button type="submit">💵 Registrar CASH</button>
-      </form>
-
-      <!-- Rechazar -->
-      <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
-        <?= csrf_input() ?>
-        <input type="hidden" name="id" value="<?= h($o['id']) ?>">
-        <input type="hidden" name="status" value="RECHAZADO">
-        <button class="danger" type="submit">❌ Rechazar</button>
-      </form>
-
-      <!-- Marcar LISTO -->
-      <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
-        <?= csrf_input() ?>
-        <input type="hidden" name="id" value="<?= h($o['id']) ?>">
-        <input type="hidden" name="status" value="LISTO">
-        <button type="submit">📌 Marcar LISTO</button>
-      </form>
-
-      <!-- Marcar EN_PRODUCCION -->
-      <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
-        <?= csrf_input() ?>
-        <input type="hidden" name="id" value="<?= h($o['id']) ?>">
-        <input type="hidden" name="status" value="EN_PRODUCCION">
-        <button type="submit">🏭 EN_PRODUCCION</button>
-      </form>
-
-      <!-- Marcar ENTREGADO -->
-      <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
-        <?= csrf_input() ?>
-        <input type="hidden" name="id" value="<?= h($o['id']) ?>">
-        <input type="hidden" name="status" value="ENTREGADO">
-        <button type="submit">✅ ENTREGADO</button>
-      </form>
+      <?php $st = strtoupper((string)$o['status']); ?>
+      
+      <?php if ($st === 'CREATED' || $st === 'SOLICITADO'): ?>
+        <!-- Aprobar + Cotizar -->
+        <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <?= csrf_input() ?>
+          <input type="hidden" name="id" value="<?= h($o['id']) ?>">
+          <input type="hidden" name="action" value="approve_with_quote">
+          <input
+            type="number"
+            name="total_bs"
+            step="0.01"
+            min="0"
+            placeholder="Total Bs"
+            style="width:110px"
+            required
+          >
+          <button class="primary" type="submit" style="background:#ffb300;color:#000;border-color:#ffb300">⏳ Aprobar + Cotizar</button>
+        </form>
+        <!-- Rechazar -->
+        <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <?= csrf_input() ?>
+          <input type="hidden" name="id" value="<?= h($o['id']) ?>">
+          <input type="hidden" name="status" value="RECHAZADO">
+          <button class="danger" type="submit">❌ Rechazar</button>
+        </form>
+      <?php elseif ($st === 'APROBADO_PARA_PAGO'): ?>
+        <!-- Marcar EN_PRODUCCION -->
+        <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <?= csrf_input() ?>
+          <input type="hidden" name="id" value="<?= h($o['id']) ?>">
+          <input type="hidden" name="status" value="EN_PRODUCCION">
+          <button class="primary" type="submit" style="background:#17a2b8;border-color:#17a2b8">🏭 Pasar a Producción</button>
+        </form>
+        <?php if ($remaining !== null && $remaining > 0): ?>
+        <!-- Registrar CASH -->
+        <form method="post" action="/sweetpath/admin/cash_payment.php" style="display:inline; margin-left:10px;">
+          <?= csrf_input() ?>
+          <input type="hidden" name="order_id" value="<?= h($o['id']) ?>">
+          <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Efectivo Bs" style="width:120px" required>
+          <button type="submit" style="background:#e2e8f0;border-color:#cbd5e1">💵 Registrar CASH</button>
+        </form>
+        <?php endif; ?>
+      <?php elseif ($st === 'EN_PRODUCCION'): ?>
+        <!-- Marcar LISTO -->
+        <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <?= csrf_input() ?>
+          <input type="hidden" name="id" value="<?= h($o['id']) ?>">
+          <input type="hidden" name="status" value="LISTO">
+          <button class="primary" type="submit" style="background:#007bff;border-color:#007bff">📌 Marcar como LISTO</button>
+        </form>
+      <?php elseif ($st === 'LISTO'): ?>
+        <!-- Marcar ENTREGADO -->
+        <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <?= csrf_input() ?>
+          <input type="hidden" name="id" value="<?= h($o['id']) ?>">
+          <input type="hidden" name="status" value="ENTREGADO">
+          <button class="primary" type="submit" style="background:#28a745;border-color:#28a745">✅ Entregar Pedido</button>
+        </form>
+      <?php endif; ?>
     </div>
   </div>
 <?php endforeach; ?>

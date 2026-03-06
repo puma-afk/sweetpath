@@ -69,13 +69,32 @@ export function updateCartMini() {
   cartMini.textContent = `Carrito: ${total}`;
 }
 
-/** Badge global en navbar (si existe) */
+/** Badge global en navbar y flotante */
 export function updateCartBadge() {
   const badge = document.getElementById("cartBadge");
-  if (!badge) return;
-
+  const floatCart = document.getElementById("floatingCart");
+  const floatBadge = document.getElementById("floatingCartBadge");
   const total = cartCount();
-  badge.textContent = `Carrito (${total})`;
+
+  if (badge) {
+    badge.textContent = `Mi pedido (${total})`;
+  }
+
+  if (floatCart && floatBadge) {
+    if (total > 0) {
+      floatCart.style.display = "flex";
+
+      // Animación si el valor cambia
+      if (floatBadge.textContent !== String(total)) {
+        floatCart.classList.remove("pop");
+        void floatCart.offsetWidth; // trigger reflow
+        floatCart.classList.add("pop");
+      }
+      floatBadge.textContent = total;
+    } else {
+      floatCart.style.display = "none";
+    }
+  }
 }
 
 /**

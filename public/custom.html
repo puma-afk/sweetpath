@@ -22,7 +22,6 @@
       <nav class="navlinks">
         <a class="pill" href="./index.html">Inicio</a>
         <a class="pill" href="./products.html">Productos</a>
-        <a class="pill primary" id="cartBadge" href="./cart.html">Mi pedido (0)</a>
       </nav>
     </div>
   </header>
@@ -35,98 +34,115 @@
         Una vez aprobado, podrás pagar el adelanto aquí mismo.
       </p>
 
-      <div class="filters">
-        <select id="type" class="select" style="min-width:240px">
-          <option value="CUSTOM">Pastel Personalizado</option>
-          <option value="PACK">Paquete para Evento</option>
-        </select>
+      <div class="card" style="padding:16px;">
+        <div class="filters" style="margin-top:0">
+          <select id="type" class="select" style="flex:1;min-width:100%">
+            <option value="CUSTOM">Pastel Personalizado</option>
+            <option value="PACK">Paquete para Evento</option>
+          </select>
 
-        <input id="phone" class="input" placeholder="Tu WhatsApp (obligatorio)" />
-        <input id="name" class="input" placeholder="Tu nombre (opcional)" />
-      </div>
-
-      <div class="filters">
-        <input id="date" class="input" type="date" title="¿Para qué fecha necesitas el pastel?" />
-        <div class="time-selector" style="display:flex;gap:8px;flex-wrap:wrap">
-          <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)">☀️ Mañana (10:00 -
-            13:00)</button>
-          <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)">🌆 Tarde (14:00 - 19:00)</button>
-          <input type="hidden" id="time" value="">
+          <input id="name" class="input" style="flex:1;min-width:100%" placeholder="Tu nombre (opcional)" />
+          <input id="phone" class="input" style="flex:1;min-width:100%" placeholder="Tu WhatsApp (obligatorio)" />
         </div>
-        <select id="people" class="select" style="min-width:240px">
-          <option value="">¿Para cuántas personas?</option>
-          <option value="10">10 personas</option>
-          <option value="15">15 personas</option>
-          <option value="20">20 personas</option>
-          <option value="30">30 personas</option>
-        </select>
+
+        <div class="filters" style="margin-top:12px">
+          <input id="date" class="input" type="date" title="¿Para qué fecha necesitas el pastel?"
+            style="flex:1;min-width:100%" />
+          <div class="time-selector" style="display:flex;gap:8px;flex:1;min-width:100%">
+            <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)"
+              style="flex:1;padding:8px;font-size:13px">☀️ Mañana<br>(10:00-13:00)</button>
+            <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)"
+              style="flex:1;padding:8px;font-size:13px">🌆 Tarde<br>(14:00-19:00)</button>
+            <input type="hidden" id="time" value="">
+          </div>
+          <select id="people" class="select" style="flex:1;min-width:100%">
+            <option value="">¿Para cuántas personas?</option>
+            <option value="10">10 personas</option>
+            <option value="15">15 personas</option>
+            <option value="20">20 personas</option>
+            <option value="30">30 personas</option>
+          </select>
+        </div>
       </div>
 
       <div class="card" style="margin-top:12px">
         <div class="cardBody">
-          <div class="kicker">Detalles</div>
+          <h3 style="margin:0 0 12px 0;font-size:18px">Detalles</h3>
 
-          <div class="filters" style="margin-top:10px">
-            <select id="flavor" class="select" style="min-width:240px">
+          <div class="filters" style="margin-top:0">
+            <select id="flavor" class="select" style="flex:1;min-width:100%">
               <option value="">Elige el sabor de la masa</option>
               <option value="Vainilla">Vainilla</option>
               <option value="Chocolate">Chocolate</option>
               <option value="Zanahoria">Zanahoria</option>
             </select>
-            <select id="theme" class="select" style="min-width:240px">
+            <select id="theme" class="select" style="flex:1;min-width:100%">
               <option value="">Elige el relleno</option>
               <option value="Manjar">Manjar</option>
               <option value="Ganache">Ganache de chocolate</option>
               <option value="Frutos">Frutos del bosque</option>
               <option value="Crema">Crema pastelera</option>
             </select>
-            <input id="size" class="input" placeholder="Diseño/Temática (ej: flores, dorado...)" />
+            <!-- Nuevo selector de temática -->
+            <select id="size" class="select" style="flex:1;min-width:100%">
+              <option value="">Diseño / Temática visual</option>
+              <option value="Floral">Floral / Botánico</option>
+              <option value="Minimalista">Minimalista / Elegante</option>
+              <option value="Infantil">Infantil / Personajes</option>
+              <option value="Vintage">Vintage / Clásico</option>
+              <option value="Otro">Otro (Especificar en notas)</option>
+            </select>
           </div>
 
           <div class="filters" style="margin-top:10px">
-            <!-- Eliminado mensaje (ahora estara abajo en textarea) -->
-            <input id="qty" class="input" type="number" min="1" step="1" placeholder="Cantidad (unidades o packs)" />
+            <input id="qty" class="input" type="number" min="1" step="1" style="flex:1;min-width:100%"
+              placeholder="Cantidad (unidades o packs)" />
           </div>
 
-          <div class="filters" style="margin-top:10px">
+          <div class="filters" style="margin-top:12px">
             <label style="font-size:14px;font-weight:bold;width:100%;display:block;margin-bottom:8px">Sube una foto de
               referencia (Obligatorio para personalizados)</label>
-            <input type="file" id="referenceImage" class="input" accept="image/*" />
+            <input type="file" id="referenceImage" class="input" style="flex:1;min-width:100%" accept="image/*" />
           </div>
         </div>
 
-        <div class="notice" style="margin-top:10px">
-          <b>Mensaje o detalles para tu pastel (opcional)</b><br>
-          <textarea id="notes" class="input"
-            placeholder="Ej: Que diga 'Feliz Cumpleaños María' en letras doradas, con flores..."
-            style="width:100%;margin-top:10px;min-height:80px;"></textarea>
-        </div>
+        <div class="notice" style="margin:16px; margin-top:0">
+          <b style="font-size:14px;display:block;margin-bottom:8px">Mensaje o detalles para tu pastel (Opcional)</b>
+          <textarea id="notes" class="input" placeholder="Ej: Que diga 'Feliz Cumple' en letras doradas..."
+            style="width:100%;min-height:70px;"></textarea>
 
-        <div style="margin-top:10px">
-          <!-- Opcional si agregaron otra seccion, la dejo oculta o visible pero con el nombre MessageCake -->
           <a href="#" id="toggleMessage"
-            style="color:var(--primary);text-decoration:none;font-weight:bold;font-size:14px;">+ Añadir dedicatoria
+            style="color:var(--primary);text-decoration:none;font-weight:bold;font-size:14px;display:block;margin-top:12px;text-align:center;padding:8px;background:var(--soft);border-radius:8px;">+
+            Añadir dedicatoria
             extra (Opcional)</a>
-          <textarea id="messageCake" class="input"
-            placeholder="Ej: Quiero una dedicatoria que diga 'Feliz Cumple Mary', o el color de la caja..."
-            style="display:none;width:100%;margin-top:10px;min-height:80px;"></textarea>
+          <textarea id="messageCake" class="input" placeholder="Ej: Dedicatoria para la tarjeta..."
+            style="display:none;width:100%;margin-top:8px;min-height:70px;"></textarea>
         </div>
 
-        <div class="row" style="margin-top:12px">
-          <button class="btn primary" id="btnSend">CONTINUAR CON EL PEDIDO</button>
-          <div id="msg" class="notice" style="display:none"></div>
+        <div class="row" style="padding:0 16px 16px 16px; margin-top:0">
+          <button class="btn primary" id="btnSend"
+            style="width:100%;font-size:16px;padding:16px;background:#25D366;border-color:#25D366;box-shadow:0 4px 12px rgba(37,211,102,0.3)">
+            <b style="font-size:18px;">📲 CONTINUAR POR WHATSAPP</b>
+          </button>
+          <div id="msg" class="notice" style="display:none;width:100%"></div>
         </div>
       </div>
     </div>
     </div>
   </main>
 
-  <footer class="container footer">
+  <footer class="container footer" style="margin-bottom:60px">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div>© ESENCIA</div>
       <div>Personalizados y Eventos</div>
     </div>
   </footer>
+
+  <!-- Carrito Flotante -->
+  <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
+    🛍️
+    <div id="floatingCartBadge" class="floating-cart-badge">0</div>
+  </a>
 
   <script type="module" src="./js/custom.js"></script>
   <script type="module">
