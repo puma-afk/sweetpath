@@ -97,6 +97,7 @@ if (count($products) !== count($productIds)) {
 // Validate product rules
 $lines = [];
 $total_est_cents = 0;
+$maxLeadHoursNeeded = 0;
 
 foreach ($products as $p) {
   if ($p['type'] !== 'EXPRESS' && $p['type'] !== 'PACK') {

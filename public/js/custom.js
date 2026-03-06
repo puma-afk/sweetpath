@@ -153,7 +153,7 @@ document.getElementById("btnSend").addEventListener("click", async () => {
       }
     }
 
-    if (data.whatsapp_link) {
+    if (data && data.whatsapp_link) {
       msg.textContent = "✅ Solicitud enviada. Abriendo WhatsApp para confirmar con la dueña…";
       // Abrir WhatsApp inmediatamente
       window.open(data.whatsapp_link, '_blank');

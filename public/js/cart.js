@@ -160,7 +160,7 @@ document.getElementById("btnConfirm")?.addEventListener("click", async () => {
     orderSubmitted = true;
     clearCart();
 
-    if (data.whatsapp_link) {
+    if (data && data.whatsapp_link) {
       msg.textContent = `✅ Pedido #${data.order_code} creado. Abriendo WhatsApp…`;
       window.open(data.whatsapp_link, '_blank');
       setTimeout(() => {

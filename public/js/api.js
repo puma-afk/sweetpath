@@ -15,6 +15,10 @@ export async function apiPost(path, payload) {
   });
   const data = await res.json().catch(() => null);
 
+  if (data === null && res.ok) {
+    throw new Error("El servidor envió una respuesta vacía o inválida.");
+  }
+
   // Si está cerrado (403) o cualquier error
   if (!res.ok) {
     const msg = data?.message || data?.error || "No se pudo completar la acción.";

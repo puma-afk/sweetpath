@@ -6,9 +6,17 @@ require __DIR__ . '/../db.php';
 
 $type = strtoupper(trim($_GET['type'] ?? ''));
 $status = strtoupper(trim($_GET['status'] ?? ''));
+$q = trim($_GET['q'] ?? '');
 
 $where = [];
 $params = [];
+
+if ($q !== '') {
+  $where[] = "(o.customer_name LIKE ? OR o.customer_phone LIKE ? OR o.order_code LIKE ?)";
+  $params[] = "%$q%";
+  $params[] = "%$q%";
+  $params[] = "%$q%";
+}
 
 if (in_array($type, ['EXPRESS','CUSTOM','PACK'], true)) {
   $where[] = "o.type = ?";
@@ -31,12 +39,14 @@ SELECT
   o.pickup_date, o.pickup_time,
   o.total_final_cents,
   o.created_at,
+  a.path_original AS ref_image_path,
 
   COALESCE(SUM(CASE WHEN p.verified=1 THEN p.amount_cents ELSE 0 END),0) AS paid_verified_cents,
   COALESCE(SUM(CASE WHEN p.verified=0 THEN p.amount_cents ELSE 0 END),0) AS paid_pending_cents
 
 FROM orders o
 LEFT JOIN payments p ON p.order_id = o.id
+LEFT JOIN assets a ON o.image_ref_asset_id = a.id
 ";
 
 if ($where) $sql .= " WHERE " . implode(" AND ", $where);
@@ -50,6 +60,25 @@ LIMIT 200
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $orders = $stmt->fetchAll();
+
+// --- NUEVA LÓGICA: Cargar items de los pedidos en una sola consulta ---
+$orderItemsMap = [];
+if (count($orders) > 0) {
+    $ids = array_column($orders, 'id');
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmtItems = $pdo->prepare("
+        SELECT oi.*, p.name AS product_name 
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        WHERE oi.order_id IN ($placeholders)
+    ");
+    $stmtItems->execute($ids);
+    $allOrderItems = $stmtItems->fetchAll();
+    
+    foreach ($allOrderItems as $item) {
+        $orderItemsMap[$item['order_id']][] = $item;
+    }
+}
 
 function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 
@@ -68,20 +97,30 @@ $msg = trim($_GET['msg'] ?? '');
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ESENCIA · Panel de control</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
+    body{font-family:system-ui,Arial;margin:16px;background:#f0efe4;color:#151613}
     .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
-    .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
+    .card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:20px;margin:15px 0;box-shadow: 0 4px 12px rgba(0,0,0,0.05); position:relative; overflow:hidden;}
+    .card.status-solicitado, .card.status-created { border-left: 8px solid #ffd32a; background: #fffcf0; }
+    .card.status-produccion { border-left: 8px solid #3498db; background: #f0f7ff; }
+    .card.status-listo { border-left: 8px solid #2ecc71; background: #f2fff6; }
+    .card.status-entregado { border-left: 8px solid #aaa; color: #777; }
+    
     .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eee;font-size:12px}
-    button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
+    .pill{display:inline-block;padding:5px 12px;border-radius:999px;background:#eee;font-size:12px; font-weight: 600;}
+    button{padding:10px 16px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer; font-weight:500; transition: 0.2s;}
+    button:hover{filter: brightness(0.95);}
     button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
     button.danger{background:#b00020;color:#fff;border-color:#b00020}
-    input,select{padding:10px;border-radius:10px;border:1px solid #ccc}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    input,select{padding:10px 14px;border-radius:12px;border:1px solid #ccc}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px; border-top: 1px solid #eee; padding-top:15px;}
     small{color:#666}
-    .note{background:#e7f3ff;border:1px solid #b3d7ff;padding:10px;border-radius:10px;margin:10px 0}
+    .note{background:#f8f9fa;border:1px solid #eee;padding:12px;border-radius:14px;margin:12px 0}
     .moneyline{margin-top:6px;line-height:1.4}
     .muted{color:#666}
+    .client-name{font-size:1.3rem; margin:0; color:#004f39;}
+    .ref-thumbnail{width:80px; height:80px; border-radius:12px; object-fit:cover; border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor:pointer;}
+    .wa-btn { background: #25D366; color:#fff; border:none; padding: 8px 12px; border-radius:10px; font-size:13px; font-weight:bold; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    details summary { cursor:pointer; color:#004f39; font-weight:bold; margin-top:10px; font-size:14px; outline:none; }
   </style>
 </head>
 <body>
@@ -108,6 +147,8 @@ $msg = trim($_GET['msg'] ?? '');
 <?php endif; ?>
 
 <form class="bar" method="get">
+  <input type="text" name="q" value="<?= h($q) ?>" placeholder="Buscar cliente, tel o código..." style="min-width:260px">
+  
   <select name="type">
     <option value="">Todos los tipos</option>
     <option value="EXPRESS" <?= $type==='EXPRESS'?'selected':''; ?>>EXPRESS</option>
@@ -137,82 +178,126 @@ $msg = trim($_GET['msg'] ?? '');
     $paidV = (int)$o['paid_verified_cents'];
     $paidP = (int)$o['paid_pending_cents'];
     $remaining = ($total !== null) ? max($total - $paidV, 0) : null;
-    $canPay = (strtoupper((string)$o['status']) === 'APROBADO_PARA_PAGO');
+    $st = strtoupper((string)$o['status']);
+    $canPay = ($st === 'APROBADO_PARA_PAGO');
+    
+    $cardClass = '';
+    if ($st === 'SOLICITADO' || $st === 'CREATED') $cardClass = 'status-solicitado';
+    elseif ($st === 'EN_PRODUCCION') $cardClass = 'status-produccion';
+    elseif ($st === 'LISTO') $cardClass = 'status-listo';
+    elseif ($st === 'ENTREGADO') $cardClass = 'status-entregado';
+
+    $translations = [
+      'people' => 'Personas/Porciones',
+      'flavor' => 'Sabor',
+      'size' => 'Tamaño',
+      'theme' => 'Temática',
+      'message' => 'Mensaje/Dedicatoria',
+      'qty' => 'Cantidad',
+      'notes' => 'Notas adicionales',
+      'payment_method' => 'Método de Pago',
+      'note' => 'Nota del cliente'
+    ];
+
+    $valTranslations = [
+      'TIENDA' => '📍 Recojo en Tienda',
+      'QR' => '💳 Pago por QR',
+      'EXPRESS' => 'Rápido (Express)',
+      'CUSTOM' => 'Personalizado',
+      'PACK' => 'Paquete/Pack'
+    ];
+
+    $whatsappMsg = "Hola " . ($o['customer_name'] ?: '') . "! Te escribo de ESENCIA por tu pedido " . $o['order_code'];
+    $whatsappLink = "https://wa.me/" . preg_replace('/\D+/', '', $o['customer_phone']) . "?text=" . rawurlencode($whatsappMsg);
   ?>
-  <div class="card">
-    <div class="row">
-      <div><b><?= h($o['order_code']) ?></b></div>
-      <div class="pill"><?= h($o['type']) ?></div>
-      <div class="pill"><?= h($o['status']) ?></div>
-      <div class="pill"><?= h($o['channel']) ?></div>
-      <?php if ($canPay): ?>
-        <div class="pill">Pago habilitado ✅</div>
+  <div class="card <?= $cardClass ?>">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:15px;">
+      <div style="flex:1">
+        <div class="row">
+          <small class="muted">#<?= h($o['order_code']) ?></small>
+          <div class="pill"><?= h($o['type']) ?></div>
+          <div class="pill" style="background:var(--primary); color:#fff;"><?= h($o['status']) ?></div>
+        </div>
+        <h3 class="client-name"><?= h($o['customer_name'] ?: 'Cliente sin nombre') ?></h3>
+        <div style="margin-top:4px">
+          <a href="<?= $whatsappLink ?>" target="_blank" class="wa-btn">
+            <span>📲</span> <?= h($o['customer_phone'] ?: '-') ?>
+          </a>
+        </div>
+      </div>
+      <?php if ($o['ref_image_path']): ?>
+        <a href="<?= h($o['ref_image_path']) ?>" target="_blank">
+          <img src="<?= h($o['ref_image_path']) ?>" class="ref-thumbnail" title="Click para ver imagen de referencia">
+        </a>
       <?php endif; ?>
     </div>
 
-    <div style="margin-top:6px">
-      <small>
-        <?= h($o['created_at']) ?> |
-        Cliente: <?= h($o['customer_name'] ?: '-') ?> |
-        WhatsApp: <?= h($o['customer_phone'] ?: '-') ?>
-      </small>
-    </div>
-
-    <div style="margin-top:6px">
-      Recojo: <b><?= h($o['pickup_date'] ?: '-') ?></b>
-      <?= $o['pickup_time'] ? ('<b>'.h($o['pickup_time']).'</b>') : '' ?>
-    </div>
-
-      Total final: <b>Bs <?= h(bs($total)) ?></b><br>
-      Pagado (verificado): <b>Bs <?= h(bs($paidV)) ?></b>
-      <?php if ($paidP > 0): ?>
-        <span class="pill">Pendiente: Bs <?= h(bs($paidP)) ?></span>
-      <?php endif; ?>
-      <br>
-      Falta: <b>Bs <?= $remaining !== null ? h(bs($remaining)) : '-' ?></b>
+    <div style="margin-top:12px; display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+      <div>
+        <small class="muted">Fecha de recojo:</small><br>
+        <b>📅 <?= h($o['pickup_date'] ?: '-') ?></b> | <b>🕒 <?= h($o['pickup_time'] ?: '-') ?></b>
+      </div>
+      <div>
+        <small class="muted">Monto total:</small><br>
+        <b>Bs <?= h(bs($total)) ?></b> 
+        <?php if ($remaining > 0): ?>
+          <span style="color:#b00020">(Resta: Bs <?= h(bs($remaining)) ?>)</span>
+        <?php else: ?>
+          <span style="color:#28a745">(Pagado)</span>
+        <?php endif; ?>
+      </div>
     </div>
 
     <?php 
     $cjson = json_decode($o['custom_json'] ?? '{}', true) ?: [];
     if (!empty($cjson)): 
     ?>
-    <div class="note" style="margin-top:10px; font-size:13px">
-      <b>Detalles / Mensaje:</b>
-      <ul style="margin:5px 0 0 -15px;">
-        <?php foreach ($cjson as $k => $v): ?>
-          <?php if (is_array($v) || $v === '') continue; ?>
-          <li><b><?= h(ucfirst($k)) ?>:</b> <?= nl2br(h($v)) ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </div>
+    <details>
+      <summary>🔍 Ver más detalles del pedido</summary>
+      <div class="note" style="font-size:14px">
+        
+        <?php 
+        $items = $orderItemsMap[$o['id']] ?? [];
+        if (!empty($items)):
+        ?>
+          <div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <b>🛒 Productos en el carrito:</b>
+            <ul style="margin:5px 0 0 0px; padding-left:15px;">
+              <?php foreach ($items as $item): ?>
+                <li>
+                  <?= h($item['quantity']) ?> x <b><?= h($item['product_name']) ?></b> 
+                  <?php if ($item['unit_price_cents']): ?>
+                    (Bs <?= h(number_format($item['unit_price_cents']/100, 2)) ?> c/u)
+                  <?php endif; ?>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+
+        <ul style="margin:0; padding-left:15px;">
+          <?php foreach ($cjson as $k => $v): ?>
+            <?php if (is_array($v) || $v === '') continue; ?>
+            <?php 
+              $label = $translations[$k] ?? ucfirst($k); 
+              $val = $valTranslations[strtoupper((string)$v)] ?? $v;
+            ?>
+            <li style="margin-bottom:5px"><b><?= h($label) ?>:</b> <?= nl2br(h($val)) ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    </details>
     <?php endif; ?>
 
-    <div style="margin-top:10px" class="muted">
-      Link de pago:
-      <a href="/sweetpath/pay.php?code=<?= h($o['order_code']) ?>" target="_blank">Abrir pay.php</a>
-    </div>
-
     <div class="actions">
-      <?php $st = strtoupper((string)$o['status']); ?>
-      
       <?php if ($st === 'CREATED' || $st === 'SOLICITADO'): ?>
-        <!-- Aprobar + Cotizar -->
         <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
           <input type="hidden" name="action" value="approve_with_quote">
-          <input
-            type="number"
-            name="total_bs"
-            step="0.01"
-            min="0"
-            placeholder="Total Bs"
-            style="width:110px"
-            required
-          >
-          <button class="primary" type="submit" style="background:#ffb300;color:#000;border-color:#ffb300">⏳ Aprobar + Cotizar</button>
+          <input type="number" name="total_bs" step="0.01" min="0" placeholder="Cotizar Bs" style="width:110px" required>
+          <button class="primary" type="submit">⏳ Aprobar y Cotizar</button>
         </form>
-        <!-- Rechazar -->
         <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
@@ -220,37 +305,33 @@ $msg = trim($_GET['msg'] ?? '');
           <button class="danger" type="submit">❌ Rechazar</button>
         </form>
       <?php elseif ($st === 'APROBADO_PARA_PAGO'): ?>
-        <!-- Marcar EN_PRODUCCION -->
         <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
           <input type="hidden" name="status" value="EN_PRODUCCION">
-          <button class="primary" type="submit" style="background:#17a2b8;border-color:#17a2b8">🏭 Pasar a Producción</button>
+          <button class="primary" type="submit" style="background:#3498db; border-color:#3498db">🏭 Pasar a Producción</button>
         </form>
         <?php if ($remaining !== null && $remaining > 0): ?>
-        <!-- Registrar CASH -->
-        <form method="post" action="/sweetpath/admin/cash_payment.php" style="display:inline; margin-left:10px;">
+        <form method="post" action="/sweetpath/admin/cash_payment.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="order_id" value="<?= h($o['id']) ?>">
-          <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Efectivo Bs" style="width:120px" required>
-          <button type="submit" style="background:#e2e8f0;border-color:#cbd5e1">💵 Registrar CASH</button>
+          <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Bs Efectivo" style="width:110px" required>
+          <button type="submit">💵 Registrar Pago</button>
         </form>
         <?php endif; ?>
       <?php elseif ($st === 'EN_PRODUCCION'): ?>
-        <!-- Marcar LISTO -->
         <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
           <input type="hidden" name="status" value="LISTO">
-          <button class="primary" type="submit" style="background:#007bff;border-color:#007bff">📌 Marcar como LISTO</button>
+          <button class="primary" type="submit" style="background:#2ecc71; border-color:#2ecc71">📌 Marcar LISTO</button>
         </form>
       <?php elseif ($st === 'LISTO'): ?>
-        <!-- Marcar ENTREGADO -->
         <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
           <input type="hidden" name="status" value="ENTREGADO">
-          <button class="primary" type="submit" style="background:#28a745;border-color:#28a745">✅ Entregar Pedido</button>
+          <button class="primary" type="submit" style="background:#28a745; border-color:#28a745">✅ Entregar Pedido</button>
         </form>
       <?php endif; ?>
     </div>
@@ -258,7 +339,7 @@ $msg = trim($_GET['msg'] ?? '');
 <?php endforeach; ?>
 
 <?php if (count($orders) === 0): ?>
-  <p>No hay pedidos con esos filtros.</p>
+  <p style="text-align:center; padding:40px; color:#666;">No se encontraron pedidos con esos filtros.</p>
 <?php endif; ?>
 
 </body>
