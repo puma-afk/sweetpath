@@ -1,22 +1,28 @@
+/* --- 1. IMPORTACIÓN DE TIPOGRAFÍAS --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+/* --- 2. PALETA DE COLORES Y VARIABLES --- */
 :root {
   --bg: #fffaca;
-  /* CREMA SUAVE */
+  /* CREMA SUAVE - Fondo general */
   --card: #ffffff;
-  --muted: #666666;
+  /* BLANCO PURO - Tarjetas y paneles */
   --text: #151613;
-  /* GRIS OSCURO */
+  /* GRIS OSCURO - Textos legibles */
   --primary: #004f39;
-  /* VERDE OSCURO */
-  --line: rgba(0, 0, 0, .1);
-  --soft: rgba(0, 0, 0, .04);
-  --accent: #004f39;
-  /* para logo / acentos fuertes */
-  --accent2: #fffaca;
+  /* VERDE OSCURO - Acentos y botones */
+  --muted: #666666;
+  /* GRIS MEDIO - Textos secundarios */
+
+  --line: rgba(0, 79, 57, 0.15);
+  /* Líneas teñidas de verde sutil */
+  --soft: rgba(0, 79, 57, 0.05);
+  /* Fondos hover suaves */
   --danger: #e84118;
 }
 
 * {
-  box-sizing: border-box
+  box-sizing: border-box;
 }
 
 html,
@@ -25,101 +31,216 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+/* Títulos con tipografía elegante */
+h1,
+h2,
+h3,
+h4,
+.hTitle,
+.brand-text h1,
+.bandTitle h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 a {
   color: inherit;
-  text-decoration: none
+  text-decoration: none;
 }
 
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 18px
+  padding: 18px;
 }
 
+/* --- 3. BARRA DE NAVEGACIÓN Y LOGO --- */
 .nav {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #004f39;
+  background: var(--primary);
   border-bottom: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .nav .container {
-  color: #fffaca;
+  color: var(--bg);
 }
 
-/* Texto nav crema */
 .nav a {
-  color: #fffaca;
+  color: var(--bg);
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px
+  gap: 30px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px
+  gap: 10px;
 }
 
-.logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  background: var(--accent);
-  border: none;
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
 }
 
-.brand h1 {
-  font-size: 16px;
-  margin: 0;
-  letter-spacing: .8px
+/* Control inteligente del Logo */
+.logo-img {
+  height: 110px;
+  /* Tamaño grande para PC */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  content: url('../img/logo_white.png');
+  /* Carga el logo blanco por defecto */
 }
 
-.brand small {
-  display: block;
-  color: rgba(255, 250, 202, .8);
-  font-size: 12px;
-  margin-top: 2px
+.logo-img:hover {
+  transform: scale(1.05);
 }
 
+.brand-text {
+  display: none;
+}
+
+/* Responsive del Nav y Logo para Celulares */
+@media(max-width: 600px) {
+  .logo-img {
+    height: 65px;
+    /* Tamaño adaptado para móvil */
+  }
+
+  .navbar {
+    gap: 15px;
+  }
+}
+
+/* Truco de contraste: si agregas la clase 'nav-claro' al header en HTML */
+.nav.nav-claro {
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 4px 15px rgba(0, 79, 57, 0.05);
+}
+
+.nav.nav-claro .logo-img {
+  content: url('../img/logo.png');
+  /* Cambia al logo oscuro automáticamente */
+}
+
+.nav.nav-claro .container,
+.nav.nav-claro a {
+  color: var(--primary);
+}
+
+.nav.nav-claro a.pill {
+  border-color: var(--primary);
+}
+
+.nav.nav-claro a.pill:hover {
+  background: var(--soft);
+}
+
+/* --- 4. BOTONES Y ENLACES --- */
 .navlinks {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  align-items: center
+  align-items: center;
 }
 
 .pill {
   padding: 10px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   background: transparent;
   color: var(--bg);
   min-height: 44px;
-  /* Touch friendly */
   display: inline-flex;
   align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .pill:hover {
-  background: rgba(255, 255, 255, .1)
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .pill.primary {
   background: var(--bg);
   color: var(--primary) !important;
   border-color: var(--bg);
-  font-weight: bold;
+  font-weight: 700;
 }
 
+.btn {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background: var(--soft);
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: var(--card) !important;
+  border-color: var(--primary);
+}
+
+.btn.primary:hover {
+  background: #003d2c;
+  /* Un tono más oscuro al pasar el mouse */
+}
+
+/* NUEVO: Botón especial para WhatsApp (Reemplaza estilos en línea del HTML) */
+.btn.whatsapp {
+  background-color: #25D366;
+  color: #ffffff !important;
+  border-color: #25D366;
+  font-size: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  font-weight: 700;
+}
+
+.btn.whatsapp:hover {
+  background-color: #20bd5a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+}
+
+.btn.danger {
+  border-color: rgba(255, 90, 106, .45);
+  color: #ffd7dc;
+}
+
+/* --- 5. ESTRUCTURA Y PANELES (CART, FORMS) --- */
 .hero {
   border-bottom: 1px solid var(--line);
   background:
@@ -131,12 +252,12 @@ a {
   display: grid;
   grid-template-columns: 1.3fr .7fr;
   gap: 18px;
-  align-items: stretch
+  align-items: stretch;
 }
 
 @media(max-width:900px) {
   .heroGrid {
-    grid-template-columns: 1fr
+    grid-template-columns: 1fr;
   }
 }
 
@@ -144,120 +265,46 @@ a {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, .03);
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 79, 57, 0.04);
 }
 
 .hTitle {
-  font-size: 34px;
-  margin: 0 0 8px 0;
-  letter-spacing: .4px
+  font-size: 38px;
+  margin: 0 0 12px 0;
+  letter-spacing: .4px;
+  line-height: 1.2;
 }
 
 .hSub {
   color: var(--muted);
-  margin: 0 0 14px 0;
-  line-height: 1.5
+  margin: 0 0 16px 0;
+  line-height: 1.6;
 }
 
 .row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  align-items: center
-}
-
-.btn {
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--text);
-  padding: 12px 20px;
-  border-radius: 14px;
-  cursor: pointer;
-  min-height: 44px;
-  /* Touch friendly */
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-weight: 500;
 }
 
-.btn:hover {
-  background: var(--soft)
-}
-
-.btn.primary {
-  background: var(--primary);
-  color: var(--bg) !important;
-  border-color: var(--primary);
-}
-
-.btn.danger {
-  border-color: rgba(255, 90, 106, .45);
-  color: #ffd7dc
-}
-
-.band {
-  margin-top: 14px;
-  background: rgba(0, 0, 0, .02);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.bandTitle {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px
-}
-
-.bandTitle h3 {
-  margin: 0;
-  font-size: 14px;
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  color: var(--primary)
-}
-
-.bandTitle small {
-  color: var(--muted)
-}
-
-.banner {
-  margin-top: 12px;
-  border-radius: 16px;
-  border: 1px solid var(--line);
-  overflow: hidden;
-  height: 180px;
-  background: var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block
-}
-
+/* --- 6. TARJETAS DE PRODUCTO --- */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 18px;
 }
 
 @media(max-width:900px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr)
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media(max-width:560px) {
   .grid {
-    grid-template-columns: 1fr
+    grid-template-columns: 1fr;
   }
 }
 
@@ -266,229 +313,136 @@ a {
   border: 1px solid var(--line);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .02);
+  box-shadow: 0 4px 10px rgba(0, 79, 57, 0.03);
+  position: relative;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 79, 57, 0.3);
+  box-shadow: 0 18px 40px rgba(0, 79, 57, 0.08);
 }
 
 .cardImg {
-  height: 170px;
+  height: 190px;
   background: var(--soft);
-  border-bottom: 1px solid var(--line)
+  border-bottom: 1px solid var(--line);
+  position: relative;
 }
 
 .cardImg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block
+  display: block;
 }
 
 .cardBody {
-  padding: 14px
+  padding: 16px;
 }
 
 .cardTitle {
   margin: 0;
-  font-size: 16px
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
 }
 
 .cardDesc {
   margin: 8px 0 0 0;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.45;
-  min-height: 36px
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 42px;
 }
 
 .meta {
-  margin-top: 10px;
+  margin-top: 14px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 10px
+  align-items: flex-end;
+  gap: 10px;
 }
 
 .price {
-  font-weight: 700
-}
-
-.tag {
-  font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: none;
-}
-
-.tag.express,
-.tag.pack {
-  background: var(--primary);
-  color: var(--bg);
-}
-
-.tag.custom {
-  background: var(--soft);
-  color: var(--text);
-}
-
-.tag.low {
-  background: #f39c12;
-  color: #fff;
-}
-
-/* Últimas unidades: Naranja suave */
-.tag.out {
-  background: #7f8c8d;
-  color: #fff;
-}
-
-/* Agotado: Gris, texto blanco */
-.footer {
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  padding: 18px 0;
-  margin-top: 22px
-}
-
-.notice {
-  margin: 12px 0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid var(--primary);
-  background: rgba(0, 79, 57, .05);
+  font-weight: 700;
+  font-size: 16px;
   color: var(--primary);
-}
-
-/* --- Premium pastry touches --- */
-.card {
-  position: relative;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(0, 79, 57, .3);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, .08);
-}
-
-.cardImg {
-  position: relative;
-  height: 190px;
-}
-
-.cardImg::after {
-  display: none;
-  /* Quitar viñeta oscura */
-}
-
-.badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 7px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  letter-spacing: .3px;
-  font-weight: bold;
-}
-
-.badge.express,
-.badge.pack {
-  background: var(--primary);
-  color: var(--bg);
-  border: none;
-}
-
-.badge.custom {
-  background: #f1c40f;
-  color: #000;
-  border: none;
-}
-
-.badge.low {
-  background: #f39c12;
-  color: #fff;
-  border: none;
-}
-
-.badge.out {
-  background: #7f8c8d;
-  color: #fff;
-  border: none;
-}
-
-.cardBody {
-  padding: 14px 14px 16px 14px
-}
-
-.cardTitle {
-  font-size: 17px;
-  letter-spacing: .2px
-}
-
-.cardDesc {
-  min-height: 42px
-}
-
-.meta {
-  align-items: flex-end
-}
-
-.price {
-  font-size: 15px;
-  letter-spacing: .2px;
 }
 
 .price small {
   display: block;
   color: var(--muted);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 12px;
-  margin-top: 2px
+  margin-top: 2px;
 }
 
-.btn.small {
-  padding: 10px 12px;
-  border-radius: 14px;
-  font-size: 13px;
+/* --- 7. ETIQUETAS (BADGES) --- */
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: .5px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-/* header bar for catalog */
+.badge.express,
+.badge.pack {
+  background: var(--primary);
+  color: var(--card);
+}
+
+.badge.custom {
+  background: #f1c40f;
+  color: #000;
+}
+
+.badge.low {
+  background: #f39c12;
+  color: #fff;
+}
+
+.badge.out {
+  background: #7f8c8d;
+  color: #fff;
+}
+
+/* --- 8. FORMULARIOS Y FILTROS --- */
 .filters {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
   align-items: center;
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
-.input {
-  padding: 12px 14px;
-  border-radius: 14px;
+.input,
+.select {
+  padding: 12px 16px;
+  border-radius: 12px;
   border: 1px solid var(--line);
   background: var(--card);
   color: var(--text);
   min-width: 220px;
-  min-height: 44px;
-  /* Touch friendly */
+  min-height: 48px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
 }
 
-.select {
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--text);
-  min-height: 44px;
-  /* Touch friendly */
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 79, 57, 0.1);
 }
 
-.kicker {
-  text-transform: uppercase;
-  letter-spacing: 1.4px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, .75);
-}
-
-/* Time selector pills */
 .time-selector {
   width: 100%;
 }
@@ -500,18 +454,68 @@ a {
   border: 1px solid var(--line);
   color: var(--muted);
   transition: all 0.2s ease;
-  min-height: 44px;
-  /* Touch friendly */
+  min-height: 48px;
 }
 
 .time-pill.active {
   background: var(--primary);
   border-color: var(--primary);
-  color: var(--bg);
-  font-weight: bold;
+  color: var(--card);
+  font-weight: 700;
 }
 
-/* --- Floating Cart --- */
+/* --- 9. ELEMENTOS EXTRA (BANDS, NOTICES, FOOTER) --- */
+.band {
+  margin-top: 16px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.bandTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.bandTitle small {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.banner {
+  margin-top: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  height: 180px;
+  background: var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notice {
+  margin: 16px 0;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--primary);
+  background: rgba(0, 79, 57, .04);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  padding: 24px 0;
+  margin-top: 32px;
+  font-size: 14px;
+}
+
+/* --- 10. CARRITO FLOTANTE --- */
 .floating-cart {
   position: fixed;
   bottom: 24px;
@@ -524,9 +528,8 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
-  color: var(--bg);
-  text-decoration: none;
+  font-size: 26px;
+  color: var(--card);
   z-index: 9999;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
@@ -542,9 +545,9 @@ a {
 
 .floating-cart-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #ff3b30;
+  top: -2px;
+  right: -2px;
+  background: var(--danger);
   color: #fff;
   font-size: 13px;
   font-weight: bold;
@@ -554,39 +557,14 @@ a {
   min-width: 22px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.floating-cart.pop .floating-cart-badge {
-  animation: badgePop 0.4s ease forwards;
-}
-
-@keyframes badgePop {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.4);
-  }
-
-  100% {
-    transform: scale(1);
-  }
 }
 
 @media(max-width: 600px) {
   .floating-cart {
     bottom: 20px;
     right: 20px;
-    width: 64px;
-    height: 64px;
-    font-size: 32px;
-  }
-
-  .floating-cart-badge {
-    font-size: 14px;
-    min-width: 24px;
-    padding: 5px 8px;
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
   }
 }

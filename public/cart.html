@@ -6,19 +6,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ESENCIA — Mi pedido</title>
   <link rel="stylesheet" href="./css/app.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
   <header class="nav">
     <div class="container navbar">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
+      <a href="./index.html" class="logo-link">
+        <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
+        <div class="brand-text">
           <h1>ESENCIA</h1>
           <small>Mi pedido</small>
         </div>
-      </div>
+      </a>
       <nav class="navlinks">
         <a class="pill" href="./index.html">Inicio</a>
         <a class="pill" href="./products.html">Productos</a>
@@ -38,7 +39,7 @@
 
       <div class="row" style="margin-top:12px">
         <button class="btn" id="btnClear">Vaciar carrito</button>
-        <a class="btn" href="./products.html">Seguir comprando</a>
+       <a class="btn" href="./products.html"><i class="fas fa-store"></i> Seguir comprando</a>
       </div>
     </div>
 
@@ -82,10 +83,9 @@
         </div>
 
         <div class="row" style="margin-top:20px">
-          <button class="btn primary" id="btnConfirm"
-            style="width:100%;font-size:16px;padding:16px;background:#25D366;border-color:#25D366;box-shadow:0 4px 12px rgba(37,211,102,0.3)">
-            <b style="font-size:18px;">📲 ENVIAR PEDIDO POR WHATSAPP</b>
-          </button>
+          <button class="btn whatsapp" id="btnConfirm" style="width:100%;">
+  <i class="fab fa-whatsapp" style="font-size: 1.3em;"></i> ENVIAR PEDIDO
+</button>
           <div id="msg" class="notice" style="display:none;width:100%"></div>
         </div>
       </div>
@@ -94,16 +94,16 @@
 
   <footer class="container footer" style="margin-bottom:60px">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>© ESENCIA</div>
+      <div>ESENCIA</div>
       <div>Mi pedido</div>
     </div>
   </footer>
 
   <!-- Carrito Flotante -->
   <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
-    🛍️
-    <div id="floatingCartBadge" class="floating-cart-badge">0</div>
-  </a>
+  <i class="fas fa-shopping-basket"></i>
+  <div id="floatingCartBadge" class="floating-cart-badge">0</div>
+</a>
 
   <script type="module" src="./js/cart.js"></script>
   <script type="module">
