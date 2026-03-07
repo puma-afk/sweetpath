@@ -35,24 +35,24 @@ $err = trim($_GET['err'] ?? '');
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title><?= $id>0 ? 'Editar' : 'Nuevo' ?> producto</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
-    .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;max-width:720px}
-    input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin:8px 0}
-    button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .col{flex:1;min-width:220px}
-    .img{width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #ddd;background:#fff}
-    .ok{background:#e9ffe8;border:1px solid #b6ffb3;padding:10px;border-radius:10px;margin:10px 0}
-    .err{background:#ffe8e8;border:1px solid #ffb3b3;padding:10px;border-radius:10px;margin:10px 0}
-    a{color:#111}
-    small{color:#666}
+    body{font-family:system-ui,Arial,sans-serif;margin:16px;background:#fffaca;color:#151613}
+    .card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:30px;max-width:800px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ccc;margin:8px 0; font-family: inherit;}
+    button{padding:12px 20px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer; font-weight:600; transition: 0.2s; color: #151613;}
+    button:hover{filter: brightness(0.92); transform: translateY(-1px);}
+    button.primary, button[type="submit"]{background:#004f39;color:#fffaca;border-color:#004f39; box-shadow: 0 4px 10px rgba(0,79,57,0.2);}
+    h2, h3{color:#004f39; font-family: 'Playfair Display', serif;}
+    .ok{background:#e9ffe8;border:1px solid #b6ffb3;padding:12px;border-radius:12px;margin:10px 0}
+    .err{background:#ffe8e8;border:1px solid #ffb3b3;padding:12px;border-radius:12px;margin:10px 0}
+    a{color:#004f39; font-weight: 600; text-decoration: none;}
+    a:hover{text-decoration: underline;}
   </style>
 </head>
-<body>
-  <div class="card">
+<?php require __DIR__ . '/_navbar.php'; ?>
+
+  <div class="card" style="margin: 0 auto;">
     <h2><?= $id>0 ? '✏️ Editar producto' : '➕ Nuevo producto' ?></h2>
-    <p><a href="/sweetpath/admin/products.php">← Volver</a></p>
+    <p><a href="/sweetpath/admin/products.php">← Volver a Productos</a></p>
 
     <?php if ($msg): ?><div class="ok"><?= h($msg) ?></div><?php endif; ?>
     <?php if ($err): ?><div class="err"><?= h($err) ?></div><?php endif; ?>

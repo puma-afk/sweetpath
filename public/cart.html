@@ -13,17 +13,23 @@
 
   <header class="nav">
     <div class="container navbar">
-      <a href="./index.html" class="logo-link">
+      <a href="./index.html" class="logo-link" title="Ir al inicio">
         <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
         <div class="brand-text">
           <h1>ESENCIA</h1>
-          <small>Mi pedido</small>
+          <small>Repostería artesanal</small>
         </div>
       </a>
-      <nav class="navlinks">
-        <a class="pill" href="./index.html">Inicio</a>
-        <a class="pill" href="./products.html">Productos</a>
-        <a class="pill" href="./custom.html">Personalizados</a>
+
+      <button class="menu-toggle" aria-label="Abrir menú"
+        onclick="document.getElementById('mainNav').classList.toggle('active')">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <nav class="navlinks" id="mainNav">
+        <a class="nav-item" href="./index.html">Inicio</a>
+        <a class="nav-item" href="./products.html">Productos</a>
+        <a class="nav-item" href="./custom.html">Personalizados</a>
       </nav>
     </div>
   </header>
@@ -39,7 +45,7 @@
 
       <div class="row" style="margin-top:12px">
         <button class="btn" id="btnClear">Vaciar carrito</button>
-       <a class="btn" href="./products.html"><i class="fas fa-store"></i> Seguir comprando</a>
+        <a class="btn" href="./products.html"><i class="fas fa-store"></i> Seguir comprando</a>
       </div>
     </div>
 
@@ -84,8 +90,8 @@
 
         <div class="row" style="margin-top:20px">
           <button class="btn whatsapp" id="btnConfirm" style="width:100%;">
-  <i class="fab fa-whatsapp" style="font-size: 1.3em;"></i> ENVIAR PEDIDO
-</button>
+            <i class="fab fa-whatsapp" style="font-size: 1.3em;"></i> ENVIAR PEDIDO
+          </button>
           <div id="msg" class="notice" style="display:none;width:100%"></div>
         </div>
       </div>
@@ -99,16 +105,51 @@
     </div>
   </footer>
 
-  <!-- Carrito Flotante -->
   <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
-  <i class="fas fa-shopping-basket"></i>
-  <div id="floatingCartBadge" class="floating-cart-badge">0</div>
-</a>
+    <i class="fas fa-shopping-basket"></i>
+    <div id="floatingCartBadge" class="floating-cart-badge">0</div>
+  </a>
 
   <script type="module" src="./js/cart.js"></script>
   <script type="module">
     import { bindCartBadge } from "./js/ui.js";
     bindCartBadge("cartBadge");
+  </script>
+  <script>
+    // Script para mostrar el perfil en el menú y proteger la página
+    async function verificarSesion() {
+      const res = await fetch('../api/get_session.php');
+      const user = await res.json();
+      const nav = document.getElementById('mainNav'); // Ubicamos el menú
+
+      // Protección: Si estamos en una página privada y no hay sesión, mandarlo a login
+      const path = window.location.pathname;
+      const paginasPrivadas = ['cart.html', 'custom.html', 'mis-pedidos.html', 'perfil.html'];
+      const requiereLogin = paginasPrivadas.some(p => path.includes(p));
+
+      if (!user.logged && requiereLogin) {
+        window.location.href = './login.html';
+        return;
+      }
+
+      // Si está logueado, inyectamos su foto estilo "botón"
+      if (user.logged) {
+        nav.innerHTML += `
+      <a href="./perfil.html" class="nav-item" style="display:flex; align-items:center; justify-content:center; gap:8px; background: rgba(255, 250, 202, 0.15); border-radius: 20px; padding: 5px 15px;">
+        <img src="${user.avatar}" style="width:28px; height:28px; border-radius:50%; border:2px solid #fffaca; object-fit:cover;">
+        <span>${user.name.split(' ')[0]}</span>
+      </a>
+    `;
+      } else {
+        // Si NO está logueado, inyectamos un botón llamativo para Entrar
+        nav.innerHTML += `
+      <a class="nav-item" href="./login.html" style="background:#fffaca; color:#004f39; border-radius:20px; padding: 8px 20px;">
+        <i class="fas fa-user"></i> Entrar
+      </a>
+    `;
+      }
+    }
+    verificarSesion();
   </script>
 </body>
 

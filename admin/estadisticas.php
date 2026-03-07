@@ -111,55 +111,28 @@ $chartDaysJson    = json_encode($chartDays);
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *{box-sizing:border-box}
-    body{font-family:system-ui,Arial;margin:0;padding:16px;background:#fffaca;color:#151613}
-    h2{margin:0 0 4px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
-    .stat{background:#fff;border-radius:14px;padding:16px;border:1px solid #e0e0e0}
-    .stat .label{font-size:12px;color:#666;margin-bottom:4px}
-    .stat .value{font-size:26px;font-weight:700;line-height:1.1}
-    .stat .sub{font-size:12px;color:#888;margin-top:4px}
-    .stat.green{border-left:4px solid #22c55e}
-    .stat.blue{border-left:4px solid #3b82f6}
-    .stat.amber{border-left:4px solid #f59e0b}
-    .stat.red{border-left:4px solid #ef4444}
-    .stat.purple{border-left:4px solid #8b5cf6}
-    .card{background:#fff;border-radius:14px;padding:16px;border:1px solid #e0e0e0;margin-bottom:12px}
-    .card h3{margin:0 0 10px;font-size:15px}
-    table{width:100%;border-collapse:collapse}
-    th{text-align:left;font-size:12px;color:#666;padding:6px 4px;border-bottom:2px solid #f0f0f0}
-    td{padding:7px 4px;border-bottom:1px solid #f5f5f5;font-size:14px}
-    tr:last-child td{border-bottom:none}
-    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;background:#eee}
-    .pill.green{background:#dcfce7;color:#166534}
-    .pill.blue{background:#dbeafe;color:#1e3a8a}
-    .pill.amber{background:#fef3c7;color:#92400e}
-    select,a.btn{padding:8px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:14px;text-decoration:none;color:#111}
-    .bar-wrap{background:#f0f0f0;border-radius:8px;height:8px;overflow:hidden;margin-top:4px}
-    .bar-fill{height:100%;border-radius:8px;background:#3b82f6}
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:600px){.two-col{grid-template-columns:1fr}}
-    .chart-box{height:200px;position:relative}
-    nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    body{font-family:system-ui,Arial,sans-serif;margin:16px;background:#fffaca;color:#151613}
+    h2{margin:0 0 10px; color:#004f39; font-family: 'Playfair Display', serif;}
+    .stat{background:#fff;border-radius:18px;padding:20px;border:1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
+    .card{background:#fff;border-radius:18px;padding:20px;border:1px solid #e0e0e0;margin-bottom:15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
+    select, .btn{padding:10px 14px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:14px;text-decoration:none;color:#151613; font-weight: 600;}
+    .btn:hover{filter: brightness(0.92); transform: translateY(-1px);}
   </style>
 </head>
-<body>
+<?php require __DIR__ . '/_navbar.php'; ?>
 
-<div class="topbar">
+<div class="topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
   <div>
     <h2>📊 ESENCIA — Estadísticas</h2>
-    <small style="color:#666">Panel · <?= h($validRanges[$range]) ?></small>
+    <small style="color:#666"><?= h($validRanges[$range]) ?></small>
   </div>
-  <nav>
-    <a href="/sweetpath/admin/orders.php" class="btn">← Pedidos</a>
-    <form method="get" style="display:inline">
-      <select name="range" onchange="this.form.submit()">
-        <?php foreach ($validRanges as $k => $v): ?>
-          <option value="<?= h($k) ?>" <?= $k === $range ? 'selected' : '' ?>><?= h($v) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </form>
-  </nav>
+  <form method="get">
+    <select name="range" onchange="this.form.submit()">
+      <?php foreach ($validRanges as $k => $v): ?>
+        <option value="<?= h($k) ?>" <?= $k === $range ? 'selected' : '' ?>><?= h($v) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </form>
 </div>
 
 <!-- KPIs principales -->

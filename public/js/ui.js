@@ -54,3 +54,35 @@ export function showNotice(id, text) {
   el.style.display = "block";
   el.textContent = text;
 }
+
+/**
+ * Inicializa el menú responsivo (hamburguesa)
+ */
+export function initializeNav() {
+  const toggle = document.querySelector(".menu-toggle");
+  const navlinks = document.querySelector(".navlinks");
+  
+  if (toggle && navlinks) {
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navlinks.classList.toggle("active");
+      toggle.textContent = navlinks.classList.contains("active") ? "✕" : "☰";
+    });
+
+    // Cerrar al hacer click fuera
+    document.addEventListener("click", (e) => {
+      if (!navlinks.contains(e.target) && !toggle.contains(e.target)) {
+        navlinks.classList.remove("active");
+        toggle.textContent = "☰";
+      }
+    });
+
+    // Cerrar al redimensionar si es PC
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 800) {
+        navlinks.classList.remove("active");
+        toggle.textContent = "☰";
+      }
+    });
+  }
+}

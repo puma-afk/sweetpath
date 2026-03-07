@@ -4,14 +4,7 @@ import { validatePhone, getMinDate } from "./ui-utils.js";
 
 bindCartCounters();
 
-// ---- Advertencia si el cliente intenta salir con carrito con productos ----
-let orderSubmitted = false;
-
-window.addEventListener('beforeunload', (e) => {
-  if (!orderSubmitted && getCart().length > 0) {
-    e.returnValue = '¿Estás seguro de que quieres salir? Tu pedido aún no fue enviado.';
-  }
-});
+// ---- Fin de configuración de advertencia (Removida por ser intrusiva) ----
 
 const cartBox = document.getElementById("cartBox");
 const msg = document.getElementById("msg");

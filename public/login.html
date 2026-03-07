@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ESENCIA — Iniciar Sesión</title>
+    <link rel="stylesheet" href="./css/app.css" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="nav">
+        <div class="container navbar">
+            <a href="./index.html" class="logo-link">
+                <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="panel" style="max-width: 450px; margin: 40px auto; text-align: center;">
+            <h2 class="hTitle">Bienvenido a Esencia</h2>
+            <p class="hSub">Inicia sesión para revisar el estado de tus pedidos y pagos.</p>
+
+            <div id="g_id_onload"
+                data-client_id="349806175640-65d64o579a7v28s66mr06q37175u89vo.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                data-text="signin_with" data-size="large" data-logo_alignment="left"
+                style="display: flex; justify-content: center;">
+            </div>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--line);">
+                <a href="./index.html" class="btn">
+                    <i class="fas fa-arrow-left"></i> Volver a la tienda
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function handleCredentialResponse(response) {
+            // Enviamos el token JWT a nuestro backend PHP
+            fetch('../api/auth_google.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.credential })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Si todo sale bien, vamos al historial
+                        window.location.href = './index.html';
+                    } else {
+                        alert("Error al iniciar sesión: " + data.error);
+                    }
+                })
+                .catch(err => console.error("Error:", err));
+        }
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 <?php
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../lib/store_status.php';
+session_start();
+$cliente_id = $_SESSION['user_id'] ?? null;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -123,22 +125,22 @@ $order_code = make_order_code();
 try {
   $pdo->beginTransaction();
 
-  // status starts as SOLICITADO (request). No QR, no payment.
-  $stmt = $pdo->prepare("INSERT INTO orders
-    (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json)
-    VALUES
-    (?, ?, 'WEB', 'SOLICITADO', ?, ?, NULLIF(?,''), NULLIF(?,''), ?)
-  ");
+$stmt = $pdo->prepare("INSERT INTO orders
+  (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json, cliente_id)
+  VALUES
+  (?, ?, 'WEB', 'SOLICITADO', ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?)
+");
 
-  $stmt->execute([
-    $order_code,
-    $type,
-    $customer_name ?: null,
-    $customer_phone,
-    $pickup_date,
-    $pickup_time,
-    json_encode($details, JSON_UNESCAPED_UNICODE)
-  ]);
+$stmt->execute([
+  $order_code,
+  $type,
+  $customer_name ?: null,
+  $customer_phone,
+  $pickup_date,
+  $pickup_time,
+  json_encode($details, JSON_UNESCAPED_UNICODE),
+  $cliente_id // Nuevo campo vinculado
+]);
 
   $order_id = (int)$pdo->lastInsertId();
 

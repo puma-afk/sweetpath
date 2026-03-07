@@ -1,6 +1,8 @@
 <?php
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../lib/store_status.php';
+session_start(); // Necesario para detectar si el cliente está logueado
+$cliente_id = $_SESSION['user_id'] ?? null; // Captura el ID de la sesión de Google
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -174,10 +176,10 @@ try {
   if ($payment_method !== '') $customJson['payment_method'] = $payment_method;
   $jsonStr = empty($customJson) ? null : json_encode($customJson, JSON_UNESCAPED_UNICODE);
 
-  // Status starts as CREATED (unconfirmed by owner for payment)
-  $o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json)
-                      VALUES (?, 'MIXED', 'WEB', 'CREATED', ?, ?, NULLIF(?,''), NULLIF(?,''), ?)");
-  $o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time, $jsonStr]);
+  // Modificamos el INSERT para incluir cliente_id
+$o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json, cliente_id)
+                    VALUES (?, 'MIXED', 'WEB', 'CREATED', ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?)");
+$o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time, $jsonStr, $cliente_id]);
   $order_id = (int)$pdo->lastInsertId();
 
   $itStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price_cents)

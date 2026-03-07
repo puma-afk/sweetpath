@@ -36,13 +36,13 @@ $err = trim($_GET['err'] ?? '');
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ESENCIA · Promos</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
+    body{font-family:system-ui,Arial,sans-serif;margin:16px;background:#fffaca;color:#151613}
     .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
     .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
     input,select{padding:10px;border-radius:10px;border:1px solid #ccc}
-    button{padding:10px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    button.primary{background:#004f39;color:#fffaca;border-color:#004f39}
-    button.danger{background:#b00020;color:#fff;border-color:#b00020}
+    button{padding:10px 16px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer; font-weight:600; transition: 0.2s; color: #151613;}
+    button:hover{filter: brightness(0.92); transform: translateY(-1px);}
+    button.primary{background:#004f39;color:#fffaca;border-color:#004f39; box-shadow: 0 4px 10px rgba(0,79,57,0.2);}
     .ok{background:#e9ffe8;border:1px solid #b6ffb3;padding:10px;border-radius:10px;margin:10px 0}
     .err{background:#ffe8e8;border:1px solid #ffb3b3;padding:10px;border-radius:10px;margin:10px 0}
     .img{width:140px;height:60px;object-fit:cover;border-radius:12px;border:1px solid #ddd;background:#fff}
@@ -54,20 +54,7 @@ $err = trim($_GET['err'] ?? '');
 </head>
 <body>
 
-<div class="bar" style="justify-content:space-between">
-  <div>
-    <h2 style="margin:0">📣 ESENCIA — Promos</h2>
-    <small>
-      <a href="/sweetpath/admin/orders.php">Pedidos</a> |
-      <a href="/sweetpath/admin/products.php">Productos</a> |
-      <a href="/sweetpath/admin/config.php">Config</a>
-    </small>
-  </div>
-  <div class="bar">
-    <a href="/sweetpath/admin/promo_form.php"><button class="primary" type="button">+ Nueva promo</button></a>
-    <a href="/sweetpath/admin/logout.php"><button class="danger" type="button">Cerrar sesión</button></a>
-  </div>
-</div>
+<?php require __DIR__ . '/_navbar.php'; ?>
 
 <?php if ($msg): ?><div class="ok"><?= h($msg) ?></div><?php endif; ?>
 <?php if ($err): ?><div class="err"><?= h($err) ?></div><?php endif; ?>

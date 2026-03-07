@@ -13,7 +13,6 @@
   /* VERDE OSCURO - Acentos y botones */
   --muted: #666666;
   /* GRIS MEDIO - Textos secundarios */
-
   --line: rgba(0, 79, 57, 0.15);
   /* Líneas teñidas de verde sutil */
   --soft: rgba(0, 79, 57, 0.05);
@@ -35,13 +34,11 @@ body {
   line-height: 1.5;
 }
 
-/* Títulos con tipografía elegante */
 h1,
 h2,
 h3,
 h4,
 .hTitle,
-.brand-text h1,
 .bandTitle h3 {
   font-family: 'Playfair Display', serif;
   color: var(--primary);
@@ -59,108 +56,144 @@ a {
   padding: 18px;
 }
 
-/* --- 3. BARRA DE NAVEGACIÓN Y LOGO --- */
+/* --- 3. BARRA DE NAVEGACIÓN Y LOGO (NUEVO DISEÑO LIMPIO) --- */
 .nav {
+  background-color: var(--primary);
+  padding: 10px 0;
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: var(--primary);
-  border-bottom: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.nav .container {
-  color: var(--bg);
-}
-
-.nav a {
-  color: var(--bg);
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .navbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 30px;
-}
-
-.brand {
-  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 .logo-link {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: inherit;
 }
 
-/* Control inteligente del Logo */
 .logo-img {
-  height: 110px;
-  /* Tamaño grande para PC */
+  height: 85px;
+  /* LOGO GIGANTE EN PC */
   width: auto;
   object-fit: contain;
   transition: transform 0.2s ease;
   content: url('../img/logo_white.png');
-  /* Carga el logo blanco por defecto */
 }
 
 .logo-img:hover {
   transform: scale(1.05);
 }
 
+/* OCULTAMOS EL TEXTO PARA DARLE PROTAGONISMO AL LOGO */
 .brand-text {
-  display: none;
+  display: none !important;
 }
 
-/* Responsive del Nav y Logo para Celulares */
-@media(max-width: 600px) {
-  .logo-img {
-    height: 65px;
-    /* Tamaño adaptado para móvil */
-  }
-
-  .navbar {
-    gap: 15px;
-  }
-}
-
-/* Truco de contraste: si agregas la clase 'nav-claro' al header en HTML */
-.nav.nav-claro {
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 4px 15px rgba(0, 79, 57, 0.05);
-}
-
-.nav.nav-claro .logo-img {
-  content: url('../img/logo.png');
-  /* Cambia al logo oscuro automáticamente */
-}
-
-.nav.nav-claro .container,
-.nav.nav-claro a {
-  color: var(--primary);
-}
-
-.nav.nav-claro a.pill {
-  border-color: var(--primary);
-}
-
-.nav.nav-claro a.pill:hover {
-  background: var(--soft);
-}
-
-/* --- 4. BOTONES Y ENLACES --- */
 .navlinks {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   align-items: center;
+  gap: 15px;
 }
 
+.nav-item {
+  color: var(--bg);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 250, 202, 0.15);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--bg);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.user-avatar-nav {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  object-fit: cover;
+}
+
+/* --- MODO CELULAR PARA EL MENÚ --- */
+@media (max-width: 800px) {
+  .logo-img {
+    height: 65px;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 2rem;
+  }
+
+  .navlinks {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--primary);
+    padding: 80px 20px 20px 20px;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -10px 0 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  /* Esta clase abre el menú al tocar la hamburguesa */
+  .navlinks.active {
+    right: 0 !important;
+    display: flex !important;
+  }
+
+  .nav-item {
+    width: 100%;
+    text-align: left;
+    padding: 15px 10px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(255, 250, 202, 0.1);
+    margin: 0;
+  }
+
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(110, 105, 105, 0.5);
+    z-index: 999;
+  }
+
+  .menu-overlay.active {
+    display: block;
+  }
+}
+
+
+/* --- 4. BOTONES Y ENLACES --- */
 .pill {
   padding: 10px 14px;
   border-radius: 999px;
@@ -215,10 +248,8 @@ a {
 
 .btn.primary:hover {
   background: #003d2c;
-  /* Un tono más oscuro al pasar el mouse */
 }
 
-/* NUEVO: Botón especial para WhatsApp (Reemplaza estilos en línea del HTML) */
 .btn.whatsapp {
   background-color: #25D366;
   color: #ffffff !important;
@@ -240,7 +271,7 @@ a {
   color: #ffd7dc;
 }
 
-/* --- 5. ESTRUCTURA Y PANELES (CART, FORMS) --- */
+/* --- 5. ESTRUCTURA Y PANELES --- */
 .hero {
   border-bottom: 1px solid var(--line);
   background:
@@ -464,7 +495,7 @@ a {
   font-weight: 700;
 }
 
-/* --- 9. ELEMENTOS EXTRA (BANDS, NOTICES, FOOTER) --- */
+/* --- 9. ELEMENTOS EXTRA --- */
 .band {
   margin-top: 16px;
   background: var(--soft);

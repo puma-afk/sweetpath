@@ -3,23 +3,7 @@ import { validatePhone, getMinDate } from "./ui-utils.js";
 import { bindCartCounters } from "./cart-manager.js";
 bindCartCounters();
 
-// ---- Advertencia si el cliente intenta salir con el formulario a medias ----
-let formSubmitted = false;
-
-function hasFormData() {
-  const fields = ['phone', 'name', 'date', 'people', 'flavor', 'theme', 'messageCake', 'qty', 'notes'];
-  return fields.some(id => {
-    const el = document.getElementById(id);
-    return el && el.value.trim() !== '';
-  });
-}
-
-window.addEventListener('beforeunload', (e) => {
-  if (!formSubmitted && hasFormData()) {
-    e.preventDefault();
-    e.returnValue = '¿Estás seguro de que quieres salir? Tu solicitud aún no fue enviada.';
-  }
-});
+// ---- Fin de configuración de advertencia (Removida por ser intrusiva) ----
 
 const msg = document.getElementById("msg");
 const typeEl = document.getElementById("type");

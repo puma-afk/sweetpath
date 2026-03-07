@@ -26,20 +26,19 @@ function bs($c){ return number_format(((int)$c)/100, 2, '.', ''); }
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ESENCIA · Pagos</title>
   <style>
-    body{font-family:system-ui,Arial;margin:16px;background:#fffaca;color:#151613}
-    .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
-    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eee;font-size:12px}
-    button{padding:10px 12px;border-radius:10px;border:1px solid #004f39;background:#004f39;color:#fffaca;cursor:pointer}
-    a{color:#151613}
+    body{font-family:system-ui,Arial,sans-serif;margin:16px;background:#fffaca;color:#151613}
+    .card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:20px;margin:15px 0;box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
+    .pill{display:inline-block;padding:5px 12px;border-radius:999px;background:#eee;font-size:12px; font-weight: 600;}
+    button{padding:10px 16px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer; font-weight:600; transition: 0.2s; color: #151613;}
+    button:hover{filter: brightness(0.92); transform: translateY(-1px);}
+    button.primary, button[type="submit"]{background:#004f39;color:#fffaca;border-color:#004f39; box-shadow: 0 4px 10px rgba(0,79,57,0.2);}
+    a{color:#004f39; font-weight: 600; text-decoration: none;}
+    a:hover{text-decoration: underline;}
   </style>
 </head>
-<body>
+<?php require __DIR__ . '/_navbar.php'; ?>
+
 <h2>💰 ESENCIA — Pagos</h2>
-<p>
-  <a href="/sweetpath/admin/orders.php">← Pedidos</a>
-  &nbsp;|&nbsp;
-  <a href="/sweetpath/admin/limpiar_archivos.php">🗑️ Limpiar archivos viejos</a>
-</p>
 
 <?php foreach($rows as $r): ?>
   <div class="card">
