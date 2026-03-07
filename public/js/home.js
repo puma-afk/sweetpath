@@ -1,7 +1,9 @@
 import { apiGet } from "./api.js";
 import { card } from "./ui-utils.js";
 import { bindCartCounters, addToCart } from "./cart-manager.js";
+import { initializeNav } from "./ui.js";
 bindCartCounters();
+initializeNav();
 
 const promoMeta = document.getElementById("promoMeta");
 const promoBanner = document.getElementById("promoBanner");

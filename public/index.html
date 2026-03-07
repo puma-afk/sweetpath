@@ -10,7 +10,7 @@
 </head>
 
 <body>
-
+  <div class="menu-overlay"></div>
   <header class="nav">
     <div class="container navbar">
       <a href="./index.html" class="logo-link" title="Ir al inicio">
@@ -21,8 +21,7 @@
         </div>
       </a>
 
-      <button class="menu-toggle" aria-label="Abrir menú"
-        onclick="document.getElementById('mainNav').classList.toggle('active')">
+      <button class="menu-toggle" aria-label="Abrir menú">
         <i class="fas fa-bars"></i>
       </button>
 
@@ -133,6 +132,7 @@
       </a>
     `;
       }
+      initializeNav();
     }
     verificarSesion();
   </script>

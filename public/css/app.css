@@ -58,12 +58,17 @@ a {
 
 /* --- 3. BARRA DE NAVEGACIÓN Y LOGO (NUEVO DISEÑO LIMPIO) --- */
 .nav {
-  background-color: var(--primary);
-  padding: 10px 0;
+  background-color: rgba(0, 79, 57, 0.96);
+  /* Translúcido */
+  backdrop-filter: blur(10px);
+  /* Efecto cristal */
+  -webkit-backdrop-filter: blur(10px);
+  padding: 5px 0;
+  /* Más delgado */
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .navbar {
@@ -80,11 +85,13 @@ a {
 }
 
 .logo-img {
-  height: 85px;
-  /* LOGO GIGANTE EN PC */
+  height: 110px;
+  /* Logo más prominente */
+  margin: -5px 0;
+  /* Ayuda a que la barra se vea más delgada */
   width: auto;
   object-fit: contain;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
   content: url('../img/logo_white.png');
 }
 
@@ -137,8 +144,13 @@ a {
 
 /* --- MODO CELULAR PARA EL MENÚ --- */
 @media (max-width: 800px) {
+  .nav {
+    padding: 2px 0;
+    /* Aún más delgado en móvil */
+  }
+
   .logo-img {
-    height: 65px;
+    height: 85px;
   }
 
   .menu-toggle {
@@ -152,12 +164,17 @@ a {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 280px;
+    width: 230px;
+    /* Ancho más sutil */
     height: 100vh;
-    background-color: var(--primary);
-    padding: 80px 20px 20px 20px;
+    background-color: rgba(0, 79, 57, 0.95);
+    /* Translúcido */
+    backdrop-filter: blur(10px);
+    /* Efecto cristal */
+    -webkit-backdrop-filter: blur(10px);
+    padding: 80px 15px 20px 15px;
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: -10px 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
     z-index: 1000;
   }
 
@@ -169,11 +186,21 @@ a {
 
   .nav-item {
     width: 100%;
-    text-align: left;
-    padding: 15px 10px;
+    text-align: center;
+    /* Centrado para mejor estética */
+    padding: 18px 10px;
     font-size: 1.1rem;
-    border-bottom: 1px solid rgba(255, 250, 202, 0.1);
+    border-bottom: 1px solid rgba(255, 250, 202, 0.08);
     margin: 0;
+    transition: background 0.2s;
+  }
+
+  .nav-item:last-child {
+    border-bottom: none;
+  }
+
+  .nav-item:hover {
+    background-color: rgba(255, 250, 202, 0.1);
   }
 
   .menu-overlay {
@@ -183,12 +210,17 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(110, 105, 105, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+    /* Overlay más oscuro para foco */
+    backdrop-filter: blur(2px);
     z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .menu-overlay.active {
     display: block;
+    opacity: 1;
   }
 }
 
