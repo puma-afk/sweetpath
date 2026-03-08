@@ -95,9 +95,8 @@
 
   <script type="module" src="./js/home.js"></script>
   <script type="module">
-    import { bindCartBadge, initializeNav } from "./js/ui.js";
+    import { bindCartBadge } from "./js/ui.js";
     bindCartBadge("cartBadge");
-    initializeNav();
   </script>
   <script>
     // Script para mostrar el perfil en el menú
@@ -132,7 +131,8 @@
       </a>
     `;
       }
-      initializeNav();
+      const ui = await import('./js/ui.js');
+      ui.initializeNav();
     }
     verificarSesion();
   </script>

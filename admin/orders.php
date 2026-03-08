@@ -327,6 +327,11 @@ $msg = trim($_GET['msg'] ?? '');
                 </li>
               <?php endforeach; ?>
             </ul>
+            <?php if ($calcTotalCents > 0): ?>
+            <div style="margin-top:8px; text-align:right; font-size:14px; padding-right:10px;">
+              <b>Subtotal Carrito:</b> Bs <?= h(bs($calcTotalCents)) ?>
+            </div>
+            <?php endif; ?>
           </div>
         <?php endif; ?>
 

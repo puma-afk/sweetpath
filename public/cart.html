@@ -42,6 +42,11 @@
 
       <div id="cartBox" class="notice">Cargando…</div>
 
+      <div id="cartTotalContainer"
+        style="display:none; text-align:right; font-size:1.2rem; font-weight:bold; margin-top:15px; padding-top:15px; border-top:2px solid var(--line);">
+        Total Estimado: Bs <span id="cartTotalText">0.00</span>
+      </div>
+
       <div class="row" style="margin-top:12px">
         <button class="btn" id="btnClear">Vaciar carrito</button>
         <a class="btn" href="./products.html"><i class="fas fa-store"></i> Seguir comprando</a>
@@ -147,7 +152,9 @@
       </a>
     `;
       }
-      initializeNav();
+
+      const ui = await import('./js/ui.js');
+      ui.initializeNav();
     }
     verificarSesion();
   </script>

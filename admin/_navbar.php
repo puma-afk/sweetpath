@@ -21,9 +21,11 @@ function is_active_c($page, $current) {
     }
 
     .admin-nav {
-        background: var(--admin-primary);
-        color: var(--admin-bg); /* Use brand cream for text */
-        padding: 0.5rem 1rem;
+        background: rgba(0, 79, 57, 0.94); /* Translúcido para efecto Glass */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: var(--admin-bg);
+        padding: 8px 20px; /* Un poco más delgado */
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -32,6 +34,7 @@ function is_active_c($page, $current) {
         z-index: 1000;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         margin: -16px -16px 20px -16px; /* Offset body margin */
+        flex-wrap: wrap; /* Ayuda en pantallas medianas */
     }
 
     .admin-nav-brand {
@@ -39,15 +42,24 @@ function is_active_c($page, $current) {
         align-items: center;
         gap: 10px;
         text-decoration: none;
-        color: inherit;
     }
 
-    .admin-nav-brand h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
-        margin: 0;
+    /* --- ESTILO DEL LOGO --- */
+    .admin-logo {
+        height: 45px; /* Tamaño perfecto para que el menú no sea muy gordo */
+        width: auto;
+        object-fit: contain;
+        transition: transform 0.2s;
+    }
+    .admin-logo:hover {
+        transform: scale(1.05);
+    }
+
+    .admin-nav-brand span {
         color: var(--admin-bg);
-        font-weight: 700;
+        font-family: system-ui, sans-serif;
+        font-size: 14px;
+        opacity: 0.8;
     }
 
     .admin-nav-links {
@@ -60,13 +72,14 @@ function is_active_c($page, $current) {
         color: var(--admin-bg);
         text-decoration: none;
         padding: 0.6rem 0.9rem;
-        border-radius: 12px;
-        font-size: 0.95rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
         font-weight: 600;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 6px;
+        font-family: system-ui, sans-serif;
     }
 
     .admin-nav-links a:hover {
@@ -80,22 +93,32 @@ function is_active_c($page, $current) {
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
-    .admin-nav-user {
+    /* Agrupamos usuario y botones derechos */
+    .admin-right-section {
         display: flex;
         align-items: center;
         gap: 15px;
+    }
+
+    .admin-nav-user {
         font-size: 0.85rem;
+        font-family: system-ui, sans-serif;
     }
 
     .btn-logout {
         background: #b00020;
-        color: #fff;
+        color: #fff !important;
         border: none;
-        padding: 5px 12px;
-        border-radius: 6px;
+        padding: 6px 14px;
+        border-radius: 8px;
         cursor: pointer;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+    
+    .btn-logout:hover {
+        background: #8a0019;
     }
 
     .mobile-toggle {
@@ -103,39 +126,77 @@ function is_active_c($page, $current) {
         background: none;
         border: none;
         color: #fffaca;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         cursor: pointer;
+        padding: 0 5px;
     }
 
+    /* --- RESPONSIVIDAD PARA CELULARES --- */
     @media (max-width: 992px) {
-        .admin-nav-links {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--admin-primary);
-            flex-direction: column;
-            padding: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .admin-nav-links.show {
-            display: flex;
+        .admin-nav {
+            padding: 10px 15px;
         }
 
         .mobile-toggle {
             display: block;
+            z-index: 1001; /* Queda por encima del panel deslizable */
         }
+
+        .admin-nav-links {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            height: 100vh;
+            width: 260px;
+            flex-direction: column;
+            padding: 80px 20px 20px 20px;
+            margin: 0;
+            border-top: none;
+            align-items: flex-start;
+            background: rgba(0, 79, 57, 0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 0;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .admin-nav-links.show {
+            right: 0 !important;
+            display: flex !important;
+        }
+
+        .admin-nav-links a {
+            width: 100%;
+            padding: 15px 10px;
+            justify-content: flex-start;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 250, 202, 0.08);
+            border-radius: 0;
+        }
+
+        .admin-nav-links a:last-child {
+            border-bottom: none;
+        }
+
+        /* Ocultar elementos secundarios en celular para ganar espacio */
+        .desktop-only { display: none !important; }
     }
 </style>
 
 <nav class="admin-nav">
     <a href="/sweetpath/admin/orders.php" class="admin-nav-brand">
-        <h1>ESENCIA Admin</h1>
+        <img src="/sweetpath/public/img/logo_white.png" alt="ESENCIA" class="admin-logo">
+        <span class="desktop-only">| Admin</span>
     </a>
 
-    <button class="mobile-toggle" onclick="document.querySelector('.admin-nav-links').classList.toggle('show')">☰</button>
+    <div class="admin-right-section">
+        <div class="admin-nav-user desktop-only">
+            <span>👤 <?= htmlspecialchars($admin_user) ?></span>
+        </div>
+        <a href="/sweetpath/admin/logout.php" class="btn-logout">Salir</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.admin-nav-links').classList.toggle('show')">☰</button>
+    </div>
 
     <div class="admin-nav-links">
         <a href="/sweetpath/admin/orders.php" class="<?= is_active_c('orders.php', $current_page) ?>">📦 Pedidos</a>
@@ -144,18 +205,7 @@ function is_active_c($page, $current) {
         <a href="/sweetpath/admin/products.php" class="<?= is_active_c('products.php', $current_page) ?>">🧁 Productos</a>
         <a href="/sweetpath/admin/promos.php" class="<?= is_active_c('promos.php', $current_page) ?>">📣 Promos</a>
         <a href="/sweetpath/admin/config.php" class="<?= is_active_c('config.php', $current_page) ?>">⚙️ Config</a>
-        <div style="border-left: 1px solid rgba(255,255,255,0.2); height: 20px; margin: 0 10px;" class="desktop-only"></div>
-        <a href="/sweetpath/public/index.html" target="_blank">🌐 Ver Tienda</a>
-    </div>
-
-    <div class="admin-nav-user">
-        <span class="desktop-only">👤 <?= htmlspecialchars($admin_user) ?></span>
-        <a href="/sweetpath/admin/logout.php" class="btn-logout">Salir</a>
+        
+        <a href="/sweetpath/public/index.html" target="_blank" style="background: rgba(255,250,202,0.1); justify-content: center; margin-top: 5px;">🌐 Ver Tienda</a>
     </div>
 </nav>
-
-<style>
-    @media (max-width: 600px) {
-        .desktop-only { display: none; }
-    }
-</style>

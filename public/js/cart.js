@@ -102,6 +102,29 @@ function render() {
       render();
     });
   });
+
+  // Calculate and display total
+  let totalBs = 0;
+  let allPriced = true;
+  cart.forEach(it => {
+    if (it.price_bs) {
+      totalBs += (Number(it.price_bs) * Number(it.qty));
+    } else {
+      allPriced = false; // Si hay items personalizados o sin precio
+    }
+  });
+
+  const totalContainer = document.getElementById("cartTotalContainer");
+  const totalText = document.getElementById("cartTotalText");
+
+  if (totalContainer && totalText) {
+    if (totalBs > 0) {
+      totalContainer.style.display = "block";
+      totalText.textContent = totalBs.toFixed(2) + (allPriced ? "" : " + a cotizar");
+    } else {
+      totalContainer.style.display = "none";
+    }
+  }
 }
 
 document.getElementById("btnClear")?.addEventListener("click", () => {
@@ -149,19 +172,21 @@ document.getElementById("btnConfirm")?.addEventListener("click", async () => {
       items,
     });
 
-    // Pedido guardado — desactivar advertencia y limpiar carrito
-    orderSubmitted = true;
     clearCart();
 
     if (data && data.whatsapp_link) {
       msg.textContent = `✅ Pedido #${data.order_code} creado. Abriendo WhatsApp…`;
       window.open(data.whatsapp_link, '_blank');
       setTimeout(() => {
-        msg.textContent = `✅ Pedido #${data.order_code} guardado. Confirma por WhatsApp con la dueña.`;
+        msg.textContent = `✅ Pedido #${data.order_code} guardado. Redirigiendo a tus pedidos...`;
         document.getElementById("btnConfirm").disabled = true;
-      }, 1500);
+        window.location.href = './mis-pedidos.html';
+      }, 2000);
     } else {
-      msg.textContent = `✅ Pedido #${data.order_code} creado. Falta configurar WhatsApp en admin.`;
+      msg.textContent = `✅ Pedido #${data.order_code} creado. Redirigiendo...`;
+      setTimeout(() => {
+        window.location.href = './mis-pedidos.html';
+      }, 2000);
     }
   } catch (e) {
     msg.textContent = e?.message || "No se pudo crear el pedido.";

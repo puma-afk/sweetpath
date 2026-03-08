@@ -52,7 +52,6 @@
                 window.location.href = './login.html';
                 return;
             }
-            initializeNav();
 
             container.innerHTML = `
         <img src="${user.avatar}" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--primary); margin-bottom:20px;">
@@ -65,9 +64,9 @@
           </a>
           <a href="../api/logout.php" class="btn danger">
             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-          </a>
         </div>
       `;
+            initializeNav();
         }
         cargarPerfil();
     </script>

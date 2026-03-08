@@ -138,16 +138,18 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     }
 
     if (data && data.whatsapp_link) {
-      msg.textContent = "✅ Solicitud enviada. Abriendo WhatsApp para confirmar con la dueña…";
-      // Abrir WhatsApp inmediatamente
+      msg.textContent = `✅ Solicitud #${data.order_code} enviada. Abriendo WhatsApp…`;
       window.open(data.whatsapp_link, '_blank');
-      // Redirigir la página actual a una de confirmación si existe, o mostrar mensaje final
       setTimeout(() => {
-        msg.textContent = `✅ Solicitud #${data.order_code} guardada. Revisa WhatsApp para continuar.`;
-        document.getElementById("btnSend").disabled = true;
-      }, 1500);
+        msg.textContent = `✅ Solicitud #${data.order_code} guardada. Redirigiendo a tus pedidos...`;
+        document.getElementById("btnConfirm").disabled = true;
+        window.location.href = './mis-pedidos.html';
+      }, 2000);
     } else {
-      msg.textContent = `✅ Solicitud #${data.order_code} creada. Falta configurar WhatsApp en admin.`;
+      msg.textContent = `✅ Solicitud #${data.order_code} creada. Redirigiendo...`;
+      setTimeout(() => {
+        window.location.href = './mis-pedidos.html';
+      }, 2000);
     }
 
   } catch (e) {
