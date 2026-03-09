@@ -1,9 +1,15 @@
 <?php
+// Session must be configured before any output or require
+session_set_cookie_params(86400 * 30);
+session_start();
+
+ob_start(); // Buffer all output to prevent accidental corruption of JSON
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../lib/store_status.php';
-session_start(); // Necesario para detectar si el cliente está logueado
+
 $cliente_id = $_SESSION['user_id'] ?? null; // Captura el ID de la sesión de Google
 
+ob_end_clean(); // Discard any warnings from requires so JSON stays clean
 header('Content-Type: application/json; charset=utf-8');
 
 function json_body(): array {
@@ -163,9 +169,21 @@ if ($maxLeadHoursNeeded > 0) {
     }
 }
 
+// Define if we should auto-approve this order
+$is_all_express = ($type === 'EXPRESS');
+foreach ($products as $p) {
+  if ($p['type'] !== 'EXPRESS' || $p['price_cents'] === null) {
+      $is_all_express = false;
+  }
+}
+
 // Create order_code
 $now = now_la_paz();
 $order_code = "SP-" . $now->format('Ymd') . "-" . random_int(1000, 9999);
+
+$db_type = $is_all_express ? 'EXPRESS' : 'MIXED';
+$db_status = $is_all_express ? 'APROBADO_PARA_PAGO' : 'CREATED';
+$db_total = $is_all_express ? $total_est_cents : null;
 
 // Save order + items in transaction
 try {
@@ -176,10 +194,9 @@ try {
   if ($payment_method !== '') $customJson['payment_method'] = $payment_method;
   $jsonStr = empty($customJson) ? null : json_encode($customJson, JSON_UNESCAPED_UNICODE);
 
-  // Modificamos el INSERT para incluir cliente_id
-$o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json, cliente_id)
-                    VALUES (?, 'MIXED', 'WEB', 'CREATED', ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?)");
-$o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time, $jsonStr, $cliente_id]);
+  $o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json, cliente_id, total_final_cents)
+                    VALUES (?, ?, 'WEB', ?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?, ?)");
+  $o->execute([$order_code, $db_type, $db_status, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time, $jsonStr, $cliente_id, $db_total]);
   $order_id = (int)$pdo->lastInsertId();
 
   $itStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price_cents)
@@ -194,11 +211,11 @@ $o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date,
   respond(500, ["ok"=>false, "error"=>"DB_ERROR", "message"=>"Error guardando pedido."]);
 }
 
-// Build WhatsApp message (confirm before QR payment)
+// Build WhatsApp message
 $cfg = $pdo->query("SELECT whatsapp_number FROM config WHERE id=1")->fetch();
 $bizPhone = $cfg ? (string)$cfg['whatsapp_number'] : '';
 
-$msg = "Hola! Quiero confirmar un pedido (EXPRESS)\n";
+$msg = "Hola! Quiero confirmar un pedido ({$db_type})\n";
 $msg .= "Pedido: {$order_code}\n";
 if ($pickup_date !== '') $msg .= "Recojo: {$pickup_date}" . ($pickup_time ? " ({$pickup_time})" : "") . "\n";
 if ($customer_note !== '') $msg .= "Nota: {$customer_note}\n";
@@ -210,11 +227,26 @@ foreach ($lines as $ln) {
   $msg .= "\n";
 }
 if ($total_est_cents > 0) {
-  $msg .= "Total estimado: Bs " . format_bs($total_est_cents) . "\n";
+  $msg .= "Total: Bs " . format_bs($total_est_cents) . "\n";
 }
-$msg .= "\nPor favor confirmar disponibilidad antes de pago QR. Gracias!";
+if (!$is_all_express) {
+    $msg .= "\nPor favor confirmar cotización y disponibilidad antes del pago. Gracias!";
+} else {
+    $msg .= "\nPedido generado vía web, procediendo al pago.";
+}
 
 $wa = $bizPhone ? wa_link($bizPhone, $msg) : null;
+
+// QR logic if auto_approved
+$qr_account = null;
+$qr_image = null;
+if ($is_all_express && $payment_method !== 'TIENDA') {
+    $cqr = $pdo->query("SELECT qr_account_info, qr_image_path FROM config WHERE id=1")->fetch();
+    if ($cqr && $cqr['qr_image_path']) {
+        $qr_account = $cqr['qr_account_info'];
+        $qr_image = $cqr['qr_image_path'];
+    }
+}
 
 respond(201, [
   "ok" => true,
@@ -222,5 +254,8 @@ respond(201, [
   "order_code" => $order_code,
   "whatsapp_link" => $wa,
   "total_estimated_cents" => $total_est_cents,
-  "note" => "No se muestra QR hasta confirmación."
+  "status" => $db_status,
+  "qr_account" => $qr_account,
+  "qr_image" => $qr_image,
+  "note" => $is_all_express ? "Pedido auto-aprobado." : "No se muestra QR hasta confirmación."
 ]);

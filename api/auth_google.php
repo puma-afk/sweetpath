@@ -1,4 +1,5 @@
 <?php
+session_set_cookie_params(86400 * 30);
 session_start();
 header('Content-Type: application/json');
 require_once '../db.php'; // Tu conexión PDO

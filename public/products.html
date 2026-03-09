@@ -21,8 +21,8 @@
         </div>
       </a>
 
-      <button class="menu-toggle" aria-label="Abrir menú">
-        <i class="fas fa-bars"></i>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <i class="fas fa-bars" id="menuIcon"></i>
       </button>
 
       <nav class="navlinks" id="mainNav">
@@ -81,40 +81,17 @@
     bindCartBadge("cartBadge");
   </script>
   <script>
-    // Script para mostrar el perfil en el menú
+    // ── Session
     async function verificarSesion() {
       const res = await fetch('../api/get_session.php');
       const user = await res.json();
-      const nav = document.getElementById('mainNav'); // Ubicamos el menú
-
-      // Protección: Si estamos en una página privada y no hay sesión, mandarlo a login
-      const path = window.location.pathname;
-      const paginasPrivadas = ['cart.html', 'custom.html', 'mis-pedidos.html', 'perfil.html'];
-      const requiereLogin = paginasPrivadas.some(p => path.includes(p));
-
-      if (!user.logged && requiereLogin) {
-        window.location.href = './login.html';
-        return;
-      }
-
-      // Si está logueado, inyectamos su foto estilo "botón"
+      const nav = document.getElementById('mainNav');
       if (user.logged) {
-        nav.innerHTML += `
-      <a href="./perfil.html" class="nav-item" style="display:flex; align-items:center; justify-content:center; gap:8px; background: rgba(255, 250, 202, 0.15); border-radius: 20px; padding: 5px 15px;">
-        <img src="${user.avatar}" style="width:28px; height:28px; border-radius:50%; border:2px solid #fffaca; object-fit:cover;">
-        <span>${user.name.split(' ')[0]}</span>
-      </a>
-    `;
+        nav.innerHTML += `<a href="./perfil.html" class="nav-item" style="display:flex;align-items:center;gap:8px;background:rgba(255,250,202,0.15);border-radius:20px;padding:5px 15px;"><img src="${user.avatar}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;border:2px solid #fffaca;object-fit:cover;"><span>${user.name.split(' ')[0]}</span></a>`;
       } else {
-        // Si NO está logueado, inyectamos un botón llamativo para Entrar
-        nav.innerHTML += `
-      <a class="nav-item" href="./login.html" style="background:#fffaca; color:#004f39; border-radius:20px; padding: 8px 20px;">
-        <i class="fas fa-user"></i> Entrar
-      </a>
-    `;
+        nav.innerHTML += `<a class="nav-item" href="./login.html" style="background:#fffaca;color:#004f39;border-radius:20px;padding:8px 20px;"><i class="fas fa-user"></i> Entrar</a>`;
       }
 
-      // Reinicializar eventos del menú de navegación después de modificar el innerHTML
       const ui = await import('./js/ui.js');
       ui.initializeNav();
     }

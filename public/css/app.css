@@ -144,6 +144,12 @@ a {
   object-fit: cover;
 }
 
+.nav-item.active {
+  background-color: rgba(255, 250, 202, 0.2);
+  border-bottom: 2px solid var(--bg);
+  font-weight: 700;
+}
+
 /* --- MODO CELULAR PARA EL MENÚ --- */
 @media (max-width: 800px) {
   .nav {

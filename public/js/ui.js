@@ -55,34 +55,58 @@ export function showNotice(id, text) {
   el.textContent = text;
 }
 
-/**
- * Inicializa el menú responsivo (hamburguesa)
- */
 export function initializeNav() {
   const toggle = document.querySelector(".menu-toggle");
   const navlinks = document.querySelector(".navlinks");
-  
-  if (toggle && navlinks) {
-    toggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      navlinks.classList.toggle("active");
-      toggle.textContent = navlinks.classList.contains("active") ? "✕" : "☰";
-    });
 
-    // Cerrar al hacer click fuera
-    document.addEventListener("click", (e) => {
-      if (!navlinks.contains(e.target) && !toggle.contains(e.target)) {
-        navlinks.classList.remove("active");
-        toggle.textContent = "☰";
-      }
-    });
+  if (!toggle || !navlinks) return;
 
-    // Cerrar al redimensionar si es PC
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 800) {
-        navlinks.classList.remove("active");
-        toggle.textContent = "☰";
-      }
-    });
-  }
+  // Highlight active tab
+  const currentPath = window.location.pathname.split("/").pop() || "index.html";
+  const navItems = navlinks.querySelectorAll(".nav-item");
+  navItems.forEach(item => {
+    let itemHref = item.getAttribute("href");
+    if (!itemHref) return;
+    if (itemHref.includes(currentPath)) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
+    }
+  });
+
+  // Evitar duplicar listeners si se llama varias veces
+  if (toggle.dataset.navBound) return;
+  toggle.dataset.navBound = "true";
+
+  const icon = toggle.querySelector("i") || document.getElementById("menuIcon");
+
+  const updateIcon = (isOpen) => {
+    if (icon) {
+      icon.className = isOpen ? "fas fa-times" : "fas fa-bars";
+    } else {
+      toggle.textContent = isOpen ? "✕" : "☰";
+    }
+  };
+
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = navlinks.classList.toggle("active");
+    updateIcon(open);
+  });
+
+  // Cerrar al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (navlinks.classList.contains("active") && !navlinks.contains(e.target) && !toggle.contains(e.target)) {
+      navlinks.classList.remove("active");
+      updateIcon(false);
+    }
+  });
+
+  // Cerrar al redimensionar si es PC
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 800 && navlinks.classList.contains("active")) {
+      navlinks.classList.remove("active");
+      updateIcon(false);
+    }
+  });
 }

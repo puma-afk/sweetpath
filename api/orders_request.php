@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../lib/store_status.php';
+session_set_cookie_params(86400 * 30);
 session_start();
 $cliente_id = $_SESSION['user_id'] ?? null;
 

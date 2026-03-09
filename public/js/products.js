@@ -1,10 +1,9 @@
 import { apiGet } from "./api.js";
 import { addToCart, updateCartMini } from "./cart-manager.js";
 import { card } from "./ui-utils.js";
-import { bindCartBadge, initializeNav } from "./ui.js";
+import { bindCartBadge } from "./ui.js";
 import { bindCartCounters } from "./cart-manager.js";
 bindCartCounters();
-initializeNav();
 
 const grid = document.getElementById("grid");
 const meta = document.getElementById("meta");

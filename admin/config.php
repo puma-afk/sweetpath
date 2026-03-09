@@ -82,18 +82,50 @@ $err = trim($_GET['err'] ?? '');
 
   <hr>
 
-  <h3>💳 QR (imagen fija)</h3>
-  <p><small>Sube el QR general. El sistema lo usará para todos los pagos aprobados.</small></p>
+  <h3>💳 Pago por QR</h3>
+  <p><small>Sube el QR de tu cuenta bancaria o billetera. El sistema lo mostrará a los clientes cuando aprueben su pedido.</small></p>
+
+  <?php
+    // Get current QR image from assets table
+    $currQR = null;
+    if (!empty($c['qr_asset_id'])) {
+        $qa = $pdo->prepare("SELECT path_original FROM assets WHERE id=?");
+        $qa->execute([$c['qr_asset_id']]);
+        $currQR = $qa->fetchColumn();
+    }
+  ?>
+
+  <?php if ($currQR): ?>
+  <div style="margin-bottom: 15px; padding: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;">
+    <p style="font-size:13px; color:#166534; margin:0 0 8px 0;"><b>✅ QR actual configurado:</b></p>
+    <img src="<?= h($currQR) ?>" style="max-width:160px; border-radius:10px; border:2px solid #bbf7d0;">
+  </div>
+  <?php else: ?>
+  <div style="margin-bottom: 15px; padding: 12px; background: #fff3e0; border: 1px solid #ffd32a; border-radius: 12px;">
+    <p style="font-size:13px; color:#92400e; margin:0;">⚠️ No hay QR configurado aún. Sube tu imagen de QR para que los clientes puedan pagar.</p>
+  </div>
+  <?php endif; ?>
 
   <form method="post" action="/sweetpath/admin/config_save.php" enctype="multipart/form-data">
     <?= csrf_input() ?>
     <input type="hidden" name="action" value="upload_qr">
-
+    <label><small>Imagen QR (JPG / PNG / WebP)</small></label>
     <input type="file" name="qr_image" accept="image/*" required>
-    <button type="submit">Subir / Reemplazar QR</button>
+    <button type="submit">📤 Subir / Reemplazar QR</button>
   </form>
 
-  <p><small>QR actual (asset_id): <b><?= h($c['qr_asset_id'] ?? '-') ?></b></small></p>
+  <hr style="margin:20px 0;">
+
+  <h3>🏦 Info de cuenta (aparece debajo del QR)</h3>
+  <p><small>Escribe aquí el nombre del banco, número de cuenta, nombre del titular, etc. Se muestra junto al QR en la sección de pagos.</small></p>
+  <form method="post" action="/sweetpath/admin/config_save.php">
+    <?= csrf_input() ?>
+    <input type="hidden" name="action" value="save_qr_info">
+    <textarea name="qr_account_info" rows="4"
+      placeholder="Ej:\nBanco BNB\nCuenta: 1234567890\nTitular: Esencia Repostería"><?= h($c['qr_account_info'] ?? '') ?></textarea>
+    <button type="submit">💾 Guardar info de cuenta</button>
+  </form>
+
 </div>
 
 </body>

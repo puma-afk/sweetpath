@@ -21,8 +21,8 @@
                 </div>
             </a>
 
-            <button class="menu-toggle" aria-label="Abrir menú">
-                <i class="fas fa-bars"></i>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars" id="menuIcon"></i>
             </button>
 
             <nav class="navlinks" id="mainNav">
@@ -43,37 +43,157 @@
     </main>
 
     <script>
+        // ── Load orders ──────────────────────────────────────────────────────────
         async function cargarPedidos() {
-            const res = await fetch('../api/get_my_orders.php');
-            const data = await res.json();
             const container = document.getElementById('listaPedidos');
+            try {
+                const res = await fetch('../api/get_my_orders.php');
+                const data = await res.json();
 
-            if (data.orders.length === 0) {
-                container.innerHTML = '<div class="notice">Aún no tienes pedidos registrados.</div>';
-                return;
+                if (!data.success || !data.orders) {
+                    container.innerHTML = `<div class="notice" style="border-color:#ffd32a;color:#92400e;background:#fffcf0;">
+                        Tu sesión expiró. <a href='./login.html' style='color:#004f39;text-decoration:underline;'>Vuelve a iniciar sesión</a>.
+                    </div>`;
+                    return;
+                }
+
+                if (data.orders.length === 0) {
+                    container.innerHTML = '<div class="notice">Aún no tienes pedidos registrados.</div>';
+                    return;
+                }
+
+                container.innerHTML = data.orders.map(o => renderOrder(o)).join('');
+            } catch (err) {
+                container.innerHTML = `<div class="notice" style="border-color:#e53e3e;color:#c53030;">Error cargando pedidos. Intenta de nuevo.</div>`;
+            }
+        }
+
+        function renderOrder(o) {
+            const states = ['CREATED', 'APROBADO_PARA_PAGO', 'EN_PRODUCCION', 'LISTO', 'ENTREGADO'];
+            const labels = ['Creado', 'Aprobado', 'En producción', 'Listo', 'Entregado'];
+            let stIndex = states.indexOf(o.status);
+            if (stIndex < 0) stIndex = 0;
+
+            const pct = stIndex === 0 ? 0 : Math.round((stIndex / (states.length - 1)) * 100);
+
+            const timelineHtml = `
+            <div style="margin-top:18px; margin-bottom:5px; position:relative;">
+                <!-- Progress bar -->
+                <div style="position:absolute;top:6px;left:12px;right:12px;height:3px;background:#e2e8f0;z-index:0;">
+                    <div style="height:100%;background:var(--primary);width:${pct}%;transition:width 0.4s;"></div>
+                </div>
+                <!-- Dots row -->
+                <div style="display:flex;justify-content:space-between;position:relative;z-index:1;">
+                    ${states.map((st, i) => `
+                        <div style="text-align:center;flex:1;">
+                            <div style="width:15px;height:15px;border-radius:50%;margin:0 auto;
+                                background:${i <= stIndex ? 'var(--primary)' : '#e2e8f0'};
+                                border:2px solid ${i <= stIndex ? 'var(--primary)' : '#cbd5e0'};
+                                box-shadow:${i === stIndex ? '0 0 0 3px rgba(0,79,57,0.2)' : 'none'};
+                            "></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <!-- Labels row -->
+                <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                    ${labels.map((lbl, i) => `
+                        <div style="flex:1;text-align:center;font-size:9px;font-weight:${i === stIndex ? '800' : '600'};
+                            color:${i <= stIndex ? 'var(--primary)' : '#a0aec0'};line-height:1.2;padding:0 2px;">
+                            ${lbl}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+
+            let paymentHtml = '';
+            if (o.status === 'APROBADO_PARA_PAGO') {
+                const isCash = o.payment_method === 'TIENDA';
+
+                if (isCash) {
+                    // Cash: just show a friendly message, no QR or upload needed
+                    paymentHtml = `
+                    <div style="margin-top:15px;padding:15px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;">
+                        <h4 style="margin:0 0 8px 0;color:#166534;">🏪 Pago en Tienda</h4>
+                        <p style="font-size:13px;color:#166534;margin:0;">
+                            Seleccionaste <b>pago al retirar en tienda</b>. No necesitas hacer nada aquí.<br>
+                            Al recoger tu pedido pagas en efectivo o con el método disponible en tienda. ¡Te esperamos!
+                        </p>
+                        ${o.total_bs !== 'Por cotizar' ? `<div style="margin-top:10px;font-size:15px;font-weight:bold;color:#166534;">Total a pagar: Bs ${o.total_bs}</div>` : ''}
+                    </div>`;
+                } else if (o.has_pending_proof) {
+                    paymentHtml = `<div class="notice" style="background:#fffcf0;border-color:#ffd32a;color:#92400e;">
+                        ⏳ Comprobante en revisión. Espera a que la administradora lo verifique.
+                    </div>`;
+                } else {
+                    // QR payment
+                    const qrSection = o.qr_image
+                        ? `<img src="${o.qr_image}" style="max-width:180px;display:block;margin:10px auto;border-radius:10px;border:2px solid #e2e8f0;">`
+                        : '';
+                    const qrInfo = o.qr_info
+                        ? `<p style="font-size:13px;text-align:center;white-space:pre-wrap;background:#fff;border-radius:8px;padding:10px;border:1px solid #e2e8f0;">${o.qr_info}</p>`
+                        : (!o.qr_image ? `<p style="text-align:center;font-size:13px;color:#666;">📲 Escríbenos por WhatsApp para recibir el QR de pago.</p>` : '');
+
+                    paymentHtml = `
+                    <div style="margin-top:15px;padding:15px;background:#f8f9fa;border-radius:12px;border:1px solid #e2e8f0;">
+                        <h4 style="margin:0 0 10px 0;color:var(--primary);">💳 Realizar Pago por QR</h4>
+                        ${qrSection}
+                        ${qrInfo}
+                        <div style="margin:12px 0;font-size:13px;display:flex;flex-direction:column;gap:8px;">
+                            ${o.total_bs !== 'Por cotizar' ? `
+                            <div style="background:#e8f5e9;color:#2e7d32;padding:10px 12px;border-radius:8px;">
+                                ✨ <b>Recomendado:</b> Pago completo <b>Bs ${o.total_bs}</b>
+                            </div>
+                            <div style="background:#fff3e0;color:#e65100;padding:10px 12px;border-radius:8px;">
+                                ⏱️ Reserva pagando el 30%: mínimo <b>Bs ${o.min_payment_bs}</b>
+                            </div>` : ''}
+                        </div>
+                        <form action="../api/payment_submit.php" method="POST" enctype="multipart/form-data"
+                            style="display:flex;flex-direction:column;gap:10px;">
+                            <input type="hidden" name="order_code" value="${o.order_code}">
+                            <div style="display:flex;align-items:center;border:1px solid #ccc;border-radius:8px;overflow:hidden;background:#fff;">
+                                <span style="padding:10px 12px;background:#eee;border-right:1px solid #ccc;font-weight:bold;">Bs</span>
+                                <input type="number" name="amount_bs" step="0.01"
+                                    min="${o.min_payment_bs || 0}"
+                                    value="${o.total_bs !== 'Por cotizar' ? o.total_bs : ''}"
+                                    placeholder="Monto pagado"
+                                    style="padding:10px;border:none;width:100%;outline:none;" required>
+                            </div>
+                            <label style="font-size:13px;font-weight:bold;">📸 Sube tu comprobante de pago:</label>
+                            <input type="file" name="proof" accept="image/png,image/jpeg,image/webp"
+                                style="padding:10px;background:#fff;border-radius:8px;border:1px solid #ccc;width:100%;" required>
+                            <button type="submit" class="btn primary" style="width:100%;">
+                                <i class="fas fa-upload" style="margin-right:8px;"></i> Enviar Comprobante
+                            </button>
+                        </form>
+                    </div>`;
+                }
             }
 
-            container.innerHTML = data.orders.map(o => `
-            <div class="card">
+            return `
+            <div class="card" style="box-shadow:0 4px 15px rgba(0,0,0,0.08);margin-bottom:16px;">
                 <div class="cardBody">
-                    <span class="badge ${o.status.toLowerCase()}">${o.status}</span>
-                    <h3 class="cardTitle" style="margin-top: 8px;">Pedido #${o.order_code}</h3>
-                    <p class="cardDesc">
-                        <i class="fas fa-calendar"></i> Realizado: ${o.fecha_fmt}<br>
-                        <i class="fas fa-truck"></i> Entrega: ${o.pickup_date || 'Pendiente'}
-                    </p>
-                    <div class="meta">
-                        <span class="price">Bs ${o.total_bs}</span>
+                    <span class="badge ${o.status.toLowerCase()}">${o.status.replace(/_/g, ' ')}</span>
+                    <div style="display:flex;justify-content:space-between;align-items:start;margin-top:20px;margin-bottom:8px;">
+                        <h3 class="cardTitle" style="margin:0;">Pedido #${o.order_code}</h3>
+                        <div style="text-align:right;">
+                            <span class="price" style="font-size:20px;">Bs ${o.total_bs}</span>
+                        </div>
                     </div>
+                    <p class="cardDesc" style="margin-bottom:10px;">
+                        <i class="fas fa-calendar"></i> ${o.fecha_fmt}<br>
+                        <i class="fas fa-truck"></i> Retiro: ${o.pickup_date || 'Pendiente'}
+                        ${o.pickup_time ? ` · ${o.pickup_time}` : ''}
+                    </p>
+                    ${timelineHtml}
+                    ${paymentHtml}
                 </div>
-            </div>
-            `).join('');
+            </div>`;
         }
+
         cargarPedidos();
 
-        // Script para mostrar el perfil en el menú y proteger la página
+        // ── Session check & inject user in nav ──────────────────────────────────
         async function verificarSesion() {
-            const { bindCartBadge, initializeNav } = await import('./js/ui.js');
             const res = await fetch('../api/get_session.php');
             const user = await res.json();
 
@@ -84,12 +204,14 @@
 
             const navLinks = document.getElementById('mainNav');
             navLinks.innerHTML += `
-            <a href="./perfil.html" class="nav-item" style="display:flex; align-items:center; justify-content:center; gap:8px; background: rgba(255, 250, 202, 0.15); border-radius: 20px; padding: 5px 15px;">
-                <img src="${user.avatar}" style="width:28px; height:28px; border-radius:50%; border:2px solid #fffaca; object-fit:cover;">
-                <span>${user.name.split(' ')[0]}</span>
-            </a>
-            `;
-            initializeNav();
+            <a href="./perfil.html" class="nav-item" style="display:flex;align-items:center;gap:8px;background:rgba(255,250,202,0.15);border-radius:20px;padding:5px 15px;">
+                <img src="${user.avatar || ''}" onerror="this.style.display='none'"
+                    style="width:28px;height:28px;border-radius:50%;border:2px solid #fffaca;object-fit:cover;">
+                <span>${(user.name || 'Mi perfil').split(' ')[0]}</span>
+            </a>`;
+
+            const ui = await import('./js/ui.js');
+            ui.initializeNav();
         }
         verificarSesion();
     </script>

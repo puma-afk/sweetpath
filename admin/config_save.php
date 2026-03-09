@@ -88,4 +88,11 @@ if ($action === 'upload_qr') {
   back_ok("QR actualizado ✅ (asset_id=$assetId)");
 }
 
+if ($action === 'save_qr_info') {
+  $info = trim($_POST['qr_account_info'] ?? '');
+  $st = $pdo->prepare("UPDATE config SET qr_account_info=?, updated_at=NOW() WHERE id=1");
+  $st->execute([$info === '' ? null : $info]);
+  back_ok("Info de cuenta QR guardada ✅");
+}
+
 back_err("Acción inválida");

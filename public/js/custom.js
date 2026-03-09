@@ -1,6 +1,6 @@
 import { apiPost } from "./api.js";
 import { validatePhone, getMinDate } from "./ui-utils.js";
-import { bindCartCounters } from "./cart-manager.js";
+import { bindCartCounters, clearCart } from "./cart-manager.js";
 bindCartCounters();
 
 // ---- Fin de configuración de advertencia (Removida por ser intrusiva) ----
@@ -111,7 +111,8 @@ document.getElementById("btnSend").addEventListener("click", async () => {
     });
 
     // Pedido guardado con éxito — desactivar advertencia de salida
-    formSubmitted = true;
+    let formSubmitted = true;
+    clearCart();
 
     // Subir imagen de referencia
     if (hasImage) {
