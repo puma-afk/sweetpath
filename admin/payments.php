@@ -37,57 +37,193 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title>ESENCIA · Pagos</title>
   <style>
-    body{font-family:system-ui,Arial,sans-serif;margin:16px;background:#fffaca;color:#151613}
-    .card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:20px;margin:15px 0;box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
-    .pill{display:inline-block;padding:5px 12px;border-radius:999px;background:#eee;font-size:12px; font-weight: 600;}
-    button{padding:10px 16px;border-radius:12px;border:1px solid #ccc;background:#fff;cursor:pointer; font-weight:600; transition: 0.2s; color: #151613;}
-    button:hover{filter: brightness(0.92); transform: translateY(-1px);}
-    button.primary, button[type="submit"]{background:#004f39;color:#fffaca;border-color:#004f39; box-shadow: 0 4px 10px rgba(0,79,57,0.2);}
-    a{color:#004f39; font-weight: 600; text-decoration: none;}
-    a.btn{display:inline-block; padding:8px 14px; border-radius:10px; border:1px solid #ccc; font-size:13px; color:#333; transition:0.2s; background:#fffoca;}
-    a.btn:hover{background:#eee; text-decoration:none;}
+    html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
+    .admin-page-content { padding: 16px; max-width: 1000px; margin: 0 auto; padding-bottom: 40px; }
+    :root {
+        --primary: #004f39;
+        --bg: #fffaca;
+        --text: #151613;
+        --accent: #ffd32a;
+        --card-bg: #ffffff;
+        --success: #10b981;
+        --warning: #f59e0b;
+    }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+    }
+
+    h2 {
+        color: var(--primary);
+        font-weight: 800;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .order-header {
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .order-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .payment-row {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 12px;
+    }
+
+    .payment-row:last-child { margin-bottom: 0; }
+
+    .amount {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text);
+    }
+
+    .method-tag {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    button, .btn {
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    button.primary {
+        background: var(--primary);
+        color: #fffaca;
+        box-shadow: 0 4px 12px rgba(0, 79, 57, 0.15);
+    }
+    button.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(0, 79, 57, 0.2); }
+
+    .btn-view {
+        background: #fff;
+        color: var(--primary);
+        border: 1px solid #e2e8f0;
+    }
+    .btn-view:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+    @media (max-width: 640px) {
+        .payment-row { flex-direction: column; align-items: stretch; text-align: center; }
+        .payment-row > div { display: flex; flex-direction: column; align-items: center; }
+        .payment-actions { justify-content: center; width: 100%; }
+        .btn, button { width: 100%; justify-content: center; }
+    }
   </style>
 </head>
 <body>
 <?php require __DIR__ . '/_navbar.php'; ?>
 
-<h2>💰 ESENCIA — Pagos</h2>
+<main class="admin-page-content">
+
+<h2><i class="fas fa-money-check-alt"></i> Gestión de Pagos</h2>
 
 <?php foreach($grouped as $order_id => $group): ?>
-  <div class="card" style="margin-bottom: 25px; border-left: 6px solid var(--admin-primary)">
-    <div style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+  <div class="card">
+    <div class="order-header">
       <div>
-        <h3 style="margin:0 0 5px 0">Pedido <?= h($group['order_code']) ?></h3>
-        <span class="pill" style="font-size: 11px"><?= h(strtoupper($group['status'])) ?></span>
-        <span style="margin-left: 10px; font-size: 14px">Total Pedido: <b>Bs <?= $group['total_final_cents'] ? h(bs($group['total_final_cents'])) : '-' ?></b></span>
+        <h3 class="order-title">Pedido #<?= h($group['order_code']) ?></h3>
+        <div style="margin-top: 5px; display: flex; gap: 8px; align-items: center;">
+            <span class="pill"><?= h($group['status']) ?></span>
+            <span style="font-size: 13px; color: #64748b; font-weight: 600;">Total: <b style="color: var(--text);">Bs <?= $group['total_final_cents'] ? h(bs($group['total_final_cents'])) : '-' ?></b></span>
+        </div>
       </div>
-      <a href="/sweetpath/admin/orders.php?q=<?= h($group['order_code']) ?>" class="btn">👁️ Ver Pedido</a>
+      <a href="/sweetpath/admin/orders.php?q=<?= h($group['order_code']) ?>" class="btn btn-view">
+        <i class="fas fa-eye"></i> Ver Pedido
+      </a>
     </div>
 
-    <div style="display: grid; gap: 15px;">
+    <div>
     <?php foreach($group['payments'] as $r): ?>
-      <div style="background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <div class="payment-row">
         <div>
-           <b style="font-size: 16px;">Bs <?= h(bs($r['amount_cents'])) ?></b> <small style="color: #666">vía <?= h($r['method']) ?></small><br>
-           <small style="color: #888"><?= h($r['created_at']) ?></small>
-           <div style="margin-top: 5px;">
-             <?= $r['verified'] ? '<span class="pill" style="background:#dcfce7; color:#166534">✅ VERIFICADO</span>' : '<span class="pill" style="background:#fef3c7; color:#92400e">⏳ PENDIENTE</span>' ?>
+           <div class="amount">Bs <?= h(bs($r['amount_cents'])) ?></div>
+           <div class="method-tag"><i class="fas fa-university"></i> vía <?= h($r['method']) ?></div>
+           <small style="color: #94a3b8; font-size: 11px;"><?= h($r['created_at']) ?></small>
+           <div style="margin-top: 8px;">
+             <?= $r['verified'] ? 
+                '<span class="pill" style="background:#dcfce7; color:#166534;"><i class="fas fa-check-circle"></i> VERIFICADO</span>' : 
+                '<span class="pill" style="background:#fef3c7; color:#92400e;"><i class="fas fa-clock"></i> PENDIENTE</span>' ?>
            </div>
         </div>
         
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <div class="payment-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
           <?php if (!empty($r['proof_url'])): ?>
-            <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($r['payment_id']) ?>" target="_blank" class="btn">📸 Ver comprobante</a>
+            <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($r['payment_id']) ?>" target="_blank" class="btn btn-view">
+              <i class="fas fa-file-invoice-dollar"></i> Ver comprobante
+            </a>
           <?php endif; ?>
 
           <?php if (!$r['verified']): ?>
             <form method="post" action="/sweetpath/admin/payment_verify.php" style="margin:0" onsubmit="return confirm('¿Confirma que el pago ingresó a su cuenta bancaria/caja?');">
                <?= csrf_input() ?>
               <input type="hidden" name="payment_id" value="<?= h($r['payment_id']) ?>">
-              <button type="submit" style="padding: 8px 12px; font-size: 13px; margin:0;" class="primary">✅ Validar Pago</button>
+              <button type="submit" class="primary">
+                <i class="fas fa-user-check"></i> Validar Pago
+              </button>
             </form>
           <?php endif; ?>
         </div>
@@ -98,8 +234,15 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
 <?php endforeach; ?>
 
 <?php if (empty($grouped)): ?>
-  <div class="card"><p style="text-align:center; color:#666;">No hay pagos registrados.</p></div>
+  <div style="text-align:center; padding:100px 20px; color:#64748b;">
+    <i class="fas fa-hand-holding-usd" style="font-size: 4rem; opacity: 0.1; display: block; margin-bottom: 20px;"></i>
+    No hay pagos registrados aún.
+  </div>
 <?php endif; ?>
+
+</main>
+</body>
+</html>
 
 </body>
 </html>

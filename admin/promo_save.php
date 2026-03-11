@@ -59,6 +59,12 @@ if ($action === 'toggle_active') {
   back(true, "Estado actualizado ✅");
 }
 
+if ($action === 'delete') {
+  if ($id <= 0) back(false, "ID inválido");
+  $pdo->prepare("DELETE FROM promos WHERE id=?")->execute([$id]);
+  back(true, "Promo eliminada ✅");
+}
+
 if (!in_array($action, ['create','update'], true)) back(false, "Acción inválida");
 
 $title = trim($_POST['title'] ?? '');

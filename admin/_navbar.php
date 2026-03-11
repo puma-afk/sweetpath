@@ -18,194 +18,245 @@ function is_active_c($page, $current) {
         --admin-bg: #fffaca;      /* Crema Suave Esencia */
         --admin-text: #151613;
         --admin-accent: #ffd32a;
+        --nav-height: 70px;
     }
 
     .admin-nav {
-        background: rgba(0, 79, 57, 0.94); /* Translúcido para efecto Glass */
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: rgba(0, 79, 57, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         color: var(--admin-bg);
-        padding: 8px 20px; /* Un poco más delgado */
+        height: var(--nav-height);
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: sticky;
         top: 0;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        margin: -16px -16px 20px -16px; /* Offset body margin */
-        flex-wrap: wrap; /* Ayuda en pantallas medianas */
+        z-index: 2000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        padding: 0 20px;
+        margin: 0 0 0 0;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .admin-nav-brand {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         text-decoration: none;
     }
 
-    /* --- ESTILO DEL LOGO --- */
     .admin-logo {
-        height: 45px; /* Tamaño perfecto para que el menú no sea muy gordo */
+        height: 40px;
         width: auto;
-        object-fit: contain;
-        transition: transform 0.2s;
+        transition: transform 0.3s ease;
     }
-    .admin-logo:hover {
-        transform: scale(1.05);
-    }
+    .admin-logo:hover { transform: scale(1.05); }
 
-    .admin-nav-brand span {
-        color: var(--admin-bg);
-        font-family: system-ui, sans-serif;
-        font-size: 14px;
-        opacity: 0.8;
+    .brand-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
     }
+    .brand-text b { font-size: 18px; letter-spacing: 1px; color: #fffaca; }
+    .brand-text small { font-size: 10px; opacity: 0.7; color: #fffaca; }
 
     .admin-nav-links {
         display: flex;
-        gap: 0.5rem;
+        gap: 8px;
         align-items: center;
     }
 
     .admin-nav-links a {
         color: var(--admin-bg);
         text-decoration: none;
-        padding: 0.6rem 0.9rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 14px;
         font-weight: 600;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-family: system-ui, sans-serif;
+        gap: 8px;
     }
 
     .admin-nav-links a:hover {
-        background: rgba(255, 250, 202, 0.15);
-        transform: translateY(-1px);
+        background: rgba(255, 250, 202, 0.1);
     }
 
     .admin-nav-links a.active {
         background: var(--admin-bg);
         color: var(--admin-primary);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
-    /* Agrupamos usuario y botones derechos */
     .admin-right-section {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 20px;
     }
 
-    .admin-nav-user {
-        font-size: 0.85rem;
-        font-family: system-ui, sans-serif;
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        opacity: 0.9;
     }
 
     .btn-logout {
-        background: #b00020;
+        background: #ef4444;
         color: #fff !important;
-        border: none;
-        padding: 6px 14px;
-        border-radius: 8px;
-        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
         text-decoration: none;
-        font-weight: bold;
         transition: background 0.2s;
     }
-    
-    .btn-logout:hover {
-        background: #8a0019;
-    }
+    .btn-logout:hover { background: #dc2626; }
 
     .mobile-toggle {
         display: none;
         background: none;
         border: none;
-        color: #fffaca;
-        font-size: 1.8rem;
+        color: var(--admin-bg);
+        font-size: 24px;
         cursor: pointer;
-        padding: 0 5px;
+        padding: 5px;
     }
 
-    /* --- RESPONSIVIDAD PARA CELULARES --- */
-    @media (max-width: 992px) {
-        .admin-nav {
-            padding: 10px 15px;
-        }
+    .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1900;
+    }
+    .nav-overlay.active { opacity: 1; visibility: visible; }
 
-        .mobile-toggle {
-            display: block;
-            z-index: 1001; /* Queda por encima del panel deslizable */
-        }
-
+    @media (max-width: 1024px) {
         .admin-nav-links {
             position: fixed;
             top: 0;
-            right: -100%;
-            height: 100vh;
-            width: 260px;
-            flex-direction: column;
-            padding: 80px 20px 20px 20px;
-            margin: 0;
-            border-top: none;
-            align-items: flex-start;
-            background: rgba(0, 79, 57, 0.96);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 0;
-            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .admin-nav-links.show {
-            right: 0 !important;
-            display: flex !important;
-        }
-
-        .admin-nav-links a {
+            right: -320px;
             width: 100%;
-            padding: 15px 10px;
+            max-width: 300px;
+            height: 100vh;
+            background: rgba(0, 79, 57, 0.90);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            flex-direction: column;
+            align-items: center;
             justify-content: flex-start;
+            padding: 80px 20px 40px;
+            gap: 15px;
+            overflow-y: auto;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+            z-index: 2100;
+            box-shadow: -15px 0 40px rgba(0,0,0,0.4);
+            visibility: hidden;
+            border-left: 1px solid rgba(255, 250, 202, 0.1);
+        }
+        .admin-nav-links.active { right: 0; visibility: visible; }
+        
+        .admin-nav-links a {
+            width: 90%;
             font-size: 1.1rem;
-            border-bottom: 1px solid rgba(255, 250, 202, 0.08);
+            padding: 15px;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255, 250, 202, 0.1);
             border-radius: 0;
         }
+        .admin-nav-links a:last-child { border-bottom: none; }
 
-        .admin-nav-links a:last-child {
-            border-bottom: none;
+        .admin-nav-links a.active {
+            background: transparent;
+            color: var(--admin-accent);
+            font-weight: 800;
         }
 
-        /* Ocultar elementos secundarios en celular para ganar espacio */
+        .mobile-toggle { display: block; }
         .desktop-only { display: none !important; }
     }
 </style>
 
+<div class="nav-overlay" id="navOverlay"></div>
+
 <nav class="admin-nav">
     <a href="/sweetpath/admin/orders.php" class="admin-nav-brand">
         <img src="/sweetpath/public/img/logo_white.png" alt="ESENCIA" class="admin-logo">
-        <span class="desktop-only">| Admin</span>
+        <div class="brand-text">
+            <b>ESENCIA</b>
+            <small>Panel Administrativo</small>
+        </div>
     </a>
 
-    <div class="admin-right-section">
-        <div class="admin-nav-user desktop-only">
-            <span>👤 <?= htmlspecialchars($admin_user) ?></span>
-        </div>
-        <a href="/sweetpath/admin/logout.php" class="btn-logout">Salir</a>
-        <button class="mobile-toggle" onclick="document.querySelector('.admin-nav-links').classList.toggle('show')">☰</button>
+    <div class="admin-nav-links" id="adminNavLinks">
+        <a href="/sweetpath/admin/orders.php" class="<?= is_active_c('orders.php', $current_page) ?>">
+            <i class="fas fa-box"></i> Pedidos
+        </a>
+        <a href="/sweetpath/admin/payments.php" class="<?= is_active_c('payments.php', $current_page) ?>">
+            <i class="fas fa-credit-card"></i> Pagos
+        </a>
+        <a href="/sweetpath/admin/estadisticas.php" class="<?= is_active_c('estadisticas.php', $current_page) ?>">
+            <i class="fas fa-chart-line"></i> Estadísticas
+        </a>
+        <a href="/sweetpath/admin/products.php" class="<?= is_active_c('products.php', $current_page) ?>">
+            <i class="fas fa-birthday-cake"></i> Productos
+        </a>
+        <a href="/sweetpath/admin/promos.php" class="<?= is_active_c('promos.php', $current_page) ?>">
+            <i class="fas fa-bullhorn"></i> Promos
+        </a>
+        <a href="/sweetpath/admin/config.php" class="<?= is_active_c('config.php', $current_page) ?>">
+            <i class="fas fa-cog"></i> Config
+        </a>
+        <a href="/sweetpath/public/index.html" target="_blank" style="margin-top: 10px; background: rgba(255,211,42,0.2); color: #ffd32a;">
+            <i class="fas fa-external-link-alt"></i> Ver Tienda
+        </a>
     </div>
 
-    <div class="admin-nav-links">
-        <a href="/sweetpath/admin/orders.php" class="<?= is_active_c('orders.php', $current_page) ?>">📦 Pedidos</a>
-        <a href="/sweetpath/admin/payments.php" class="<?= is_active_c('payments.php', $current_page) ?>">💳 Pagos</a>
-        <a href="/sweetpath/admin/estadisticas.php" class="<?= is_active_c('estadisticas.php', $current_page) ?>">📊 Estadísticas</a>
-        <a href="/sweetpath/admin/products.php" class="<?= is_active_c('products.php', $current_page) ?>">🧁 Productos</a>
-        <a href="/sweetpath/admin/promos.php" class="<?= is_active_c('promos.php', $current_page) ?>">📣 Promos</a>
-        <a href="/sweetpath/admin/config.php" class="<?= is_active_c('config.php', $current_page) ?>">⚙️ Config</a>
-        
-        <a href="/sweetpath/public/index.html" target="_blank" style="background: rgba(255,250,202,0.1); justify-content: center; margin-top: 5px;">🌐 Ver Tienda</a>
+    <div class="admin-right-section">
+        <div class="user-info desktop-only">
+            <i class="fas fa-user-circle"></i> <span><?= htmlspecialchars($admin_user) ?></span>
+        </div>
+        <a href="/sweetpath/admin/logout.php" class="btn-logout desktop-only">Salir</a>
+        <button class="mobile-toggle" id="adminNavToggle">
+            <i class="fas fa-bars"></i>
+        </button>
     </div>
 </nav>
+
+<script>
+(function() {
+    const toggle = document.getElementById('adminNavToggle');
+    const nav = document.getElementById('adminNavLinks');
+    const overlay = document.getElementById('navOverlay');
+    const icon = toggle.querySelector('i');
+
+    function toggleMenu() {
+        const isOpen = nav.classList.toggle('active');
+        overlay.classList.toggle('active');
+        icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+    });
+
+    overlay.addEventListener('click', toggleMenu);
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024 && nav.classList.contains('active')) {
+            toggleMenu();
+        }
+    });
+})();
+</script>

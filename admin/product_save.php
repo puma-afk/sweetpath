@@ -32,6 +32,12 @@ if ($action === 'toggle_active') {
   back(true, "Estado actualizado ✅");
 }
 
+if ($action === 'delete') {
+  if ($id <= 0) back(false, "ID inválido");
+  $pdo->prepare("UPDATE products SET is_active = -1, updated_at=NOW() WHERE id=?")->execute([$id]);
+  back(true, "Producto eliminado ✅");
+}
+
 if (!in_array($action, ['create','update'], true)) {
   back(false, "Acción inválida");
 }
