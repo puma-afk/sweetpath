@@ -12,13 +12,24 @@ function is_active_c($page, $current) {
     return $page === $current ? 'active' : '';
 }
 ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --admin-primary: #004f39; /* Verde Oscuro Esencia */
-        --admin-bg: #fffaca;      /* Crema Suave Esencia */
+        --admin-primary: #004f39;
+        --admin-bg: #fffaca;
         --admin-text: #151613;
         --admin-accent: #ffd32a;
         --nav-height: 70px;
+        --primary: #004f39;
+        --bg: #fffaca;
+        --text: #151613;
+        --accent: #ffd32a;
+        --success: #10b981;
+        --info: #3b82f6;
+        --card-bg: #ffffff;
+        --danger: #ef4444;
     }
 
     .admin-nav {
@@ -141,6 +152,7 @@ function is_active_c($page, $current) {
     .nav-overlay.active { opacity: 1; visibility: visible; }
 
     @media (max-width: 1024px) {
+        .brand-text { display: none; }
         .admin-nav-links {
             position: fixed;
             top: 0;

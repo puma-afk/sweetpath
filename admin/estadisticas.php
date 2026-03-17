@@ -101,6 +101,28 @@ foreach ($dailyPayments as $dp) {
 }
 $chartAmountsJson = json_encode(array_values($chartAmounts));
 $chartDaysJson    = json_encode($chartDays);
+
+// 6. Nuevas Métricas: Total clientes únicos
+$userStats = $pdo->query("
+  SELECT COUNT(DISTINCT o.customer_phone) as total_clientes
+  FROM orders o WHERE o.customer_phone != '' {$dateFromClause}
+")->fetch();
+
+// 7. Nuevas Métricas: Top Clientes
+$topClients = $pdo->query("
+  SELECT o.customer_name, o.customer_phone, COUNT(*) as total_pedidos, SUM(o.total_final_cents) as total_gastado
+  FROM orders o
+  WHERE o.status = 'ENTREGADO' AND o.customer_name != '' {$dateFromClause}
+  GROUP BY o.customer_phone, o.customer_name
+  ORDER BY total_gastado DESC
+  LIMIT 5
+")->fetchAll();
+
+// 8. Nuevas Métricas: Ticket Promedio
+$ticketStats = $pdo->query("
+  SELECT AVG(o.total_final_cents) as ticket_promedio
+  FROM orders o WHERE o.status = 'ENTREGADO' {$dateFromClause}
+")->fetch();
 ?>
 <!doctype html>
 <html lang="es">
@@ -115,36 +137,36 @@ $chartDaysJson    = json_encode($chartDays);
     body{font-family:'Inter',system-ui,Arial,sans-serif;margin:0;background:var(--bg,#fffaca);color:var(--text,#151613);line-height:1.5;}
     .admin-page-content { padding: 16px; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
     h2{margin:0 0 10px; color:#004f39; font-family: 'Playfair Display', serif;}
-    h3{margin:0 0 15px; color:#004f39; font-family: 'Playfair Display', serif;}
-    .stat{background:#fff;border-radius:20px;padding:22px;border:1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 16px rgba(0,0,0,0.05); position:relative; overflow:hidden;}
+    h3{margin:0 0 15px; color:#004f39; font-weight:800; font-size:1.1rem; display:flex; align-items:center; gap:8px;}
+    .stat{background:#fff;border-radius:20px;padding:24px;border:1px solid rgba(0,0,0,0.03); box-shadow: 0 10px 30px rgba(0,0,0,0.04); position:relative; overflow:hidden;}
     .stat::before { content:''; position:absolute; top:0; left:0; width:6px; height:100%; }
     .stat.green::before { background:#10b981; }
     .stat.amber::before { background:#f59e0b; }
     .stat.blue::before { background:#3b82f6; }
     .stat.red::before { background:#ef4444; }
-    .stat .label { font-size:13px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:8px;}
-    .stat .value { font-size:28px; font-weight:800; color:#0f172a; margin-bottom:4px;}
+    .stat .label { font-size:13px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+    .stat .value { font-size:32px; font-weight:800; color:#0f172a; margin-bottom:4px; line-height:1;}
     .stat .sub { font-size:13px; color:#64748b; font-weight:500;}
-    .card{background:#fff;border-radius:20px;padding:24px;border:1px solid rgba(0,0,0,0.05);margin-bottom:20px; box-shadow: 0 4px 16px rgba(0,0,0,0.05);}
-    select, .btn{padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#fff;cursor:pointer;font-size:14px;text-decoration:none;color:#151613; font-weight: 600; display:inline-flex; align-items:center; gap:8px;}
-    .btn:hover{background:#f8fafc;}
-    .btn.primary{background:#004f39; color:#fffaca; border-color:#004f39;}
-    .btn.primary:hover{background:#003d2b;}
+    .card{background:#fff;border-radius:24px;padding:28px;border:1px solid rgba(0,0,0,0.03);margin-bottom:24px; box-shadow: 0 10px 30px rgba(0,0,0,0.04);}
+    select, .btn{padding:12px 16px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#f8fafc;cursor:pointer;font-size:14px;text-decoration:none;color:#151613; font-weight: 700; display:inline-flex; align-items:center; gap:8px; transition:all 0.2s;}
+    .btn:hover, select:hover{background:#f1f5f9;}
+    .btn.primary{background:#004f39; color:#fffaca; border-color:#004f39; box-shadow: 0 4px 12px rgba(0,79,57,0.15);}
+    .btn.primary:hover{background:#003d2b; transform:translateY(-1px);}
     
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:20px; }
-    .two-col { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px; margin-bottom:20px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px; margin-bottom:24px; }
+    .two-col { display:grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap:24px; margin-bottom:24px; }
     
     table { width:100%; border-collapse:collapse; font-size:14px; }
-    th { text-align:left; padding:12px 10px; color:#64748b; font-weight:600; border-bottom:1px solid #e2e8f0; }
-    td { padding:14px 10px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
-    .pill { display:inline-block; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700; }
+    th { text-align:left; padding:12px 10px; color:#64748b; font-weight:800; text-transform:uppercase; font-size:11px; border-bottom:1px solid #e2e8f0; }
+    td { padding:14px 10px; border-bottom:1px solid #f1f5f9; vertical-align:middle; font-weight:600;}
+    .pill { display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;}
     .pill.green { background:#dcfce7; color:#166534; }
     .pill.blue { background:#dbeafe; color:#1e40af; }
     .pill.amber { background:#fef3c7; color:#92400e; }
     
     .bar-wrap { background:#f1f5f9; border-radius:10px; height:8px; width:100%; overflow:hidden; }
-    .bar-wrap .bar-fill { background:#004f39; height:100%; border-radius:10px; }
-    .chart-box{position:relative;height:250px;width:100%}
+    .bar-wrap .bar-fill { background:var(--primary); height:100%; border-radius:10px; }
+    .chart-box{position:relative;height:300px;width:100%}
 
     /* MODAL STYLES */
     .modal-overlay {
@@ -190,22 +212,32 @@ $chartDaysJson    = json_encode($chartDays);
 <!-- KPIs principales -->
 <div class="grid">
   <div class="stat green">
-    <div class="label">Ingresos verificados</div>
+    <div class="label"><i class="fas fa-check-double"></i> Ingresos verificados</div>
     <div class="value">Bs <?= h(bs($paymentStats['verified_cents'] ?? 0)) ?></div>
     <div class="sub"><?= h($paymentStats['verificados'] ?? 0) ?> pagos confirmados</div>
   </div>
-  <div class="stat amber">
-    <div class="label">Cobros pendientes</div>
-    <div class="value">Bs <?= h(bs($paymentStats['pending_cents'] ?? 0)) ?></div>
-    <div class="sub"><?= h($paymentStats['pendientes'] ?? 0) ?> por verificar</div>
-  </div>
   <div class="stat blue">
-    <div class="label">Pedidos totales</div>
+    <div class="label"><i class="fas fa-box-open"></i> Pedidos totales</div>
     <div class="value"><?= h($summaryOrders['total'] ?? 0) ?></div>
     <div class="sub"><?= h($summaryOrders['activos'] ?? 0) ?> activos · <?= h($summaryOrders['entregados'] ?? 0) ?> entregados</div>
   </div>
+  <div class="stat" style="border-left: 6px solid #8b5cf6;">
+    <div class="label" style="color: #6d28d9;"><i class="fas fa-users"></i> Clientes Únicos</div>
+    <div class="value"><?= h($userStats['total_clientes'] ?? 0) ?></div>
+    <div class="sub">Han realizado al menos 1 pedido</div>
+  </div>
+  <div class="stat" style="border-left: 6px solid #0ea5e9;">
+    <div class="label" style="color: #0284c7;"><i class="fas fa-receipt"></i> Ticket Promedio</div>
+    <div class="value">Bs <?= h(bs($ticketStats['ticket_promedio'] ?? 0)) ?></div>
+    <div class="sub">Gasto promedio por pedido entregado</div>
+  </div>
+  <div class="stat amber">
+    <div class="label"><i class="fas fa-hourglass-half"></i> Cobros pendientes</div>
+    <div class="value">Bs <?= h(bs($paymentStats['pending_cents'] ?? 0)) ?></div>
+    <div class="sub"><?= h($paymentStats['pendientes'] ?? 0) ?> por verificar</div>
+  </div>
   <div class="stat red">
-    <div class="label">Cancelados / Rechazados</div>
+    <div class="label"><i class="fas fa-times-circle"></i> Cancelados / Rechazados</div>
     <div class="value"><?= h($summaryOrders['cancelados'] ?? 0) ?></div>
     <div class="sub">de <?= h($summaryOrders['total'] ?? 0) ?> pedidos totales</div>
   </div>
@@ -298,9 +330,49 @@ $chartDaysJson    = json_encode($chartDays);
     </div>
     <button class="btn primary" onclick="openModal('modalMonths')">Ver detalle <i class="fas fa-arrow-right"></i></button>
   </div>
+  
+  <!-- Botón Mejores Clientes -->
+  <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <h3 style="margin-bottom:4px;">👑 Clientes Frecuentes</h3>
+      <div style="font-size:13px; color:#64748b;">Top 5 mejores clientes</div>
+    </div>
+    <button class="btn primary" onclick="openModal('modalClients')">Ver detalle <i class="fas fa-arrow-right"></i></button>
+  </div>
 </div>
 
 </div><!-- Cierre .admin-page-content -->
+
+<!-- MODAL: Clientes -->
+<div class="modal-overlay" id="modalClients" onclick="closeModal(event, this)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>👑 Top 5 Clientes</h3>
+      <button class="modal-close" onclick="closeModal(event, 'modalClients')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <?php if (count($topClients) > 0): ?>
+      <table>
+        <thead><tr><th>Cliente</th><th>Pedidos</th><th>Total Gastado</th></tr></thead>
+        <tbody>
+          <?php foreach ($topClients as $tc): ?>
+            <tr>
+              <td>
+                <b><?= h($tc['customer_name'] ?: 'Sin nombre') ?></b><br>
+                <small style="color:#64748b"><?= h($tc['customer_phone']) ?></small>
+              </td>
+              <td><span class="pill blue"><?= h($tc['total_pedidos']) ?> entregados</span></td>
+              <td><b>Bs <?= h(bs($tc['total_gastado'])) ?></b></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+      <?php else: ?>
+        <p style="color:#64748b;">No hay clientes frecuentes registrados aún en este periodo.</p>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: Productos -->
 <div class="modal-overlay" id="modalProducts" onclick="closeModal(event, this)">
@@ -367,7 +439,6 @@ function openModal(id) {
     document.body.style.overflow = 'hidden';
 }
 function closeModal(e, idOrElement) {
-    // Si se hace clic en el overlay o en la X
     if (e.target.classList.contains('modal-overlay') || typeof idOrElement === 'string') {
         const el = typeof idOrElement === 'string' ? document.getElementById(idOrElement) : idOrElement;
         el.classList.remove('active');
@@ -375,7 +446,6 @@ function closeModal(e, idOrElement) {
     }
 }
 
-<script>
 const ctx = document.getElementById('chartPagos').getContext('2d');
 new Chart(ctx, {
   type: 'bar',
@@ -384,7 +454,8 @@ new Chart(ctx, {
     datasets: [{
       label: 'Ingresos (Bs)',
       data: <?= $chartAmountsJson ?>.map(c => c / 100),
-      backgroundColor: 'rgba(59,130,246,0.7)',
+      backgroundColor: 'rgba(59,130,246,0.85)',
+      hoverBackgroundColor: 'rgba(37,99,235,1)',
       borderRadius: 6,
       borderSkipped: false,
     }]
@@ -392,13 +463,30 @@ new Chart(ctx, {
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
+    plugins: { 
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1e293b',
+        padding: 12,
+        titleFont: { size: 13, family: 'Inter' },
+        bodyFont: { size: 14, weight: 'bold', family: 'Inter' },
+        callbacks: {
+          label: function(context) { return 'Bs ' + context.parsed.y.toFixed(2); }
+        }
+      }
+    },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { callback: v => 'Bs ' + v.toFixed(2) }
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { callback: v => 'Bs ' + v, font: { family: 'Inter', size: 11 }, color: '#64748b' },
+        border: { display: false }
       },
-      x: { grid: { display: false } }
+      x: { 
+        grid: { display: false },
+        ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b' },
+        border: { display: false }
+      }
     }
   }
 });

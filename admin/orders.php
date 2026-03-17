@@ -261,6 +261,28 @@ $msg = trim($_GET['msg'] ?? '');
         .actions button, .actions .wa-btn { width: 100%; justify-content: center; }
         .client-name { font-size: 1.1rem; }
     }
+
+    /* MODAL STYLES */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 3000;
+        padding: 20px;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-box {
+        background: #fff; border-radius: 24px; width: 100%; max-width: 500px;
+        max-height: 85vh; display: flex; flex-direction: column;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        transform: translateY(20px); transition: transform 0.3s;
+    }
+    .modal-overlay.active .modal-box { transform: translateY(0); }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { margin: 0; font-size: 1.25rem; }
+    .modal-close { background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; padding: 0; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; transition:0.2s; }
+    .modal-close:hover { background: #f1f5f9; color: #0f172a; }
+    .modal-body { padding: 24px; overflow-y: auto; }
   </style>
 </head>
 <body>
@@ -462,21 +484,28 @@ $msg = trim($_GET['msg'] ?? '');
 
     <?php 
     $cjson = json_decode($o['custom_json'] ?? '{}', true) ?: [];
-    if (!empty($cjson)): 
+    $items = $orderItemsMap[$o['id']] ?? [];
+    $payments = $orderPaymentsMap[$o['id']] ?? [];
+    if (!empty($cjson) || !empty($items) || !empty($payments)): 
     ?>
-    <details>
-      <summary><i class="fas fa-chevron-down"></i> Detalles y Productos del Pedido</summary>
-      <div class="details-content">
-        <div style="background:#fff; border:1px solid #f1f5f9; border-radius:12px; padding:15px; font-size:14px;">
-          <?php 
-          $items = $orderItemsMap[$o['id']] ?? [];
-          if (!empty($items)):
-          ?>
-            <div style="margin-bottom:15px; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">
-              <b style="color:var(--primary);"><i class="fas fa-shopping-cart"></i> Carrito:</b>
-              <ul style="margin:8px 0 0 0; padding-left:20px;">
+    <button type="button" class="toolbar-btn" style="margin-top:12px; width:100%; justify-content:center;" onclick="openModal('modal_<?= h($o['id']) ?>')">
+      <i class="fas fa-search-plus"></i> Ver Detalles Completos y Productos
+    </button>
+    
+    <!-- MODAL PARA ESTE PEDIDO -->
+    <div class="modal-overlay" id="modal_<?= h($o['id']) ?>" onclick="closeModal(event, this)">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3><i class="fas fa-receipt"></i> Detalles del Pedido #<?= h($o['order_code']) ?></h3>
+          <button type="button" class="modal-close" onclick="closeModal(event, 'modal_<?= h($o['id']) ?>')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <?php if (!empty($items)): ?>
+            <div style="margin-bottom:20px; border-bottom:1px solid #f1f5f9; padding-bottom:15px;">
+              <b style="color:var(--primary); font-size:15px;"><i class="fas fa-shopping-cart"></i> Productos:</b>
+              <ul style="margin:10px 0 0 0; padding-left:20px; font-size:14px;">
                 <?php foreach ($items as $item): ?>
-                  <li style="margin-bottom:4px">
+                  <li style="margin-bottom:6px">
                     <b><?= h($item['quantity']) ?></b> x <?= h($item['product_name']) ?> 
                     <?php if ($item['unit_price_cents']): ?>
                       <small class="muted" style="margin-left:5px;">(Bs <?= h(number_format($item['unit_price_cents']/100, 2)) ?> c/u)</small>
@@ -487,39 +516,41 @@ $msg = trim($_GET['msg'] ?? '');
             </div>
           <?php endif; ?>
 
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
-          <?php foreach ($cjson as $k => $v): ?>
-            <?php if (is_array($v) || $v === '') continue; ?>
-            <?php 
-              $label = $translations[$k] ?? ucfirst($k); 
-              $val = $valTranslations[strtoupper((string)$v)] ?? $v;
-            ?>
-            <div>
-              <small class="muted" style="font-size:10px; text-transform:uppercase; font-weight:700;"><?= h($label) ?></small><br>
-              <span style="font-weight:600;"><?= nl2br(h($val)) ?></span>
+          <?php if (!empty($cjson)): ?>
+          <div style="margin-bottom:20px;">
+            <b style="color:var(--primary); font-size:15px;"><i class="fas fa-clipboard-list"></i> Personalización:</b>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-top:10px; font-size:14px;">
+            <?php foreach ($cjson as $k => $v): ?>
+              <?php if (is_array($v) || $v === '') continue; ?>
+              <?php 
+                $label = $translations[$k] ?? ucfirst($k); 
+                $val = $valTranslations[strtoupper((string)$v)] ?? $v;
+              ?>
+              <div style="background:#f8fafc; padding:10px; border-radius:10px;">
+                <small class="muted" style="font-size:10px; text-transform:uppercase; font-weight:800;"><?= h($label) ?></small><br>
+                <span style="font-weight:600; color:#0f172a;"><?= nl2br(h($val)) ?></span>
+              </div>
+            <?php endforeach; ?>
             </div>
-          <?php endforeach; ?>
           </div>
+          <?php endif; ?>
 
-          <?php 
-          $payments = $orderPaymentsMap[$o['id']] ?? [];
-          if (!empty($payments)):
-          ?>
+          <?php if (!empty($payments)): ?>
             <div style="margin-top:20px; border-top:2px dashed #f1f5f9; padding-top:15px;">
-              <b style="color:var(--primary);"><i class="fas fa-history"></i> Historial de Pagos:</b>
+              <b style="color:var(--primary); font-size:15px;"><i class="fas fa-history"></i> Historial de Pagos:</b>
               <div style="margin-top:10px; display: grid; gap: 8px;">
                 <?php foreach ($payments as $p): ?>
-                  <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; padding:10px 15px; border-radius:12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; background:#fffaca; border:1px solid #fde68a; padding:12px; border-radius:12px;">
                     <div>
-                      <span class="pill" style="font-size:10px; background:<?= $p['verified'] ? '#dcfce7' : '#fef3c7' ?>; color:<?= $p['verified'] ? '#166534' : '#92400e' ?>">
+                      <span class="pill" style="font-size:10px; background:<?= $p['verified'] ? '#dcfce7' : '#fef3c7' ?>; color:<?= $p['verified'] ? '#166534' : '#92400e' ?>; border:1px solid <?= $p['verified'] ? '#bbf7d0' : '#fde047' ?>">
                         <?= $p['verified'] ? 'VERIFICADO' : 'PENDIENTE' ?>
                       </span>
-                      <b style="margin-left:8px; font-size:14px;">Bs <?= h(bs($p['amount_cents'])) ?></b>
+                      <b style="margin-left:8px; font-size:15px;">Bs <?= h(bs($p['amount_cents'])) ?></b>
                       <small class="muted" style="margin-left:5px;">vía <?= h($p['method']) ?></small>
-                      <div style="font-size:10px; color:#94a3b8; margin-top:2px;"><?= h($p['created_at']) ?></div>
+                      <div style="font-size:11px; color:#64748b; margin-top:4px; font-weight:600;"><i class="far fa-clock"></i> <?= h($p['created_at']) ?></div>
                     </div>
                     <?php if ($p['proof_path']): ?>
-                      <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($p['id']) ?>" target="_blank" class="secondary" style="font-size:11px; padding:6px 10px; border-radius:8px; font-weight:bold;"><i class="fas fa-image"></i> Ver</a>
+                      <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($p['id']) ?>" target="_blank" class="toolbar-btn primary" style="font-size:11px; padding:8px 12px; border-radius:10px; box-shadow:none;"><i class="fas fa-image"></i> Ver Foto</a>
                     <?php endif; ?>
                   </div>
                 <?php endforeach; ?>
@@ -528,7 +559,7 @@ $msg = trim($_GET['msg'] ?? '');
           <?php endif; ?>
         </div>
       </div>
-    </details>
+    </div>
     <?php endif; ?>
 
     <div class="actions">
@@ -580,8 +611,8 @@ $msg = trim($_GET['msg'] ?? '');
             <?= csrf_input() ?>
             <input type="hidden" name="order_id" value="<?= h($o['id']) ?>">
             <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Bs Efectivo" style="width:120px; padding:12px;" required>
-            <button type="submit" class="secondary" style="background:var(--accent); border:none; color:var(--primary);">
-              <i class="fas fa-money-bill-wave"></i> Cobrar
+            <button type="submit" class="secondary" style="background:var(--accent); border:none; color:var(--primary); font-weight:800; padding:12px 20px;">
+              <i class="fas fa-money-bill-wave"></i> Cobrar Físico
             </button>
           </form>
         <?php endif; ?>
@@ -629,6 +660,20 @@ $msg = trim($_GET['msg'] ?? '');
 <?php endif; ?>
 
 </div>
+
+<script>
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeModal(e, idOrElement) {
+    if (e.target.classList.contains('modal-overlay') || typeof idOrElement === 'string') {
+        const el = typeof idOrElement === 'string' ? document.getElementById(idOrElement) : idOrElement;
+        el.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+</script>
 
 </body>
 </html>

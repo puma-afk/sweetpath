@@ -113,11 +113,76 @@ $err = trim($_GET['err'] ?? '');
         .search-inline { max-width: 100%; }
         .adv-filters-group { min-width: 100%; }
     }
-    .img{width:140px;height:60px;object-fit:cover;border-radius:12px;border:1px solid #ddd;background:#fff}
-    small{color:#666}
-    a{color:#111}
-    table{width:100%;border-collapse:collapse}
-    td,th{padding:10px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+    .promos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .promo-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .promo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .promo-img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 14px;
+        margin-bottom: 15px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .promo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    .status-active { background: #dcfce7; color: #166534; }
+    .status-inactive { background: #fee2e2; color: #991b1b; }
+
+    .promo-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin: 0 0 5px 0;
+    }
+
+    .promo-info {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 15px;
+        flex: 1;
+    }
+
+    .promo-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 15px;
+    }
   </style>
 </head>
 <body>
@@ -171,67 +236,65 @@ $err = trim($_GET['err'] ?? '');
   </form>
 </div>
 
-<div class="card">
-  <table>
-    <thead>
-      <tr>
-        <th>Banner</th>
-        <th>Promo</th>
-        <th>Fechas</th>
-        <th>Prioridad</th>
-        <th>Activa</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($rows as $p): ?>
-      <tr>
-        <td><img class="img" src="<?= h($p['img']) ?>" alt=""></td>
-        <td>
-          <b><?= h($p['title']) ?></b><br>
-          <small>id: <?= (int)$p['id'] ?> | asset: <?= (int)$p['asset_id'] ?></small>
-        </td>
-        <td>
-          <small>
-            Inicio: <?= h($p['start_at'] ?? '-') ?><br>
-            Fin: <?= h($p['end_at'] ?? '-') ?>
-          </small>
-        </td>
-        <td><?= (int)$p['priority'] ?></td>
-        <td><?= (int)$p['is_active']===1 ? '✅' : '❌' ?></td>
-        <td class="bar" style="display:flex; gap:8px;">
-          <a href="/sweetpath/admin/promo_form.php?id=<?= (int)$p['id'] ?>" class="toolbar-btn">
-            <i class="fas fa-edit"></i> Editar
-          </a>
+<div class="promos-grid">
+  <?php foreach ($rows as $p): ?>
+    <div class="promo-card">
+      <img class="promo-img" src="<?= h($p['img']) ?>" alt="">
+      
+      <div class="promo-header">
+        <h3 class="promo-title"><?= h($p['title']) ?></h3>
+        <span class="status-badge <?= (int)$p['is_active']===1 ? 'status-active' : 'status-inactive' ?>">
+          <?= (int)$p['is_active']===1 ? 'Activa' : 'Inactiva' ?>
+        </span>
+      </div>
+      
+      <div class="promo-info">
+        <div><i class="far fa-calendar-alt"></i> <b>Inicio:</b> <?= h($p['start_at'] ?? 'Sin fecha') ?></div>
+        <div><i class="far fa-calendar-check"></i> <b>Fin:</b> <?= h($p['end_at'] ?? 'Sin fecha') ?></div>
+        <div style="margin-top: 8px;">
+          <span style="background:#f1f5f9; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:bold; color:#475569;">
+            ID: <?= (int)$p['id'] ?>
+          </span>
+          <span style="background:#f1f5f9; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:bold; color:#475569;">
+            Prioridad: <?= (int)$p['priority'] ?>
+          </span>
+        </div>
+      </div>
 
-          <form method="post" action="/sweetpath/admin/promo_save.php" style="display:inline">
-            <?= csrf_input() ?>
-            <input type="hidden" name="action" value="toggle_active">
-            <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
-            <button type="submit" class="toolbar-btn" style="<?= (int)$p['is_active']===1 ? 'color:#ef4444;' : 'color:#10b981;' ?>">
-              <i class="fas <?= (int)$p['is_active']===1 ? 'fa-eye-slash' : 'fa-eye' ?>"></i>
-              <?= (int)$p['is_active']===1 ? 'Desactivar' : 'Activar' ?>
-            </button>
-          </form>
+      <div class="promo-actions">
+        <a href="/sweetpath/admin/promo_form.php?id=<?= (int)$p['id'] ?>" class="toolbar-btn" style="justify-content:center;">
+          <i class="fas fa-edit"></i> Editar
+        </a>
 
-          <form method="post" action="/sweetpath/admin/promo_save.php" style="display:inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta promo permanentemente?');">
-            <?= csrf_input() ?>
-            <input type="hidden" name="action" value="delete">
-            <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
-            <button type="submit" class="toolbar-btn" style="color:#ef4444; border-color:#fecaca; background:#fff5f5;">
-              <i class="fas fa-trash"></i> Eliminar
-            </button>
-          </form>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-    </tbody>
-  </table>
+        <form method="post" action="/sweetpath/admin/promo_save.php" style="display:contents">
+          <?= csrf_input() ?>
+          <input type="hidden" name="action" value="toggle_active">
+          <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
+          <button type="submit" class="toolbar-btn" style="justify-content:center; <?= (int)$p['is_active']===1 ? 'color:#ef4444;' : 'color:#10b981;' ?>">
+            <i class="fas <?= (int)$p['is_active']===1 ? 'fa-eye-slash' : 'fa-eye' ?>"></i>
+            <?= (int)$p['is_active']===1 ? 'Desactiv.' : 'Activar' ?>
+          </button>
+        </form>
 
-  <?php if (count($rows)===0): ?>
-    <p>No hay promos aún.</p>
-  <?php endif; ?>
+        <form method="post" action="/sweetpath/admin/promo_save.php" style="display:contents" onsubmit="return confirm('¿Seguro que deseas eliminar esta promo permanentemente?');">
+          <?= csrf_input() ?>
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
+          <button type="submit" class="toolbar-btn" style="justify-content:center; color:#ef4444; border-color:#fecaca; background:#fff5f5;">
+            <i class="fas fa-trash"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  <?php endforeach; ?>
 </div>
+
+<?php if (count($rows)===0): ?>
+  <div style="text-align:center; padding:80px; color:#64748b; background:white; border-radius:24px; border:1px solid rgba(0,0,0,0.03);">
+    <i class="fas fa-bullhorn" style="font-size:3rem; opacity:0.1; display:block; margin-bottom:20px;"></i>
+    No hay promos aún.
+  </div>
+<?php endif; ?>
 
 </div>
 </body>
