@@ -93,6 +93,25 @@ if (!in_array($status, $allowedNext, true)) {
   back("Transición no permitida: '{$currentStatus}' → '{$status}'. Opciones válidas: " . implode(', ', $allowedNext));
 }
 
+// RESTORE STOCK IF CANCELLED OR REJECTED
+if (in_array($status, ['RECHAZADO', 'CANCELADO'], true) && !in_array($currentStatus, ['RECHAZADO', 'CANCELADO'], true)) {
+    $stmtItems = $pdo->prepare("
+        SELECT oi.product_id, oi.quantity 
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        WHERE oi.order_id = ? AND p.type = 'EXPRESS' AND p.stock_internal IS NOT NULL
+    ");
+    $stmtItems->execute([$id]);
+    $items = $stmtItems->fetchAll();
+
+    if ($items) {
+        $restoreStmt = $pdo->prepare("UPDATE products SET stock_internal = stock_internal + ? WHERE id = ?");
+        foreach ($items as $it) {
+            $restoreStmt->execute([$it['quantity'], $it['product_id']]);
+        }
+    }
+}
+
 $stmt = $pdo->prepare("UPDATE orders SET status=?, updated_at=NOW() WHERE id=?");
 $stmt->execute([$status, $id]);
 

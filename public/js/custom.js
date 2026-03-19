@@ -60,9 +60,43 @@ if (toggleMessage) {
   });
 }
 
-document.getElementById("btnSend").addEventListener("click", async () => {
+document.getElementById("btnConfirm").addEventListener("click", (e) => {
+  e.preventDefault();
+  const phone = document.getElementById("phone").value.trim();
+  const time = document.getElementById("time").value.trim();
+  const qty = document.getElementById("qty").value.trim();
+  const referenceImageInput = document.getElementById("referenceImage");
+  const hasImage = referenceImageInput && referenceImageInput.files.length > 0;
+
   msg.style.display = "block";
-  msg.className = "";
+  msg.className = "notice";
+  
+  if (!phone || !validatePhone(phone)) {
+    msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos).";
+    return;
+  }
+  if (!time) { msg.textContent = "Por favor selecciona un rango horario de retiro."; return; }
+  if (!qty) { msg.textContent = "Indica una cantidad."; return; }
+  if (!hasImage) { msg.textContent = "Por favor, sube una imagen de referencia."; return; }
+
+  // Si pasa validación básica, ocultamos el mensaje y abrimos modal
+  msg.style.display = "none";
+  document.getElementById("confirmModalFondo").classList.add("activo");
+  document.body.style.overflow = "hidden";
+});
+
+document.getElementById("btnCancelSend").addEventListener("click", () => {
+  document.getElementById("confirmModalFondo").classList.remove("activo");
+  document.body.style.overflow = "";
+});
+
+document.getElementById("btnSend").addEventListener("click", async () => {
+  // Cerrar el modal
+  document.getElementById("confirmModalFondo").classList.remove("activo");
+  document.body.style.overflow = "";
+
+  msg.style.display = "block";
+  msg.className = "notice";
   msg.textContent = "Procesando…";
 
   const type = document.getElementById("type").value.trim();
@@ -82,13 +116,8 @@ document.getElementById("btnSend").addEventListener("click", async () => {
   const referenceImageInput = document.getElementById("referenceImage");
   const hasImage = referenceImageInput && referenceImageInput.files.length > 0;
 
-  if (!phone || !validatePhone(phone)) {
-    msg.textContent = "Por favor ingresa un número de WhatsApp válido (mínimo 8 dígitos).";
-    return;
-  }
-  if (!time) { msg.textContent = "Por favor selecciona un rango horario de retiro."; return; }
-  if (!qty) { msg.textContent = "Indica una cantidad."; return; }
-  if (!hasImage) { msg.textContent = "Por favor, sube una imagen de referencia."; return; }
+  // Ya validado arriba
+
 
   const details = {
     people: people ? Number(people) : null,

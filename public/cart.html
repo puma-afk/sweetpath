@@ -6,29 +6,28 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ESENCIA — Mi pedido</title>
   <link rel="stylesheet" href="./css/app.css" />
+  <link rel="stylesheet" href="./css/tienda.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-  <div class="menu-overlay"></div>
-  <header class="nav">
-    <div class="container navbar">
+  <!-- OVERLAY MENU -->
+  <div class="capa-menu" id="capaMenu"></div>
+
+  <!-- HEADER -->
+  <header class="navegacion">
+    <div class="container barra-nav">
       <a href="./index.html" class="logo-link" title="Ir al inicio">
         <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
-        <div class="brand-text">
-          <h1>ESENCIA</h1>
-          <small>Repostería artesanal</small>
-        </div>
       </a>
-
-      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+      <button class="boton-menu" id="menuToggle" aria-label="Abrir menú">
         <i class="fas fa-bars" id="menuIcon"></i>
       </button>
-
-      <nav class="navlinks" id="mainNav">
-        <a class="nav-item" href="./index.html">Inicio</a>
-        <a class="nav-item" href="./products.html">Productos</a>
-        <a class="nav-item" href="./custom.html">Personalizados</a>
+      <nav class="enlaces-nav" id="mainNav">
+        <a class="item-nav" href="./index.html"><i class="fas fa-house"></i> Inicio</a>
+        <a class="item-nav" href="./products.html"><i class="fas fa-store"></i> Vitrina</a>
+        <a class="item-nav" href="./custom.html"><i class="fas fa-wand-magic-sparkles"></i> Personalizados</a>
+        <a class="item-nav" href="./cart.html" id="cartBadge"><i class="fas fa-basket-shopping"></i> Pedido</a>
       </nav>
     </div>
   </header>
@@ -109,6 +108,61 @@
     </div>
   </footer>
 
+  <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+  <nav class="barra-inferior" id="barraInferior">
+    <a href="./index.html" class="item-inferior" id="nav-inicio">
+      <i class="fas fa-house"></i>
+      <span>Inicio</span>
+    </a>
+    <a href="./products.html" class="item-inferior" id="nav-vitrina">
+      <i class="fas fa-store"></i>
+      <span>Vitrina</span>
+    </a>
+    <button class="item-inferior" id="nav-buscar" onclick="abrirBuscador()" style="background:none;border:none;cursor:pointer;">
+      <i class="fas fa-magnifying-glass"></i>
+      <span>Buscar</span>
+    </button>
+    <a href="./custom.html" class="item-inferior" id="nav-custom">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      <span>Custom</span>
+    </a>
+    <a href="./perfil.html" class="item-inferior" id="nav-perfil">
+      <i class="fas fa-user"></i>
+      <span>Perfil</span>
+    </a>
+  </nav>
+
+  <!-- BUSCADOR GLOBAL (OVERLAY) -->
+  <div class="buscador-fondo" id="buscadorFondo">
+    <div class="buscador-panel">
+      <div class="buscador-barra">
+        <i class="fas fa-magnifying-glass buscador-icono"></i>
+        <input type="search" id="buscadorInput" class="buscador-input" placeholder="Buscar productos, packs..." autocomplete="off">
+        <button class="buscador-cerrar" id="buscadorCerrar"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="buscadorResultados" class="buscador-resultados"></div>
+    </div>
+  </div>
+
+  <!-- MODAL DE PRODUCTO -->
+  <div class="modal-fondo" id="modalFondo">
+    <div class="modal-tarjeta" id="modalTarjeta">
+      <span class="modal-handle"></span>
+      <button class="modal-cerrar" id="modalCerrar"><i class="fas fa-times"></i></button>
+      <div class="modal-img" id="modalImg"></div>
+      <div class="modal-cuerpo">
+        <div class="modal-etiqueta" id="modalEtiqueta"></div>
+        <h3 class="modal-titulo" id="modalTitulo"></h3>
+        <p class="modal-desc" id="modalDesc"></p>
+        <div class="modal-detalles" id="modalDetalles" style="display:none;"></div>
+        <div class="modal-precio-fila">
+          <div class="modal-precio" id="modalPrecio"></div>
+          <div id="modalAccion"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <a href="./cart.html" id="floatingCart" class="floating-cart" style="display:none;">
     <i class="fas fa-shopping-basket"></i>
     <div id="floatingCartBadge" class="floating-cart-badge">0</div>
@@ -143,6 +197,119 @@
       ui.initializeNav();
     }
     verificarSesion();
+  </script>
+  <script src="./js/menu.js"></script>
+  <script>
+
+    // ── Global Search & Modals
+    window.abrirModalProducto = function(p) {
+      document.getElementById('modalImg').innerHTML = p.image_url
+        ? `<img src="${p.image_url}" alt="${p.name}">`
+        : `<div class="modal-img-placeholder"><i class="fas fa-cake-candles"></i></div>`;
+      let tipo = p.type === 'EXPRESS' ? 'RÁPIDO' : p.type === 'CUSTOM' ? 'PERSONALIZADO' : 'PACK';
+      let disponible = p.availability === 'OUT' ? 'AGOTADO' : 'DISPONIBLE';
+      document.getElementById('modalEtiqueta').textContent = `${tipo} • ${disponible}`;
+      document.getElementById('modalTitulo').textContent = p.name;
+      document.getElementById('modalDesc').textContent = p.description || 'Elaborado con ingredientes artesanales seleccionados.';
+      
+      const divDetalles = document.getElementById('modalDetalles');
+      if (divDetalles) divDetalles.innerHTML = '';
+
+      document.getElementById('modalPrecio').innerHTML = p.price_bs
+        ? `<strong>Bs ${p.price_bs}</strong><small>referencial</small>`
+        : `<strong>A confirmar</strong><small>por WhatsApp</small>`;
+      const canAdd = (p.type === 'EXPRESS' || p.type === 'PACK') && p.availability !== 'OUT';
+      document.getElementById('modalAccion').innerHTML = canAdd
+        ? `<button class="boton primario" onclick="window.agregarDesdeModal(${p.id})"><i class="fas fa-cart-plus"></i> Agregar</button>`
+        : p.type !== 'EXPRESS'
+          ? `<a class="boton primario" href="./custom.html?type=${p.type}"><i class="fas fa-paper-plane"></i> Solicitar</a>`
+          : `<button class="boton" disabled>Agotado</button>`;
+      document.getElementById('modalFondo').classList.add('activo');
+      document.body.style.overflow = 'hidden';
+    };
+
+    document.getElementById('modalCerrar').addEventListener('click', () => {
+      document.getElementById('modalFondo').classList.remove('activo');
+      document.body.style.overflow = '';
+    });
+    document.getElementById('modalFondo').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modalFondo')) {
+        document.getElementById('modalFondo').classList.remove('activo');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Delegar global helper para modal (como no hay productos listados localmente, importamos cart-manager)
+    window.agregarDesdeModal = async (id) => {
+      if (!window._todosProductos) return;
+      const p = window._todosProductos.find((x) => x.id === id);
+      if (p) {
+        const { addToCart } = await import('./js/cart-manager.js');
+        addToCart(p);
+        document.getElementById('modalFondo')?.classList.remove('activo');
+        document.body.style.overflow = '';
+        setTimeout(() => location.reload(), 300); // Reload cart view
+      }
+    };
+
+    let _todosProductos = null;
+    async function obtenerProductos() {
+      if (_todosProductos) return _todosProductos;
+      try {
+        const res = await fetch('/sweetpath/api/products_list.php?limit=200');
+        const data = await res.json();
+        _todosProductos = window._todosProductos = data.products || [];
+      } catch { _todosProductos = window._todosProductos = []; }
+      return _todosProductos;
+    }
+
+    window.abrirBuscador = async function() {
+      document.getElementById('buscadorFondo').classList.add('activo');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('buscadorInput').focus(), 300);
+      await obtenerProductos();
+      mostrarResultados('');
+    };
+
+    window.cerrarBuscador = function() {
+      document.getElementById('buscadorFondo').classList.remove('activo');
+      document.body.style.overflow = '';
+    }
+
+    function mostrarResultados(q) {
+      const lista = (_todosProductos || []).filter(p =>
+        !q || p.name.toLowerCase().includes(q.toLowerCase()) || (p.description || '').toLowerCase().includes(q.toLowerCase())
+      ).slice(0, 8);
+      const cont = document.getElementById('buscadorResultados');
+      if (!lista.length) {
+        cont.innerHTML = `<div class="buscador-vacio"><i class="fas fa-search" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:8px;"></i>Sin resultados para "${q}"</div>`;
+        return;
+      }
+      cont.innerHTML = lista.map(p => {
+        const imgHtml = p.image_url
+          ? `<img src="${p.image_url}" class="resultado-img" alt="">`
+          : `<div class="resultado-img" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--linea)"><i class="fas fa-cake-candles"></i></div>`;
+        const tipo = p.type === 'EXPRESS' ? 'Rápido' : p.type === 'CUSTOM' ? 'Personalizado' : 'Pack';
+        const precio = p.price_bs ? `Bs ${p.price_bs}` : 'Cotizar por WA';
+        const dest = `./products.html?q=${encodeURIComponent(p.name)}`;
+        return `<a class="resultado-item" href="${dest}" onclick="cerrarBuscador()">
+          ${imgHtml}
+          <div class="resultado-info">
+            <div class="resultado-titulo">${p.name}</div>
+            <div class="resultado-sub">${tipo} &bull; ${precio}</div>
+          </div>
+          <i class="fas fa-chevron-right" style="color:var(--linea);font-size:13px;"></i>
+        </a>`;
+      }).join('');
+    }
+
+    document.getElementById('buscadorInput').addEventListener('input', (e) => {
+      mostrarResultados(e.target.value.trim());
+    });
+    document.getElementById('buscadorCerrar').addEventListener('click', cerrarBuscador);
+    document.getElementById('buscadorFondo').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('buscadorFondo')) cerrarBuscador();
+    });
   </script>
 </body>
 

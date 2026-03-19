@@ -3,21 +3,20 @@
 
 /* --- 2. PALETA DE COLORES Y VARIABLES --- */
 :root {
-  --bg: #fffaca;
-  /* CREMA SUAVE - Fondo general */
-  --card: #ffffff;
-  /* BLANCO PURO - Tarjetas y paneles */
-  --text: #151613;
-  /* GRIS OSCURO - Textos legibles */
-  --primary: #004f39;
-  /* VERDE OSCURO - Acentos y botones */
-  --muted: #666666;
-  /* GRIS MEDIO - Textos secundarios */
-  --line: rgba(0, 79, 57, 0.15);
-  /* Líneas teñidas de verde sutil */
-  --soft: rgba(0, 79, 57, 0.05);
-  /* Fondos hover suaves */
-  --danger: #e84118;
+  --fondo: #fffbf0; /* CREMA SUAVE - Fondo general */
+  --tarjeta: #ffffff; /* BLANCO PURO - Tarjetas y paneles */
+  --texto: #151613; /* GRIS OSCURO - Textos legibles */
+  --primario: #004f39; /* VERDE OSCURO - Acentos y botones */
+  --atenuado: #666666; /* GRIS MEDIO - Textos secundarios */
+  --linea: rgba(0, 79, 57, 0.15); /* Líneas teñidas de verde sutil */
+  --suave: rgba(0, 79, 57, 0.05); /* Fondos hover suaves */
+  --peligro: #e84118;
+  
+  /* Aliases for better compatibility */
+  --bg: var(--fondo);
+  --text: var(--texto);
+  --card: var(--tarjeta);
+  --line: var(--linea);
 }
 
 * {
@@ -29,6 +28,7 @@ body {
   margin: 0;
   padding: 0;
   background: var(--bg);
+  background-color: var(--bg); /* explicit for some browsers */
   color: var(--text);
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
@@ -66,7 +66,7 @@ a {
   padding: 2px 0;
   position: sticky;
   top: 0;
-  z-index: 990;
+  z-index: 20000;
   /* Z-index menor que el menú lateral */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -155,6 +155,9 @@ a {
   .nav {
     padding: 1px 0;
     /* Aún más delgado en móvil */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: rgba(0, 79, 57, 0.98);
   }
 
   .logo-img {
@@ -175,18 +178,17 @@ a {
     transform: translateX(100%);
     width: 260px;
     height: 100vh;
-    background-color: rgba(0, 79, 57, 0.95);
+    background-color: rgba(0, 79, 57, 0.97);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 80px 15px 20px 15px;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    z-index: 20000;
     overflow-y: auto;
-    /* Permite scroll si hacemos zoom o la pantalla es muy pequeña */
+    pointer-events: auto;
   }
 
-  /* Esta clase abre el menú al tocar la hamburguesa */
   .navlinks.active {
     transform: translateX(0) !important;
     display: flex !important;
@@ -195,12 +197,17 @@ a {
   .nav-item {
     width: 100%;
     text-align: center;
-    /* Centrado para mejor estética */
     padding: 18px 10px;
     font-size: 1.1rem;
     border-bottom: 1px solid rgba(255, 250, 202, 0.08);
     margin: 0;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #fffaca;
+    -webkit-tap-highlight-color: rgba(255,250,202,0.15);
   }
 
   .nav-item:last-child {
@@ -218,10 +225,8 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    /* Overlay más oscuro para foco */
-    backdrop-filter: blur(2px);
-    z-index: 999;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 19999;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -230,6 +235,12 @@ a {
     display: block;
     opacity: 1;
   }
+}
+
+/* Efectos dinámicos en móviles/PC al tocar botones */
+.btn:active, .pill:active, .nav-item:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.1s;
 }
 
 
@@ -645,10 +656,10 @@ a {
 
 @media(max-width: 600px) {
   .floating-cart {
-    bottom: 20px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
+    bottom: 88px;
+    right: 14px;
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
   }
 }

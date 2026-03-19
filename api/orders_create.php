@@ -144,7 +144,8 @@ foreach ($products as $p) {
     "id" => $pid,
     "name" => $p['name'],
     "qty" => $qty,
-    "unit_price_cents" => $unit
+    "unit_price_cents" => $unit,
+    "is_express_with_stock" => ($p['type'] === 'EXPRESS' && $p['stock_internal'] !== null)
   ];
 }
 
@@ -201,8 +202,13 @@ try {
 
   $itStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price_cents)
                            VALUES (?, ?, ?, ?)");
+  $stockStmt = $pdo->prepare("UPDATE products SET stock_internal = stock_internal - ? WHERE id = ? AND stock_internal IS NOT NULL");
+  
   foreach ($lines as $ln) {
     $itStmt->execute([$order_id, $ln['id'], $ln['qty'], $ln['unit_price_cents']]);
+    if ($ln['is_express_with_stock']) {
+      $stockStmt->execute([$ln['qty'], $ln['id']]);
+    }
   }
 
   $pdo->commit();

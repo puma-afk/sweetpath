@@ -83,13 +83,40 @@ if ($f && ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
   $image_asset_id = (int)$pdo->lastInsertId();
 }
 
+// Upload gallery (optional)
+$gallery_ids = [];
+$gf = $_FILES['gallery'] ?? null;
+if ($gf && !empty($gf['name'][0])) {
+    $uploadDirFs = __DIR__ . '/../storage/uploads';
+    $uploadDirWeb = '/sweetpath/storage/uploads';
+    if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0777, true);
+
+    foreach ($gf['name'] as $i => $name) {
+        if ($gf['error'][$i] === UPLOAD_ERR_OK) {
+            $tmp = $gf['tmp_name'][$i];
+            $mime = mime_content_type($tmp);
+            if (in_array($mime, ['image/jpeg','image/png','image/webp'], true)) {
+                $ext = ($mime === 'image/png') ? 'png' : (($mime === 'image/webp') ? 'webp' : 'jpg');
+                $filename = 'gal_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '_' . $i . '.' . $ext;
+                if (move_uploaded_file($tmp, $uploadDirFs . '/' . $filename)) {
+                    $a = $pdo->prepare("INSERT INTO assets (type, path_original, path_medium, path_thumb, mime, size_bytes)
+                                        VALUES ('PRODUCT_GALLERY', ?, NULL, NULL, ?, ?)");
+                    $a->execute([$uploadDirWeb . '/' . $filename, $mime, (int)$gf['size'][$i]]);
+                    $gallery_ids[] = (int)$pdo->lastInsertId();
+                }
+            }
+        }
+    }
+}
+$gallery_json = $gallery_ids ? json_encode($gallery_ids) : null;
+
 if ($action === 'create') {
   $st = $pdo->prepare("INSERT INTO products
-    (name, description, type, price_cents, availability, stock_internal, max_per_order, min_lead_hours, image_asset_id, is_active, created_at, updated_at)
-    VALUES (?, NULLIF(?,''), ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
+    (name, description, type, price_cents, availability, stock_internal, max_per_order, min_lead_hours, image_asset_id, gallery, is_active, created_at, updated_at)
+    VALUES (?, NULLIF(?,''), ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
   ");
   $st->execute([
-    $name, $description, $type, $price_cents, $availability, $stock_internal, $max_per_order, $min_lead_hours, $image_asset_id
+    $name, $description, $type, $price_cents, $availability, $stock_internal, $max_per_order, $min_lead_hours, $image_asset_id, $gallery_json
   ]);
   back(true, "Producto creado ✅");
 }
@@ -97,41 +124,29 @@ if ($action === 'create') {
 if ($action === 'update') {
   if ($id <= 0) back(false, "ID inválido");
 
-  // if no new image, keep existing
-  if ($image_asset_id === null) {
-    $st = $pdo->prepare("UPDATE products SET
-      name=?,
-      description=NULLIF(?, ''),
-      type=?,
-      price_cents=?,
-      availability=?,
-      stock_internal=?,
-      max_per_order=?,
-      min_lead_hours=?,
-      updated_at=NOW()
-      WHERE id=?
-    ");
-    $st->execute([
-      $name, $description, $type, $price_cents, $availability, $stock_internal, $max_per_order, $min_lead_hours, $id
-    ]);
-  } else {
-    $st = $pdo->prepare("UPDATE products SET
-      name=?,
-      description=NULLIF(?, ''),
-      type=?,
-      price_cents=?,
-      availability=?,
-      stock_internal=?,
-      max_per_order=?,
-      min_lead_hours=?,
-      image_asset_id=?,
-      updated_at=NOW()
-      WHERE id=?
-    ");
-    $st->execute([
-      $name, $description, $type, $price_cents, $availability, $stock_internal, $max_per_order, $min_lead_hours, $image_asset_id, $id
-    ]);
-  }
+  $fields = [
+    'name' => $name,
+    'description' => $description === '' ? null : $description,
+    'type' => $type,
+    'price_cents' => $price_cents,
+    'availability' => $availability,
+    'stock_internal' => $stock_internal,
+    'max_per_order' => $max_per_order,
+    'min_lead_hours' => $min_lead_hours,
+  ];
+  if ($image_asset_id !== null) $fields['image_asset_id'] = $image_asset_id;
+  if ($gallery_json !== null) $fields['gallery'] = $gallery_json;
+
+  $sql = "UPDATE products SET ";
+  $parts = [];
+  foreach ($fields as $f => $v) $parts[] = "$f = :$f";
+  $sql .= implode(', ', $parts) . ", updated_at=NOW() WHERE id=:id";
+  
+  $params = $fields;
+  $params['id'] = $id;
+
+  $st = $pdo->prepare($sql);
+  $st->execute($params);
 
   back(true, "Producto actualizado ✅");
 }

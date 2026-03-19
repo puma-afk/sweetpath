@@ -119,7 +119,28 @@ $err = trim($_GET['err'] ?? '');
         </div>
       </div>
 
-      <label><small>Imagen (opcional: si subes, reemplaza la anterior)</small></label>
+      <div style="background: rgba(0,79,57,0.05); padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(0,79,57,0.1);">
+        <label><small>Imágenes de Galería (opcional, subir varias)</small></label>
+        <?php if (!empty($p['gallery'])): ?>
+          <div style="display: flex; gap: 8px; margin: 10px 0; overflow-x: auto; padding-bottom: 5px;">
+            <?php
+              $galleryIds = json_decode($p['gallery'], true) ?: [];
+              if ($galleryIds) {
+                $placeholders = implode(',', array_fill(0, count($galleryIds), '?'));
+                $stmtG = $pdo->prepare("SELECT path_original FROM assets WHERE id IN ($placeholders)");
+                $stmtG->execute($galleryIds);
+                foreach($stmtG->fetchAll() as $gImg) {
+                  echo '<img src="'.h($gImg['path_original']).'" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">';
+                }
+              }
+            ?>
+          </div>
+        <?php endif; ?>
+        <input type="file" name="gallery[]" multiple accept="image/*">
+        <p style="font-size: 11px; opacity: 0.6; margin: 5px 0 0 0;">(Si vuelves a subir archivos, se reemplaza la galería anterior)</p>
+      </div>
+
+      <label><small>Imagen de Portada (opcional: si subes, reemplaza la principal)</small></label>
       <input type="file" name="image" accept="image/*">
 
       <button class="primary" style="margin-top:10px;" type="submit"><i class="fas fa-save"></i> <?= $id>0 ? 'Guardar cambios' : 'Crear producto' ?></button>

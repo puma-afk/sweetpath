@@ -67,6 +67,8 @@ SELECT
   p.availability,
   p.max_per_order,
   p.min_lead_hours,
+  p.gallery,
+  p.stock_internal,
   a.path_original AS image_url
 FROM products p
 LEFT JOIN assets a ON a.id = p.image_asset_id
@@ -95,6 +97,26 @@ $products = array_map(function($r){
     "image_url" => $r['image_url'] ? '/sweetpath/' . ltrim((string)$r['image_url'], '/') : null,
   ];
 }, $rows);
+
+// Una segunda pasada para reconciliar stock interno con disponibilidad
+$products = array_map(function($p) use ($rows) {
+    // Buscar la fila original para obtener stock_internal
+    $original = null;
+    foreach($rows as $r) { if((int)$r['id'] === $p['id']) { $original = $r; break; } }
+    
+    $stock = ($original && $original['stock_internal'] !== null) ? (int)$original['stock_internal'] : null;
+    
+    // Si está disponible pero el stock es 0 -> Agotado automático
+    if ($p['availability'] === 'AVAILABLE' && $stock !== null && $stock <= 0) {
+        $p['availability'] = 'OUT';
+    } 
+    // Si está disponible pero el stock es bajo -> Poco stock automático
+    else if ($p['availability'] === 'AVAILABLE' && $stock !== null && $stock > 0 && $stock < 5) {
+        $p['availability'] = 'LOW';
+    }
+    
+    return $p;
+}, $products);
 
 respond(200, [
   "ok" => true,

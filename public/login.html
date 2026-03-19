@@ -11,32 +11,42 @@
 </head>
 
 <body>
-    <header class="nav">
-        <div class="container navbar">
+    <!-- HEADER -->
+    <header class="navegacion">
+        <div class="container barra-nav">
             <a href="./index.html" class="logo-link">
                 <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
             </a>
         </div>
     </header>
 
-    <main class="container">
-        <div class="panel" style="max-width: 450px; margin: 40px auto; text-align: center;">
-            <h2 class="hTitle">Bienvenido a Esencia</h2>
-            <p class="hSub">Inicia sesión para revisar el estado de tus pedidos y pagos.</p>
+    <main class="container" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px); padding: 20px;">
+        <div style="background: linear-gradient(135deg, var(--fondo), #ffffff); border: 1px solid rgba(0,79,57,0.1); border-radius: 20px; padding: 50px 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); position: relative; overflow: hidden; max-width: 400px; width: 100%; text-align: center;">
+            
+            <div style="position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: rgba(0, 79, 57, 0.03); border-radius: 50%;"></div>
+            <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(0, 79, 57, 0.03); border-radius: 50%;"></div>
+            
+            <div style="width: 80px; height: 80px; background: var(--primario); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 20px rgba(0,79,57,0.2); position: relative; z-index: 2;">
+                <i class="fas fa-leaf" style="color: var(--fondo); font-size: 2rem;"></i>
+            </div>
+            
+            <h2 style="color: var(--primario); font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; position: relative; z-index: 2;">Bienvenido a Esencia</h2>
+            <p style="color: var(--texto); font-size: 0.95rem; margin-bottom: 35px; opacity: 0.8; position: relative; z-index: 2; line-height: 1.5;">Inicia sesión de forma segura para revisar tus pedidos y gestionar tu cuenta.</p>
 
-            <div id="g_id_onload"
-                data-client_id="349806175640-65d64o579a7v28s66mr06q37175u89vo.apps.googleusercontent.com"
-                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
-                data-auto_prompt="false">
+            <div style="position: relative; z-index: 2; margin-bottom: 30px; display: flex; justify-content: center;">
+                <div id="g_id_onload"
+                    data-client_id="349806175640-65d64o579a7v28s66mr06q37175u89vo.apps.googleusercontent.com"
+                    data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
+                    data-auto_prompt="false">
+                </div>
+
+                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                    data-text="signin_with" data-size="large" data-logo_alignment="left">
+                </div>
             </div>
 
-            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
-                data-text="signin_with" data-size="large" data-logo_alignment="left"
-                style="display: flex; justify-content: center;">
-            </div>
-
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--line);">
-                <a href="./index.html" class="btn">
+            <div style="margin-top: 15px; position: relative; z-index: 2;">
+                <a href="./index.html" class="boton" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; color: var(--primario); background: transparent; border: 1px solid rgba(0,79,57,0.2); border-radius: 12px; padding: 10px 20px; transition: all 0.2s;">
                     <i class="fas fa-arrow-left"></i> Volver a la tienda
                 </a>
             </div>

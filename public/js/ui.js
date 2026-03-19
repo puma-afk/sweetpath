@@ -56,21 +56,21 @@ export function showNotice(id, text) {
 }
 
 export function initializeNav() {
-  const toggle = document.querySelector(".menu-toggle");
-  const navlinks = document.querySelector(".navlinks");
+  const toggle = document.querySelector(".menu-toggle, .boton-menu");
+  const navlinks = document.querySelector(".navlinks, .enlaces-nav");
 
   if (!toggle || !navlinks) return;
 
   // Highlight active tab
   const currentPath = window.location.pathname.split("/").pop() || "index.html";
-  const navItems = navlinks.querySelectorAll(".nav-item");
+  const navItems = navlinks.querySelectorAll(".nav-item, .item-nav");
   navItems.forEach(item => {
     let itemHref = item.getAttribute("href");
     if (!itemHref) return;
     if (itemHref.includes(currentPath)) {
-      item.classList.add("active");
+      item.classList.add("active", "activo");
     } else {
-      item.classList.remove("active");
+      item.classList.remove("active", "activo");
     }
   });
 
@@ -90,22 +90,41 @@ export function initializeNav() {
 
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
-    const open = navlinks.classList.toggle("active");
+    // Determine current state and invert it
+    const wasOpen = navlinks.classList.contains("activo") || navlinks.classList.contains("active");
+    const open = !wasOpen;
+
+    // Apply/remove open class consistently
+    if (open) {
+      navlinks.classList.add("activo", "active");
+    } else {
+      navlinks.classList.remove("activo", "active");
+    }
+
+    // Toggle dark overlay
+    const capa = document.querySelector('.menu-overlay, .capa-menu');
+    if (capa) {
+       if (open) capa.classList.add('active', 'activo');
+       else capa.classList.remove('active', 'activo');
+    }
+    
     updateIcon(open);
   });
 
   // Cerrar al hacer click fuera
   document.addEventListener("click", (e) => {
-    if (navlinks.classList.contains("active") && !navlinks.contains(e.target) && !toggle.contains(e.target)) {
-      navlinks.classList.remove("active");
+    if ((navlinks.classList.contains("active") || navlinks.classList.contains("activo")) && !navlinks.contains(e.target) && !toggle.contains(e.target)) {
+      navlinks.classList.remove("active", "activo");
+      const capa = document.querySelector('.menu-overlay, .capa-menu');
+      if (capa) capa.classList.remove('active', 'activo');
       updateIcon(false);
     }
   });
 
   // Cerrar al redimensionar si es PC
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 800 && navlinks.classList.contains("active")) {
-      navlinks.classList.remove("active");
+    if (window.innerWidth > 800 && (navlinks.classList.contains("active") || navlinks.classList.contains("activo"))) {
+      navlinks.classList.remove("active", "activo");
       updateIcon(false);
     }
   });

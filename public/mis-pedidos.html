@@ -6,29 +6,30 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ESENCIA — Mis Pedidos</title>
     <link rel="stylesheet" href="./css/app.css" />
+    <link rel="stylesheet" href="./css/tienda.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <div class="menu-overlay"></div>
-    <header class="nav">
-        <div class="container navbar">
+    <!-- OVERLAY MENU -->
+    <div class="capa-menu" id="capaMenu"></div>
+
+    <!-- HEADER -->
+    <header class="navegacion">
+        <div class="container barra-nav">
             <a href="./index.html" class="logo-link">
                 <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
-                <div class="brand-text">
-                    <h1>ESENCIA</h1>
-                    <small>Mis Pedidos</small>
-                </div>
             </a>
 
-            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+            <button class="boton-menu" id="menuToggle" aria-label="Abrir menú">
                 <i class="fas fa-bars" id="menuIcon"></i>
             </button>
 
-            <nav class="navlinks" id="mainNav">
-                <a class="nav-item" href="./index.html">Inicio</a>
-                <a class="nav-item" href="./products.html">Productos</a>
-                <a class="nav-item" href="./custom.html">Personalizados</a>
+            <nav class="enlaces-nav" id="mainNav">
+                <a class="item-nav" href="./index.html"><i class="fas fa-house"></i> Inicio</a>
+                <a class="item-nav" href="./products.html"><i class="fas fa-store"></i> Vitrina</a>
+                <a class="item-nav" href="./custom.html"><i class="fas fa-wand-magic-sparkles"></i> Personalizados</a>
+                <a class="item-nav" href="./cart.html" id="cartBadge"><i class="fas fa-basket-shopping"></i> Pedido</a>
             </nav>
         </div>
     </header>
@@ -170,22 +171,29 @@
             }
 
             return `
-            <div class="card" style="box-shadow:0 4px 15px rgba(0,0,0,0.08);margin-bottom:16px;">
-                <div class="cardBody">
-                    <span class="badge ${o.status.toLowerCase()}">${o.status.replace(/_/g, ' ')}</span>
-                    <div style="display:flex;justify-content:space-between;align-items:start;margin-top:20px;margin-bottom:8px;">
-                        <h3 class="cardTitle" style="margin:0;">Pedido #${o.order_code}</h3>
-                        <div style="text-align:right;">
-                            <span class="price" style="font-size:20px;">Bs ${o.total_bs}</span>
-                        </div>
+            <div class="card" style="box-shadow:0 8px 24px rgba(0,79,57,0.08); margin-bottom:24px; border-radius:20px; border:1px solid rgba(0,79,57,0.1);">
+                <div class="cardBody" style="padding: 24px; display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <span class="badge ${o.status.toLowerCase()}" style="font-size:0.85rem; padding:6px 14px; font-weight:bold; letter-spacing:0.5px; display:inline-block; margin-bottom:8px;">${o.status.replace(/_/g, ' ')}</span>
+                        <h3 class="cardTitle" style="margin:0; font-size:1.5rem; color:var(--primario); font-family:'Playfair Display',serif;">Pedido #${o.order_code}</h3>
                     </div>
-                    <p class="cardDesc" style="margin-bottom:10px;">
-                        <i class="fas fa-calendar"></i> ${o.fecha_fmt}<br>
-                        <i class="fas fa-truck"></i> Retiro: ${o.pickup_date || 'Pendiente'}
-                        ${o.pickup_time ? ` · ${o.pickup_time}` : ''}
+                    
+                    <div style="font-size:1.8rem; color:var(--texto); font-weight:bold; background:rgba(0,79,57,0.03); padding:10px 16px; border-radius:12px; display:inline-block; align-self:flex-start;">
+                        Bs ${o.total_bs}
+                    </div>
+
+                    <p class="cardDesc" style="margin:0; font-size:1.05rem; color:var(--texto); opacity:0.9; line-height:1.6;">
+                        <span style="display:block; margin-bottom:4px;"><i class="fas fa-calendar" style="color:var(--primario); margin-right:6px; opacity:0.8;"></i> ${o.fecha_fmt}</span>
+                        <span style="display:block;"><i class="fas fa-truck" style="color:var(--primario); margin-right:4px; opacity:0.8;"></i> Retiro: <strong>${o.pickup_date || 'Pendiente'}</strong>${o.pickup_time ? ` · ${o.pickup_time}` : ''}</span>
                     </p>
-                    ${timelineHtml}
-                    ${paymentHtml}
+                    
+                    <div style="margin-top:8px;">
+                        ${timelineHtml}
+                    </div>
+                    
+                    <div>
+                        ${paymentHtml}
+                    </div>
                 </div>
             </div>`;
         }
@@ -194,27 +202,37 @@
 
         // ── Session check & inject user in nav ──────────────────────────────────
         async function verificarSesion() {
-            const res = await fetch('../api/get_session.php');
-            const user = await res.json();
+            try {
+                const res = await fetch('../api/get_session.php');
+                const user = await res.json();
 
-            if (!user.logged) {
-                window.location.href = './login.html';
-                return;
-            }
+                if (!user.logged) {
+                    window.location.href = './login.html';
+                    return;
+                }
 
-            const navLinks = document.getElementById('mainNav');
-            navLinks.innerHTML += `
-            <a href="./perfil.html" class="nav-item" style="display:flex;align-items:center;gap:8px;background:rgba(255,250,202,0.15);border-radius:20px;padding:5px 15px;">
-                <img src="${user.avatar || ''}" onerror="this.style.display='none'"
-                    style="width:28px;height:28px;border-radius:50%;border:2px solid #fffaca;object-fit:cover;">
-                <span>${(user.name || 'Mi perfil').split(' ')[0]}</span>
-            </a>`;
+                const navLinks = document.getElementById('mainNav');
+                navLinks.innerHTML += `
+                <a href="./perfil.html" class="nav-item" style="display:flex;align-items:center;gap:8px;background:rgba(255,250,202,0.15);border-radius:20px;padding:5px 15px;">
+                    <img src="${user.avatar || ''}" onerror="this.style.display='none'"
+                        style="width:28px;height:28px;border-radius:50%;border:2px solid #fffaca;object-fit:cover;">
+                    <span>${(user.name || 'Mi perfil').split(' ')[0]}</span>
+                </a>`;
 
-            const ui = await import('./js/ui.js');
-            ui.initializeNav();
+                const ui = await import('./js/ui.js');
+                ui.initializeNav();
+                ui.bindCartBadge();
+            } catch(e) {}
         }
         verificarSesion();
     </script>
+    <!-- CARRITO FLOTANTE -->
+  <a href="./cart.html" id="floatingCart" class="carrito-flotante" style="display:none;">
+    <i class="fas fa-basket-shopping"></i>
+    <div id="floatingCartBadge" class="etiqueta-flotante">0</div>
+  </a>
+
+  <script src="./js/menu.js"></script>
 </body>
 
 </html>
