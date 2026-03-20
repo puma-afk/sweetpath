@@ -122,18 +122,18 @@
                 nav.innerHTML += `<a href="./perfil.html" class="nav-item" style="display:flex;align-items:center;gap:8px;background:rgba(255,250,202,0.15);border-radius:20px;padding:5px 15px;"><img src="${user.avatar}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;border:2px solid #fffaca;object-fit:cover;"><span>${user.name.split(' ')[0]}</span></a>`;
 
                 container.innerHTML = `
-                  <div style="background: linear-gradient(135deg, var(--fondo), #ffffff); border: 1px solid rgba(0,79,57,0.1); border-radius: 20px; padding: 40px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; overflow: hidden; max-width: 400px; margin: 0 auto;">
+                  <div class="card-perfil jaspeado-marca">
                     <div style="position: absolute; top: -50px; left: -50px; width: 120px; height: 120px; background: rgba(0, 79, 57, 0.03); border-radius: 50%;"></div>
                     <div style="position: absolute; bottom: -30px; right: -30px; width: 100px; height: 100px; background: rgba(0, 79, 57, 0.03); border-radius: 50%;"></div>
                     
-                    <img src="${user.avatar}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=004f39&color=fffaca'" style="width:110px;height:110px;border-radius:50%;border:4px solid var(--fondo); box-shadow: 0 8px 25px rgba(0,79,57,0.2); margin-bottom:20px; position: relative; z-index: 2; object-fit: cover;">
+                    <img src="${user.avatar}" class="avatar-perfil" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0a0a0a&color=fffaca'">
                     
-                    <h2 style="color: var(--primario); font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 4px; position: relative; z-index: 2;">${user.name}</h2>
-                    <p style="color: var(--texto); font-size: 0.95rem; margin-bottom: 30px; opacity: 0.8; position: relative; z-index: 2;"><i class="fas fa-envelope" style="margin-right: 6px; opacity: 0.6;"></i>${user.email}</p>
+                    <h2 style="color: var(--primario); font-size: 1.8rem; margin-bottom: 4px; position: relative; z-index: 2;">${user.name}</h2>
+                    <p style="color: var(--texto); font-size: 0.95rem; margin-bottom: 30px; opacity: 0.7; position: relative; z-index: 2;"><i class="fas fa-envelope" style="margin-right: 6px; opacity: 0.5;"></i>${user.email}</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2;">
-                      <a href="./mis-pedidos.html" class="boton primario" style="width: 100%; justify-content: center; padding: 14px; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,79,57,0.15); transition: all 0.2s;"><i class="fas fa-shopping-bag"></i> Historial de pedidos</a>
-                      <a href="../api/logout.php" class="boton" style="width: 100%; justify-content: center; padding: 14px; font-size: 1.05rem; border-radius: 12px; background: rgba(231, 76, 60, 0.08); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.2); transition: all 0.2s;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                      <a href="./mis-pedidos.html" class="boton primario" style="width: 100%; justify-content: center; padding: 14px; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 4px 15px var(--negro-suave);"><i class="fas fa-shopping-bag"></i> Historial de pedidos</a>
+                      <a href="../api/logout.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                     </div>
                   </div>`;
 

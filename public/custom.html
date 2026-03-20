@@ -68,8 +68,8 @@
       box-shadow: 0 4px 15px rgba(0,79,57,0.25);
     }
     .btn-dynamic {
-      background: linear-gradient(135deg, #128c7e, #075e54);
-      color: #fff;
+      background: var(--primario);
+      color: var(--fondo);
       border-radius: 16px;
       padding: 16px;
       font-size: 1.15rem;
@@ -81,29 +81,28 @@
       gap: 10px;
       width: 100%;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(18, 140, 126, 0.35);
+      box-shadow: 0 8px 25px var(--negro-suave);
       transition: all 0.3s ease;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .btn-dynamic:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(18, 140, 126, 0.45);
+      box-shadow: 0 12px 30px var(--negro-suave);
     }
   </style>
 
   <!-- HERO PERSONALIZADOS -->
-  <section style="background: linear-gradient(135deg, #004f39 0%, #002c1f 100%); padding: 30px 20px 50px 20px; text-align: center; position: relative; overflow: hidden; margin-bottom: -24px;">
-    <div style="position: absolute; top: -40%; right: -20%; width: 70%; height: 200%; background: radial-gradient(circle, rgba(255,250,202,0.06) 0%, transparent 60%); pointer-events: none;"></div>
-    <h1 style="color: #fffaca; font-family: 'Playfair Display', serif; font-size: 2rem; margin: 0 0 8px 0; letter-spacing: -0.5px;">Personaliza tu Pastel</h1>
-    <p style="color: rgba(255,250,202,0.7); font-size: 0.95rem; margin: 0; line-height: 1.5;">Envíanos tu solicitud y confirmamos por WhatsApp</p>
+  <section class="jaspeado-marca" style="background-color: var(--primario); padding: 40px 20px 60px 20px; text-align: center; position: relative; overflow: hidden; margin-bottom: -30px;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, transparent 100%);"></div>
+    <h1 style="color: var(--fondo); font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 0 0 8px 0; position: relative; z-index: 2;">Personaliza tu Pastel</h1>
+    <p style="color: var(--fondo); opacity: 0.9; font-size: 1rem; margin: 0; line-height: 1.5; position: relative; z-index: 2;">Artesanía y dulzura diseñada exclusivamente para ti</p>
   </section>
 
   <main class="container custom-form-container" style="margin-top:0; padding-bottom:100px;">
-    <div class="panel" style="border-radius: 24px; position: relative; top: -20px; box-shadow: 0 12px 40px rgba(0,79,57,0.1); border: 1px solid rgba(0,79,57,0.08);">
-      <p class="hSub" style="margin: 0 0 8px 0; font-size: 0.95rem; color: var(--atenuado); line-height: 1.5;">
-        Confirmaremos la disponibilidad y el precio final por WhatsApp.
-        Una vez aprobado, podrás pagar el adelanto aquí mismo.
+    <div class="panel" style="border-radius: 24px; position: relative; top: -20px; box-shadow: 0 15px 40px var(--negro-suave); border: 1px solid var(--linea);">
+      <p class="hSub" style="margin: 0 0 12px 0; font-size: 1rem; color: var(--texto); opacity: 0.8; line-height: 1.6; text-align: center;">
+        Inicia tu solicitud aquí. Confirmaremos detalles, disponibilidad y el precio final directamente por WhatsApp.
       </p>
 
       <div class="card" style="padding:16px;">
@@ -202,8 +201,8 @@
 
   <!-- MODAL DE CONFIRMACIÓN -->
   <div class="modal-fondo" id="confirmModalFondo">
-    <div class="modal-tarjeta" style="max-width:400px; text-align:center; padding:35px 24px; border-radius:24px; border:1px solid rgba(0,79,57,0.1); box-shadow:0 20px 50px rgba(0,0,0,0.15);">
-      <i class="fas fa-check-circle" style="font-size:3.5rem; color:#128c7e; margin-bottom:16px;"></i>
+    <div class="modal-tarjeta" style="max-width:400px; text-align:center; padding:35px 24px; border-radius:24px; border:1px solid var(--linea); box-shadow:0 20px 50px var(--negro-suave);">
+      <i class="fas fa-check-circle" style="font-size:3.5rem; color:var(--primario); margin-bottom:16px;"></i>
       <h3 style="margin:0 0 12px 0; font-family:'Playfair Display',serif; color:var(--primario); font-size:1.6rem;">¿Enviar Solicitud?</h3>
       <p style="color:var(--texto); opacity:0.85; font-size:1rem; line-height:1.5; margin-bottom:28px;">Revisaremos tu pedido y te confirmaremos disponibilidad y precio final a través de WhatsApp. ¿Deseas continuar?</p>
       
@@ -325,7 +324,7 @@
     window.abrirModalProducto = function(p) {
       document.getElementById('modalImg').innerHTML = p.image_url
         ? `<img src="${p.image_url}" alt="${p.name}">`
-        : `<div class="modal-img-placeholder"><i class="fas fa-cake-candles"></i></div>`;
+        : `<div class="modal-img-placeholder" style="background:var(--suave);color:var(--primario);display:flex;align-items:center;justify-content:center;height:200px;font-size:3rem;"><i class="fas fa-cake-candles"></i></div>`;
       let tipo = p.type === 'EXPRESS' ? 'RÁPIDO' : p.type === 'CUSTOM' ? 'PERSONALIZADO' : 'PACK';
       let disponible = p.availability === 'OUT' ? 'AGOTADO' : 'DISPONIBLE';
       document.getElementById('modalEtiqueta').textContent = `${tipo} • ${disponible}`;
@@ -336,15 +335,14 @@
       if (divDetalles) divDetalles.innerHTML = '';
 
       document.getElementById('modalPrecio').innerHTML = p.price_bs
-        ? `<strong>Bs ${p.price_bs}</strong><small>referencial</small>`
-        : `<strong>A confirmar</strong><small>por WhatsApp</small>`;
+        ? `<strong>Bs ${p.price_bs}</strong>`
+        : `<strong>Precio a confirmar</strong>`;
       const canAdd = (p.type === 'EXPRESS' || p.type === 'PACK') && p.availability !== 'OUT';
-      // in custom.html we might just redirect back to products or cart if they add
       document.getElementById('modalAccion').innerHTML = canAdd
-        ? `<button class="boton primario" onclick="window.agregarDesdeModal(${p.id})"><i class="fas fa-cart-plus"></i> Agregar</button>`
+        ? `<button class="btn whatsapp" style="padding:10px 20px; border-radius:12px;" onclick="window.agregarDesdeModal(${p.id})"><i class="fas fa-cart-plus"></i> Agregar</button>`
         : p.type !== 'EXPRESS'
-          ? `<a class="boton primario" href="./custom.html?type=${p.type}"><i class="fas fa-paper-plane"></i> Solicitar</a>`
-          : `<button class="boton" disabled>Agotado</button>`;
+          ? `<a class="btn whatsapp" style="padding:10px 20px; border-radius:12px; text-decoration:none;" href="./custom.html?type=${p.type}"><i class="fas fa-paper-plane"></i> Solicitar</a>`
+          : `<button class="btn" disabled style="background:var(--atenuado); color:white;">Agotado</button>`;
       document.getElementById('modalFondo').classList.add('activo');
       document.body.style.overflow = 'hidden';
     };

@@ -1,7 +1,26 @@
 // js/cart-manager.js
 
+const CART_KEY = "sp_cart";
+const CART_TS_KEY = "sp_cart_ts";
+const CART_TTL_MS = 4 * 60 * 60 * 1000; // 4 horas
+
+function isCartExpired() {
+  const ts = localStorage.getItem(CART_TS_KEY);
+  if (!ts) return false; // No timestamp = no cart yet
+  return (Date.now() - Number(ts)) > CART_TTL_MS;
+}
+
+function touchCartTimestamp() {
+  localStorage.setItem(CART_TS_KEY, String(Date.now()));
+}
+
 export function getCart() {
-  return JSON.parse(localStorage.getItem("sp_cart") || "[]");
+  if (isCartExpired()) {
+    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(CART_TS_KEY);
+    return [];
+  }
+  return JSON.parse(localStorage.getItem(CART_KEY) || "[]");
 }
 
 export function cartCount() {
@@ -15,10 +34,11 @@ function notifyCartUpdated() {
 }
 
 export function setCart(items) {
-  localStorage.setItem("sp_cart", JSON.stringify(items));
+  localStorage.setItem(CART_KEY, JSON.stringify(items));
+  touchCartTimestamp();
   notifyCartUpdated();
-  updateCartMini(); // si existe en la página
-  updateCartBadge(); // si existe en navbar
+  updateCartMini();
+  updateCartBadge();
 }
 
 export function addToCart(p) {
@@ -57,6 +77,8 @@ export function updateQty(productId, qty) {
 }
 
 export function clearCart() {
+  localStorage.removeItem(CART_KEY);
+  localStorage.removeItem(CART_TS_KEY);
   setCart([]);
 }
 
@@ -111,6 +133,6 @@ export function bindCartCounters() {
   render();
   window.addEventListener("sp_cart_updated", render);
   window.addEventListener("storage", (e) => {
-    if (e.key === "sp_cart") render();
+    if (e.key === CART_KEY) render();
   });
 }

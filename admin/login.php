@@ -108,45 +108,140 @@ if ($e === 'notlogged') $info = "Debes iniciar sesión para entrar al admin.";
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ESENCIA · Login de Admin</title>
+  <link rel="stylesheet" href="../public/css/app.css">
   <style>
-    body{font-family:system-ui,Arial;background:#fffaca;color:#151613;margin:0;padding:24px}
-    .card{max-width:380px;margin:0 auto;background:#fff;border:1px solid #ddd;border-radius:14px;padding:16px}
-    input{width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;margin:8px 0}
-    button{width:100%;padding:12px;border-radius:10px;border:1px solid #004f39;background:#004f39;color:#fffaca;cursor:pointer}
-    .err{background:#ffe8e8;border:1px solid #ffb3b3;padding:10px;border-radius:10px;margin:10px 0}
-    .info{background:#e7f3ff;border:1px solid #b3d7ff;padding:10px;border-radius:10px;margin:10px 0}
-    .muted{color:#666;font-size:13px}
+    body {
+      background-color: var(--fondo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card-admin {
+      background: #fff;
+      border: 1px solid var(--linea);
+      border-top: 3px solid var(--negro); /* Borde fino */
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 15px 45px var(--negro-suave);
+      position: relative;
+      overflow: hidden;
+    }
+    /* Eliminar franja gruesa */
+    .card-admin::before {
+      display: none;
+    }
+    .login-logo {
+      width: 120px;
+      display: block;
+      margin: 0 auto 30px;
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: var(--primario);
+      text-align: center;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--linea);
+      background: var(--tarjeta);
+      transition: all 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--primario);
+      box-shadow: 0 0 0 4px var(--suave);
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--primario);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #003d2c;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 79, 57, 0.2);
+    }
+    .err {
+      background: #fff3f3;
+      color: #d63031;
+      border: 1px solid #fab1a0;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .info {
+      background: #e7f3ff;
+      color: #0984e3;
+      border: 1px solid #74b9ff;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .footer-admin {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 13px;
+      color: var(--atenuado);
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🔒 ESENCIA · Admin</h2>
-    <p class="muted">solo personal autorizado.</p>
+  <div class="card-admin">
+    <img src="../public/img/logo.png" alt="ESENCIA" class="login-logo">
+    <h2>Panel de Control</h2>
 
     <?php if ($info): ?>
-      <div class="info"><?= h($info) ?></div>
+      <div class="info"><i class="fas fa-info-circle"></i> <?= h($info) ?></div>
     <?php endif; ?>
 
     <?php if ($error): ?>
-      <div class="err"><?= h($error) ?></div>
+      <div class="err"><i class="fas fa-exclamation-circle"></i> <?= h($error) ?></div>
     <?php endif; ?>
 
     <form method="post" autocomplete="off">
-  <input
-    name="username"
-    placeholder="Usuario"
-    autocomplete="username"
-    required
-  >
-  <input
-    name="password"
-    type="password"
-    placeholder="Contraseña"
-    autocomplete="current-password"
-    required
-  >
-  <button type="submit">Entrar</button>
-</form>
+      <div class="input-group">
+        <input
+          name="username"
+          placeholder="Usuario"
+          autocomplete="username"
+          required
+        >
+      </div>
+      <div class="input-group">
+        <input
+          name="password"
+          type="password"
+          placeholder="Contraseña"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+    
+    <div class="footer-admin">
+      &copy; <?= date('Y') ?> Esencia Repostería · Admin
+    </div>
   </div>
 </body>
 </html>

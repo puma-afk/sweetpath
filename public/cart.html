@@ -34,9 +34,9 @@
 
   <main class="container" style="margin-top:16px">
     <div class="panel">
-      <h2 style="margin:0">Mi carrito</h2>
-      <p class="hSub" style="margin-top:8px">
-        Aquí puedes realizar la compra rápida de nuestra vitrina o packs.
+      <h2 style="margin:0; font-family:'Playfair Display', serif; color:var(--primario);">Mi Carrito</h2>
+      <p class="hSub" style="margin-top:8px; color:var(--texto); opacity:0.8;">
+        Confirma tu selección y prepárate para disfrutar de lo mejor de Esencia.
       </p>
 
       <div id="cartBox" class="notice">Cargando…</div>
@@ -66,10 +66,12 @@
           <input id="date" class="input" type="date" title="¿Cuándo vas a retirar?" style="flex:1;min-width:100%">
           <div class="time-selector" title="Elige horario de retiro"
             style="display:flex;gap:8px;flex:1;min-width:100%;margin-top:8px">
-            <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)" style="flex:1">☀️
-              Mañana</button>
-            <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)" style="flex:1">🌆
-              Tarde</button>
+            <button type="button" class="btn time-pill" data-val="Mañana (10:00 - 13:00)" style="flex:1">
+              <i class="fas fa-sun"></i> Mañana
+            </button>
+            <button type="button" class="btn time-pill" data-val="Tarde (14:00 - 19:00)" style="flex:1">
+              <i class="fas fa-moon"></i> Tarde
+            </button>
             <input type="hidden" id="time" value="">
           </div>
         </div>

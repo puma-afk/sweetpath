@@ -1,15 +1,17 @@
 /* --- 1. IMPORTACIÓN DE TIPOGRAFÍAS --- */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
 
 /* --- 2. PALETA DE COLORES Y VARIABLES --- */
 :root {
   --fondo: #fffbf0; /* CREMA SUAVE - Fondo general */
   --tarjeta: #ffffff; /* BLANCO PURO - Tarjetas y paneles */
-  --texto: #151613; /* GRIS OSCURO - Textos legibles */
+  --texto: #1a1a1a; /* GRIS MUY OSCURO - Textos legibles */
   --primario: #004f39; /* VERDE OSCURO - Acentos y botones */
+  --negro: #0a0a0a; /* NEGRO DE MARCA - Detalles premium */
   --atenuado: #666666; /* GRIS MEDIO - Textos secundarios */
-  --linea: rgba(0, 79, 57, 0.15); /* Líneas teñidas de verde sutil */
-  --suave: rgba(0, 79, 57, 0.05); /* Fondos hover suaves */
+  --linea: rgba(0, 79, 57, 0.12); /* Líneas teñidas de verde sutil */
+  --suave: rgba(0, 79, 57, 0.04); /* Fondos hover suaves */
+  --negro-suave: rgba(0, 0, 0, 0.05); /* Sombras y jaspeados */
   --peligro: #e84118;
   
   /* Aliases for better compatibility */
@@ -30,8 +32,8 @@ body {
   background: var(--bg);
   background-color: var(--bg); /* explicit for some browsers */
   color: var(--text);
-  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
   overflow-x: hidden;
   position: relative;
 }
@@ -302,12 +304,12 @@ a {
 }
 
 .btn.whatsapp {
-  background-color: #25D366;
+  background-color: var(--negro);
   color: #ffffff !important;
-  border-color: #25D366;
+  border-color: var(--negro);
   font-size: 16px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   font-weight: 700;
 }
 
@@ -346,9 +348,9 @@ a {
 .panel {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 8px 24px rgba(0, 79, 57, 0.04);
+  box-shadow: 0 10px 30px var(--negro-suave), 0 4px 12px rgba(0, 79, 57, 0.02);
 }
 
 .hTitle {
@@ -395,7 +397,7 @@ a {
   border: 1px solid var(--line);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 79, 57, 0.03);
+  box-shadow: 0 4px 15px var(--negro-suave);
   position: relative;
   transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
@@ -663,3 +665,61 @@ a {
     font-size: 22px;
   }
 }
+
+/* --- 11. UTILIDADES DE MARCA (NEGRO Y JASPEADOS) --- */
+.jaspeado-marca {
+  background-image: radial-gradient(var(--negro-suave) 0.6px, transparent 0.6px);
+  background-size: 12px 12px;
+}
+
+.franja-marca {
+  border-left: 4px solid var(--negro);
+  padding-left: 15px;
+}
+
+.card-perfil {
+  background: white;
+  border: 1px solid var(--linea);
+  border-top: 3px solid var(--negro); /* Borde fino en vez de franja gruesa */
+  border-radius: 24px;
+  padding: 40px 20px;
+  box-shadow: 0 15px 45px var(--negro-suave), 0 5px 15px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* El pseudo-elemento se quita o se vuelve invisible */
+.card-perfil::before {
+  display: none;
+}
+
+.avatar-perfil {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--fondo);
+  box-shadow: 0 8px 25px var(--negro-suave);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+  object-fit: cover;
+}
+
+.btn-logout {
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  font-size: 1.05rem;
+  border-radius: 12px;
+  background: rgba(231, 76, 60, 0.08); 
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(231, 76, 60, 0.15);
+  transform: translateY(-2px);
+}

@@ -6,56 +6,170 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ESENCIA — Iniciar Sesión</title>
     <link rel="stylesheet" href="./css/app.css" />
+    <link rel="stylesheet" href="./css/tienda.css" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      .login-page {
+        background-color: var(--fondo);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .login-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+      }
+      .login-card {
+        background: white;
+        border: 1px solid var(--linea);
+        border-top: 3px solid var(--primario);
+        border-radius: 24px;
+        padding: 50px 30px 40px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 20px 60px var(--negro-suave);
+        position: relative;
+      }
+      /* Círculo decorativo que enmarca el logo */
+      .logo-circle {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, var(--suave), rgba(0,79,57,0.06));
+        border: 2px solid rgba(0, 79, 57, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        box-shadow: 0 8px 30px rgba(0, 79, 57, 0.08);
+        position: relative;
+      }
+      .logo-circle::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 1px dashed rgba(0, 79, 57, 0.12);
+      }
+      .logo-circle img {
+        width: 85px;
+        height: auto;
+        object-fit: contain;
+      }
+      .login-card h2 {
+        color: var(--primario);
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        margin: 0 0 8px 0;
+      }
+      .login-sub {
+        color: var(--texto);
+        font-size: 0.9rem;
+        opacity: 0.7;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+      .login-google {
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: center;
+      }
+      .login-back {
+        border-top: 1px solid var(--linea);
+        padding-top: 18px;
+        margin-top: 10px;
+      }
+      .login-back a {
+        color: var(--primario);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: opacity 0.2s;
+      }
+      .login-back a:hover { opacity: 0.7; }
+      .login-footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--atenuado);
+        font-size: 0.8rem;
+      }
+      /* Decoraciones de fondo crema */
+      .login-deco {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(0, 79, 57, 0.03);
+        pointer-events: none;
+      }
+      .login-deco-1 { width: 200px; height: 200px; top: -60px; right: -60px; }
+      .login-deco-2 { width: 150px; height: 150px; bottom: -40px; left: -40px; }
+      @media (max-width: 500px) {
+        .login-card { padding: 40px 20px 30px; margin: 10px; }
+        .logo-circle { width: 110px; height: 110px; }
+        .logo-circle img { width: 70px; }
+        .login-card h2 { font-size: 1.5rem; }
+      }
+    </style>
 </head>
 
 <body>
-    <!-- HEADER -->
-    <header class="navegacion">
+    <div class="login-page">
+      <!-- HEADER -->
+      <header class="navegacion">
         <div class="container barra-nav">
-            <a href="./index.html" class="logo-link">
-                <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
+          <a href="./index.html" class="logo-link">
+            <img src="./img/logo_white.png" alt="ESENCIA" class="logo-img">
+          </a>
+        </div>
+      </header>
+
+      <div class="login-content">
+        <div class="login-card">
+          <!-- Decoraciones de fondo -->
+          <div class="login-deco login-deco-1"></div>
+          <div class="login-deco login-deco-2"></div>
+
+          <!-- Logo con marco circular -->
+          <div class="logo-circle">
+            <img src="./img/logo.png" alt="ESENCIA">
+          </div>
+
+          <h2>Bienvenido</h2>
+          <p class="login-sub">Inicia sesión para gestionar tus pedidos personalizados y ver tu historial artesanal.</p>
+
+          <div class="login-google">
+            <div id="g_id_onload"
+                data-client_id="349806175640-65d64o579a7v28s66mr06q37175u89vo.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                data-text="signin_with" data-size="large" data-logo_alignment="left">
+            </div>
+          </div>
+
+          <div class="login-back">
+            <a href="./index.html">
+              <i class="fas fa-arrow-left"></i> Volver a la tienda
             </a>
+          </div>
         </div>
-    </header>
+      </div>
 
-    <main class="container" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px); padding: 20px;">
-        <div style="background: linear-gradient(135deg, var(--fondo), #ffffff); border: 1px solid rgba(0,79,57,0.1); border-radius: 20px; padding: 50px 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); position: relative; overflow: hidden; max-width: 400px; width: 100%; text-align: center;">
-            
-            <div style="position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: rgba(0, 79, 57, 0.03); border-radius: 50%;"></div>
-            <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(0, 79, 57, 0.03); border-radius: 50%;"></div>
-            
-            <div style="width: 80px; height: 80px; background: var(--primario); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 20px rgba(0,79,57,0.2); position: relative; z-index: 2;">
-                <i class="fas fa-leaf" style="color: var(--fondo); font-size: 2rem;"></i>
-            </div>
-            
-            <h2 style="color: var(--primario); font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; position: relative; z-index: 2;">Bienvenido a Esencia</h2>
-            <p style="color: var(--texto); font-size: 0.95rem; margin-bottom: 35px; opacity: 0.8; position: relative; z-index: 2; line-height: 1.5;">Inicia sesión de forma segura para revisar tus pedidos y gestionar tu cuenta.</p>
-
-            <div style="position: relative; z-index: 2; margin-bottom: 30px; display: flex; justify-content: center;">
-                <div id="g_id_onload"
-                    data-client_id="349806175640-65d64o579a7v28s66mr06q37175u89vo.apps.googleusercontent.com"
-                    data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
-                    data-auto_prompt="false">
-                </div>
-
-                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
-                    data-text="signin_with" data-size="large" data-logo_alignment="left">
-                </div>
-            </div>
-
-            <div style="margin-top: 15px; position: relative; z-index: 2;">
-                <a href="./index.html" class="boton" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; color: var(--primario); background: transparent; border: 1px solid rgba(0,79,57,0.2); border-radius: 12px; padding: 10px 20px; transition: all 0.2s;">
-                    <i class="fas fa-arrow-left"></i> Volver a la tienda
-                </a>
-            </div>
-        </div>
-    </main>
+      <div class="login-footer">
+        &copy; 2026 Esencia Repostería Artesanal
+      </div>
+    </div>
 
     <script>
         function handleCredentialResponse(response) {
-            // Enviamos el token JWT a nuestro backend PHP
             fetch('../api/auth_google.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -64,7 +178,6 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        // Si todo sale bien, vamos al historial
                         window.location.href = './index.html';
                     } else {
                         alert("Error al iniciar sesión: " + data.error);
