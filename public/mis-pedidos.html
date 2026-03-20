@@ -118,6 +118,9 @@
       .timeline-label.done, .timeline-label.current { color: var(--primario); }
       .timeline-label.pending { color: #9ca3af; }
     </style>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#004f39">
+    <link rel="apple-touch-icon" href="./img/icon-192.png">
 </head>
 
 <body>
@@ -379,6 +382,15 @@
             } catch(e) {}
         }
         verificarSesion();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.error('SW registration failed: ', err);
+                });
+            });
+        }
     </script>
 </body>
 

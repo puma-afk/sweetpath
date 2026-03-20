@@ -1,0 +1,20 @@
+{
+  "name": "ESENCIA - Repostería",
+  "short_name": "Esencia",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fffaca",
+  "theme_color": "#004f39",
+  "icons": [
+    {
+      "src": "./img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
