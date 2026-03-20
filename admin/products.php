@@ -255,6 +255,14 @@ $err = trim($_GET['err'] ?? '');
         .products-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <body>
 

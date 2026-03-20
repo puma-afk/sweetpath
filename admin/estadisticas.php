@@ -190,6 +190,14 @@ $ticketStats = $pdo->query("
     .modal-close:hover { background: #f1f5f9; color: #0f172a; }
     .modal-body { padding: 24px; overflow-y: auto; }
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <?php require __DIR__ . '/_navbar.php'; ?>
 

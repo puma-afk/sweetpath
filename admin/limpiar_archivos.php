@@ -106,6 +106,14 @@ $eligibleCount = (int)($eligible->fetch()['n'] ?? 0);
     td,th{padding:8px;border-bottom:1px solid #eee;text-align:left}
     small{color:#666}
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <body>
 <div class="card">

@@ -50,6 +50,14 @@ $err = trim($_GET['err'] ?? '');
     a{color:#004f39; font-weight: 700; text-decoration: none; display:inline-flex; align-items:center; gap:6px;}
     a:hover{text-decoration: underline;}
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <?php require __DIR__ . '/_navbar.php'; ?>
 

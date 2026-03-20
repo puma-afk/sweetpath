@@ -139,6 +139,14 @@ $err = trim($_GET['err'] ?? '');
     hr { border: none; border-top: 1px dashed rgba(0,0,0,0.1); margin: 25px 0; }
     .help-text { font-size: 12px; color: #64748b; margin-top: -12px; margin-bottom: 16px; display: block; }
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <body>
 <?php require __DIR__ . '/_navbar.php'; ?>

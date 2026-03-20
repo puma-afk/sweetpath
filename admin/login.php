@@ -204,6 +204,14 @@ if ($e === 'notlogged') $info = "Debes iniciar sesión para entrar al admin.";
       color: var(--atenuado);
     }
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <body>
   <div class="card-admin">

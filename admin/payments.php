@@ -173,6 +173,14 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
         .btn, button { width: 100%; justify-content: center; }
     }
   </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(r => console.log('Admin SW registered')).catch(e => console.log('Admin SW fail', e));
+      });
+    }
+  </script>
 </head>
 <body>
 <?php require __DIR__ . '/_navbar.php'; ?>
