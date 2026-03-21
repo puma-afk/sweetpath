@@ -106,7 +106,7 @@ $eligibleCount = (int)($eligible->fetch()['n'] ?? 0);
     td,th{padding:8px;border-bottom:1px solid #eee;text-align:left}
     small{color:#666}
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

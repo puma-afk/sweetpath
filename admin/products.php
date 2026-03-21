@@ -177,20 +177,7 @@ $err = trim($_GET['err'] ?? '');
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 20px;
-    }
-
-    .card {
-        background: var(--card-bg);
-        border-radius: 24px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        border: 1px solid rgba(0, 0, 0, 0.03);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .card:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06); }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0, 79, 57, 0.08); }
 
     .img-container {
         width: 100%;
@@ -255,7 +242,7 @@ $err = trim($_GET['err'] ?? '');
         .products-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

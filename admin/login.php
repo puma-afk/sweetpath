@@ -204,7 +204,7 @@ if ($e === 'notlogged') $info = "Debes iniciar sesión para entrar al admin.";
       color: var(--atenuado);
     }
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

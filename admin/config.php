@@ -139,7 +139,7 @@ $err = trim($_GET['err'] ?? '');
     hr { border: none; border-top: 1px dashed rgba(0,0,0,0.1); margin: 25px 0; }
     .help-text { font-size: 12px; color: #64748b; margin-top: -12px; margin-bottom: 16px; display: block; }
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

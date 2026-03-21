@@ -74,8 +74,8 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
         border-radius: 24px;
         padding: 24px;
         margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        border: 1px solid rgba(0, 0, 0, 0.03);
+        box-shadow: 0 10px 30px rgba(0, 79, 57, 0.04);
+        border: 1px solid rgba(0, 79, 57, 0.03);
         position: relative;
         overflow: hidden;
     }
@@ -173,7 +173,7 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
         .btn, button { width: 100%; justify-content: center; }
     }
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -249,8 +249,5 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
 <?php endif; ?>
 
 </main>
-</body>
-</html>
-
 </body>
 </html>

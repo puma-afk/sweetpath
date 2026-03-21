@@ -49,7 +49,7 @@ function dt_local_value(?string $dt): string {
     a{color:#004f39; font-weight: 700; text-decoration: none; display:inline-flex; align-items:center; gap:6px;}
     a:hover{text-decoration: underline;}
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

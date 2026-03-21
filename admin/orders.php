@@ -197,7 +197,7 @@ $msg = trim($_GET['msg'] ?? '');
     .ref-thumbnail{width:80px; height:80px; border-radius:12px; object-fit:cover; border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor:pointer;}
     .wa-btn { background: #25D366; color:#fff; border:none; padding: 8px 12px; border-radius:10px; font-size:13px; font-weight:bold; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
     details summary { cursor:pointer; color:#004f39; font-weight:bold; margin-top:10px; font-size:14px; outline:none; }
-    .card { background: var(--card-bg); border-radius: 20px; padding: 22px; margin-bottom: 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
+    .card { background: var(--card-bg); border-radius: 20px; padding: 22px; margin-bottom: 18px; box-shadow: 0 4px 16px rgba(0, 79, 57, 0.06); border: 1px solid rgba(0, 79, 57, 0.05); }
     .status-line { height: 0; }
     /* === COMPACT TOOLBAR === */
     .admin-toolbar {
@@ -265,7 +265,7 @@ $msg = trim($_GET['msg'] ?? '');
     /* MODAL STYLES */
     .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+        background: rgba(0,79,57,0.6); backdrop-filter: blur(5px);
         display: flex; align-items: center; justify-content: center;
         opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 3000;
         padding: 20px;
@@ -284,7 +284,7 @@ $msg = trim($_GET['msg'] ?? '');
     .modal-close:hover { background: #f1f5f9; color: #0f172a; }
     .modal-body { padding: 24px; overflow-y: auto; }
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

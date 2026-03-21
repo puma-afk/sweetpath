@@ -184,7 +184,7 @@ $err = trim($_GET['err'] ?? '');
         padding-top: 15px;
     }
   </style>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

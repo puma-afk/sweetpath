@@ -52,6 +52,8 @@ function render() {
 
   if (!cart.length) {
     cartBox.textContent = "Tu carrito está vacío.";
+    const totalContainer = document.getElementById("cartTotalContainer");
+    if (totalContainer) totalContainer.style.display = "none";
     return;
   }
 
