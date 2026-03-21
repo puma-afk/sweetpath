@@ -189,7 +189,7 @@
         async function cargarPedidos() {
             const container = document.getElementById('listaPedidos');
             try {
-                const res = await fetch('../api/get_my_orders.php');
+                const res = await fetch('/api/get_my_orders.php');
                 const data = await res.json();
 
                 if (!data.success || !data.orders) {
@@ -293,7 +293,7 @@
                                 <i class="fas fa-hourglass-half" style="margin-right:4px;"></i>Reserva pagando el 30%: mínimo <b>Bs ${o.min_payment_bs}</b>
                             </div>` : ''}
                         </div>
-                        <form action="../api/payment_submit.php" method="POST" enctype="multipart/form-data"
+                        <form action="/api/payment_submit.php" method="POST" enctype="multipart/form-data"
                             style="display:flex;flex-direction:column;gap:10px;">
                             <input type="hidden" name="order_code" value="${o.order_code}">
                             <div style="display:flex;align-items:center;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:white;">
@@ -360,7 +360,7 @@
         // ── Session check & inject user in nav
         async function verificarSesion() {
             try {
-                const res = await fetch('../api/get_session.php');
+                const res = await fetch('/api/get_session.php');
                 const user = await res.json();
 
                 if (!user.logged) {

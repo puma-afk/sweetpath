@@ -123,7 +123,7 @@
   <script>
     async function verificarSesion() {
       try {
-        const res = await fetch('../api/get_session.php');
+        const res = await fetch('/api/get_session.php');
         const user = await res.json();
         const nav = document.getElementById('mainNav');
         if (user.logged) {

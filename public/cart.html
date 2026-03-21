@@ -182,7 +182,7 @@
   <script>
     // Session check & inject user avatar in nav
     async function verificarSesion() {
-      const res = await fetch('../api/get_session.php');
+      const res = await fetch('/api/get_session.php');
       const user = await res.json();
       const nav = document.getElementById('mainNav');
       const path = window.location.pathname;

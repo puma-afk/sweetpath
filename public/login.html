@@ -173,7 +173,7 @@
 
     <script>
         function handleCredentialResponse(response) {
-            fetch('../api/auth_google.php', {
+            fetch('/api/auth_google.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: response.credential })
