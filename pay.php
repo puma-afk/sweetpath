@@ -43,7 +43,7 @@ if (!empty($o['qr_asset_id'])) {
   $qr->execute([(int)$o['qr_asset_id']]);
   $qrRow = $qr->fetch();
   if ($qrRow && !empty($qrRow['path_original'])) {
-    $qrUrl = $qrRow['path_original']; // should be a web path like /sweetpath/storage/uploads/qr.webp
+    $qrUrl = $qrRow['path_original']; // should be a web path like /storage/uploads/qr.webp
   }
 }
 ?>
@@ -103,7 +103,7 @@ if (!empty($o['qr_asset_id'])) {
 
     <h3>2) Sube tu comprobante</h3>
 
-    <form action="/sweetpath/api/payment_submit.php" method="post" enctype="multipart/form-data">
+    <form action="/api/payment_submit.php" method="post" enctype="multipart/form-data">
       <input type="hidden" name="order_code" value="<?= h($o['order_code']) ?>">
 
       <div class="row">

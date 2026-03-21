@@ -3,5 +3,5 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 $_SESSION = [];
 session_destroy();
-header("Location: /sweetpath/admin/login.php");
+header("Location: /admin/login.php");
 exit;

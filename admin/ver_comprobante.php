@@ -2,7 +2,7 @@
 /**
  * admin/ver_comprobante.php
  * Sirve imágenes de comprobantes de pago SOLO a admins autenticados.
- * Uso: /sweetpath/admin/ver_comprobante.php?payment_id=123
+ * Uso: /admin/ver_comprobante.php?payment_id=123
  */
 require __DIR__ . '/_auth.php';
 require_admin();
@@ -31,10 +31,10 @@ if (!$row || empty($row['path_original'])) {
 }
 
 // Convertir web path a filesystem path
-// path_original es algo como: /sweetpath/storage/uploads/proof_SP-xxx_abc.jpg
+// path_original es algo como: /storage/uploads/proof_SP-xxx_abc.jpg
 $webPath = $row['path_original'];
 // Construir ruta real en el sistema de archivos
-$fsPath = realpath(__DIR__ . '/../' . ltrim(str_replace('/sweetpath/', '/', $webPath), '/'));
+$fsPath = realpath(__DIR__ . '/../' . ltrim(str_replace('/', '/', $webPath), '/'));
 
 if (!$fsPath || !file_exists($fsPath)) {
     http_response_code(404);

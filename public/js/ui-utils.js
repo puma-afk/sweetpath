@@ -13,7 +13,7 @@ export function card(p) {
   let typeDisplay = p.type;
   if (p.type === "EXPRESS") typeDisplay = "RÁPIDO";
   else if (p.type === "CUSTOM") typeDisplay = "PERSONALIZADO";
-  else if (p.type === "PACK") typeDisplay = "PACK";
+  else if (p.type === "PACK") typeDisplay = "PAQUETE";
 
   const availDisplay = p.availability === "OUT" ? "AGOTADO" : p.availability;
   const badgeText = `${typeDisplay} • ${availDisplay}`;

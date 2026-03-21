@@ -17,7 +17,7 @@ const ADMIN_SESSION_TIMEOUT_SECONDS = 30 * 60; // 30 minutos
 function require_admin(): void {
   // Si no hay sesión de admin -> login
   if (empty($_SESSION['admin_user'])) {
-    header("Location: /sweetpath/admin/login.php?e=notlogged");
+    header("Location: /admin/login.php?e=notlogged");
     exit;
   }
 
@@ -35,7 +35,7 @@ function require_admin(): void {
       );
     }
     session_destroy();
-    header("Location: /sweetpath/admin/login.php?e=timeout");
+    header("Location: /admin/login.php?e=timeout");
     exit;
   }
 

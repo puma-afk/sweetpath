@@ -154,7 +154,7 @@ async function loadStoreStatus() {
   const storeStatusContainer = document.getElementById("storeStatusContainer");
   if (!storeStatusContainer) return;
   try {
-    const res = await fetch("/sweetpath/api/store_status.php");
+    const res = await fetch("/api/store_status.php");
     const status = await res.json();
     if (status.is_open) {
       storeStatusContainer.innerHTML = `<span style="background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.5); padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); letter-spacing: 0.5px; text-transform: uppercase;"><i class="fas fa-door-open"></i> Abierto Ahora</span>`;

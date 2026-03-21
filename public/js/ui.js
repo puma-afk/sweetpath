@@ -29,10 +29,10 @@ export function prettyError(err) {
 
   // Horario / pausa
   if (err?.status === 403) {
-    return "Ahora mismo los pedidos EXPRESS están pausados 🙏\nPuedes intentar más tarde o enviar una solicitud PERSONALIZADA/PACK.";
+    return "Ahora mismo los pedidos EXPRESS están pausados 🙏\nPuedes intentar más tarde o enviar una solicitud PERSONALIZADA/PAQUETE.";
   }
   if (msg.includes("fuera de horario") || msg.includes("pausad")) {
-    return "Estamos fuera de horario por ahora 🌙\nPuedes enviar solicitud CUSTOM/PACK y te confirmamos cuando estemos atendiendo.";
+    return "Estamos fuera de horario por ahora 🌙\nPuedes enviar solicitud CUSTOM/PAQUETE y te confirmamos cuando estemos atendiendo.";
   }
 
   // Stock / cantidad

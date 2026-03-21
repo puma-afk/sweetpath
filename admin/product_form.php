@@ -64,7 +64,7 @@ $err = trim($_GET['err'] ?? '');
 <div class="admin-page-content">
   <div class="card" style="margin: 0 auto;">
     <h2 style="margin-top:0;"><i class="fas fa-edit"></i> <?= $id>0 ? 'Editar producto' : 'Nuevo producto' ?></h2>
-    <p style="margin-bottom:20px;"><a href="/sweetpath/admin/products.php"><i class="fas fa-arrow-left"></i> Volver a Productos</a></p>
+    <p style="margin-bottom:20px;"><a href="/admin/products.php"><i class="fas fa-arrow-left"></i> Volver a Productos</a></p>
 
     <?php if ($msg): ?><div class="ok"><?= h($msg) ?></div><?php endif; ?>
     <?php if ($err): ?><div class="err"><?= h($err) ?></div><?php endif; ?>
@@ -73,7 +73,7 @@ $err = trim($_GET['err'] ?? '');
       <img class="img" src="<?= h($p['img']) ?>" alt="">
     <?php endif; ?>
 
-    <form method="post" action="/sweetpath/admin/product_save.php" enctype="multipart/form-data">
+    <form method="post" action="/admin/product_save.php" enctype="multipart/form-data">
       <?= csrf_input() ?>
       <input type="hidden" name="action" value="<?= $id>0 ? 'update' : 'create' ?>">
       <input type="hidden" name="id" value="<?= $id ?>">

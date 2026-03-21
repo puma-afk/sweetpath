@@ -6,11 +6,11 @@ csrf_verify_or_die();
 require __DIR__ . '/../db.php';
 
 function back_ok($msg){
-  header("Location: /sweetpath/admin/config.php?msg=" . rawurlencode($msg));
+  header("Location: /admin/config.php?msg=" . rawurlencode($msg));
   exit;
 }
 function back_err($msg){
-  header("Location: /sweetpath/admin/config.php?err=" . rawurlencode($msg));
+  header("Location: /admin/config.php?err=" . rawurlencode($msg));
   exit;
 }
 function clean_whatsapp($n): string {
@@ -64,7 +64,7 @@ if ($action === 'upload_qr') {
   if (!in_array($mime, $allowed, true)) back_err("Formato no permitido (JPG/PNG/WebP)");
 
   $uploadDirFs = __DIR__ . '/../storage/qr';
-  $uploadDirWeb = '/sweetpath/storage/qr';
+  $uploadDirWeb = '/storage/qr';
   if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0755, true);
 
   $ext = ($mime === 'image/png') ? 'png' : (($mime === 'image/webp') ? 'webp' : 'jpg');

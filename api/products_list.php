@@ -94,7 +94,7 @@ $products = array_map(function($r){
     "availability" => (string)$r['availability'],
     "max_per_order" => (int)$r['max_per_order'],
     "min_lead_hours" => (int)$r['min_lead_hours'],
-    "image_url" => $r['image_url'] ? '/sweetpath/' . ltrim((string)$r['image_url'], '/') : null,
+    "image_url" => $r['image_url'] ? '/' . ltrim((string)$r['image_url'], '/') : null,
   ];
 }, $rows);
 

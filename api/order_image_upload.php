@@ -69,7 +69,7 @@ if (!in_array($mime, $allowed, true)) {
 
 // Guardar en storage/uploads/ (protegido, solo admin puede verlo)
 $uploadDirFs  = __DIR__ . '/../storage/uploads';
-$uploadDirWeb = '/sweetpath/storage/uploads';
+$uploadDirWeb = '/storage/uploads';
 if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0755, true);
 
 $ext      = ($mime === 'image/png') ? 'png' : (($mime === 'image/webp') ? 'webp' : 'jpg');

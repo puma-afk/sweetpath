@@ -352,7 +352,7 @@ $msg = trim($_GET['msg'] ?? '');
     </div>
     <div class="adv-filters-actions">
       <button class="toolbar-btn primary" type="submit"><i class="fas fa-filter"></i> Aplicar</button>
-      <a href="/sweetpath/admin/orders.php"><button type="button" class="toolbar-btn"><i class="fas fa-undo"></i> Limpiar</button></a>
+      <a href="/admin/orders.php"><button type="button" class="toolbar-btn"><i class="fas fa-undo"></i> Limpiar</button></a>
     </div>
   </form>
 </div>
@@ -460,8 +460,8 @@ $msg = trim($_GET['msg'] ?? '');
             <?php foreach ($unverifiedWithProof as $p): ?>
               <div style="display:flex; align-items:center; gap:8px; background:#fff; padding:6px 12px; border-radius:12px; border:1px solid #fde68a; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                 <b style="font-size:14px; color:var(--text);">Bs <?= h(bs($p['amount_cents'])) ?></b>
-                <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($p['id']) ?>" target="_blank" class="secondary" style="padding:6px 10px; font-size:11px; text-decoration:none; border-radius:8px; display:inline-flex; align-items:center; gap:4px; font-weight:bold; background:#f3f4f6; border:1px solid #e5e7eb;">📸 Ver</a>
-                <form method="post" action="/sweetpath/admin/payment_verify.php" style="display:inline">
+                <a href="/admin/ver_comprobante.php?payment_id=<?= h($p['id']) ?>" target="_blank" class="secondary" style="padding:6px 10px; font-size:11px; text-decoration:none; border-radius:8px; display:inline-flex; align-items:center; gap:4px; font-weight:bold; background:#f3f4f6; border:1px solid #e5e7eb;">📸 Ver</a>
+                <form method="post" action="/admin/payment_verify.php" style="display:inline">
                   <?= csrf_input() ?>
                   <input type="hidden" name="payment_id" value="<?= h($p['id']) ?>">
                   <button type="submit" class="primary" style="padding:6px 12px; font-size:11px; border-radius:8px; background:#10b981;">✅ Validar</button>
@@ -558,7 +558,7 @@ $msg = trim($_GET['msg'] ?? '');
                       <div style="font-size:11px; color:#64748b; margin-top:4px; font-weight:600;"><i class="far fa-clock"></i> <?= h($p['created_at']) ?></div>
                     </div>
                     <?php if ($p['proof_path']): ?>
-                      <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($p['id']) ?>" target="_blank" class="toolbar-btn primary" style="font-size:11px; padding:8px 12px; border-radius:10px; box-shadow:none;"><i class="fas fa-image"></i> Ver Foto</a>
+                      <a href="/admin/ver_comprobante.php?payment_id=<?= h($p['id']) ?>" target="_blank" class="toolbar-btn primary" style="font-size:11px; padding:8px 12px; border-radius:10px; box-shadow:none;"><i class="fas fa-image"></i> Ver Foto</a>
                     <?php endif; ?>
                   </div>
                 <?php endforeach; ?>
@@ -572,7 +572,7 @@ $msg = trim($_GET['msg'] ?? '');
 
     <div class="actions">
       <?php if ($st === 'CREATED' || $st === 'SOLICITADO'): ?>
-        <form method="post" action="/sweetpath/admin/order_update.php" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex:1;">
+        <form method="post" action="/admin/order_update.php" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex:1;">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
           <input type="hidden" name="action" value="approve_with_quote">
@@ -593,7 +593,7 @@ $msg = trim($_GET['msg'] ?? '');
             </button>
           <?php endif; ?>
         </form>
-        <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+        <form method="post" action="/admin/order_update.php" style="display:inline">
           <?= csrf_input() ?>
           <input type="hidden" name="id" value="<?= h($o['id']) ?>">
           <input type="hidden" name="status" value="RECHAZADO">
@@ -601,7 +601,7 @@ $msg = trim($_GET['msg'] ?? '');
         </form>
       <?php elseif ($st === 'APROBADO_PARA_PAGO'): ?>
         <?php if ($is_min_paid): ?>
-          <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <form method="post" action="/admin/order_update.php" style="display:inline">
             <?= csrf_input() ?>
             <input type="hidden" name="id" value="<?= h($o['id']) ?>">
             <input type="hidden" name="status" value="EN_PRODUCCION">
@@ -615,7 +615,7 @@ $msg = trim($_GET['msg'] ?? '');
           </div>
         <?php endif; ?>
         <?php if ($remaining !== null && $remaining > 0): ?>
-          <form method="post" action="/sweetpath/admin/cash_payment.php" style="display:flex; align-items:center; gap:10px; flex:1;">
+          <form method="post" action="/admin/cash_payment.php" style="display:flex; align-items:center; gap:10px; flex:1;">
             <?= csrf_input() ?>
             <input type="hidden" name="order_id" value="<?= h($o['id']) ?>">
             <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Bs Efectivo" style="width:120px; padding:12px;" required>
@@ -626,7 +626,7 @@ $msg = trim($_GET['msg'] ?? '');
         <?php endif; ?>
       <?php elseif ($st === 'EN_PRODUCCION' || $st === 'LISTO'): ?>
         <?php if ($st === 'EN_PRODUCCION'): ?>
-          <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <form method="post" action="/admin/order_update.php" style="display:inline">
             <?= csrf_input() ?>
             <input type="hidden" name="id" value="<?= h($o['id']) ?>">
             <input type="hidden" name="status" value="LISTO">
@@ -635,7 +635,7 @@ $msg = trim($_GET['msg'] ?? '');
             </button>
           </form>
         <?php else: ?>
-          <form method="post" action="/sweetpath/admin/order_update.php" style="display:inline">
+          <form method="post" action="/admin/order_update.php" style="display:inline">
             <?= csrf_input() ?>
             <input type="hidden" name="id" value="<?= h($o['id']) ?>">
             <input type="hidden" name="status" value="ENTREGADO">
@@ -646,7 +646,7 @@ $msg = trim($_GET['msg'] ?? '');
         <?php endif; ?>
 
         <?php if ($remaining !== null && $remaining > 0): ?>
-          <form method="post" action="/sweetpath/admin/cash_payment.php" style="display:flex; align-items:center; gap:10px; margin-left:auto;">
+          <form method="post" action="/admin/cash_payment.php" style="display:flex; align-items:center; gap:10px; margin-left:auto;">
             <?= csrf_input() ?>
             <input type="hidden" name="order_id" value="<?= h($o['id']) ?>">
             <input type="number" name="amount_bs" step="0.01" min="0" placeholder="Cobrar Bs" style="width:100px; padding:12px;" required>

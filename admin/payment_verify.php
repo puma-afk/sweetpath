@@ -7,7 +7,7 @@ require __DIR__ . '/../db.php';
 
 
 function back($msg){
-  header("Location: /sweetpath/admin/orders.php?msg=" . rawurlencode($msg));
+  header("Location: /admin/orders.php?msg=" . rawurlencode($msg));
   exit;
 }
 

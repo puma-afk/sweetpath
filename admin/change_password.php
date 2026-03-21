@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <div class="card">
     <h2>🔐 Cambiar contraseña</h2>
-    <p><a href="/sweetpath/admin/orders.php">← Volver al admin</a></p>
+    <p><a href="/admin/orders.php">← Volver al admin</a></p>
 
     <?php if ($msg): ?><div class="ok"><?= h($msg) ?></div><?php endif; ?>
     <?php if ($err): ?><div class="err"><?= h($err) ?></div><?php endif; ?>

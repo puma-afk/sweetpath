@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'limpi
 
     foreach ($rows as $row) {
         $webPath = $row['path_original'];
-        $fsPath  = realpath(__DIR__ . '/../' . ltrim(str_replace('/sweetpath/', '/', $webPath), '/'));
+        $fsPath  = realpath(__DIR__ . '/../' . ltrim(str_replace('/', '/', $webPath), '/'));
 
         // Seguridad: verificar que el archivo esté dentro de storage/uploads
         if (!$fsPath || strpos($fsPath, $uploadDir) !== 0) {
@@ -118,7 +118,7 @@ $eligibleCount = (int)($eligible->fetch()['n'] ?? 0);
 <body>
 <div class="card">
   <h2>🗑️ Limpiar comprobantes antiguos</h2>
-  <p><a href="/sweetpath/admin/payments.php">← Volver a pagos</a></p>
+  <p><a href="/admin/payments.php">← Volver a pagos</a></p>
 
   <table>
     <tr><th>Estadística</th><th>Valor</th></tr>

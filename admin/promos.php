@@ -220,7 +220,7 @@ $err = trim($_GET['err'] ?? '');
       <i class="fas fa-sliders-h"></i> Filtros
       <?php if ($active !== ''): ?><span class="filter-dot"></span><?php endif; ?>
     </button>
-    <a href="/sweetpath/admin/promo_form.php" style="text-decoration:none;">
+    <a href="/admin/promo_form.php" style="text-decoration:none;">
       <button class="toolbar-btn primary"><i class="fas fa-plus"></i> Nueva Promo</button>
     </a>
   </div>
@@ -239,7 +239,7 @@ $err = trim($_GET['err'] ?? '');
     </div>
     <div class="adv-filters-actions">
       <button class="toolbar-btn primary" type="submit"><i class="fas fa-filter"></i> Aplicar</button>
-      <a href="/sweetpath/admin/promos.php"><button type="button" class="toolbar-btn"><i class="fas fa-undo"></i> Limpiar</button></a>
+      <a href="/admin/promos.php"><button type="button" class="toolbar-btn"><i class="fas fa-undo"></i> Limpiar</button></a>
     </div>
   </form>
 </div>
@@ -270,11 +270,11 @@ $err = trim($_GET['err'] ?? '');
       </div>
 
       <div class="promo-actions">
-        <a href="/sweetpath/admin/promo_form.php?id=<?= (int)$p['id'] ?>" class="toolbar-btn" style="justify-content:center;">
+        <a href="/admin/promo_form.php?id=<?= (int)$p['id'] ?>" class="toolbar-btn" style="justify-content:center;">
           <i class="fas fa-edit"></i> Editar
         </a>
 
-        <form method="post" action="/sweetpath/admin/promo_save.php" style="display:contents">
+        <form method="post" action="/admin/promo_save.php" style="display:contents">
           <?= csrf_input() ?>
           <input type="hidden" name="action" value="toggle_active">
           <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
@@ -284,7 +284,7 @@ $err = trim($_GET['err'] ?? '');
           </button>
         </form>
 
-        <form method="post" action="/sweetpath/admin/promo_save.php" style="display:contents" onsubmit="return confirm('¿Seguro que deseas eliminar esta promo permanentemente?');">
+        <form method="post" action="/admin/promo_save.php" style="display:contents" onsubmit="return confirm('¿Seguro que deseas eliminar esta promo permanentemente?');">
           <?= csrf_input() ?>
           <input type="hidden" name="action" value="delete">
           <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">

@@ -63,7 +63,7 @@ function dt_local_value(?string $dt): string {
 <div class="admin-page-content">
   <div class="card" style="margin: 0 auto;">
     <h2 style="margin-top:0;"><i class="fas fa-bullhorn"></i> <?= $id>0 ? 'Editar promo' : 'Nueva promo' ?></h2>
-    <p style="margin-bottom:20px;"><a href="/sweetpath/admin/promos.php"><i class="fas fa-arrow-left"></i> Volver a Promos</a></p>
+    <p style="margin-bottom:20px;"><a href="/admin/promos.php"><i class="fas fa-arrow-left"></i> Volver a Promos</a></p>
 
     <?php if ($msg): ?><div class="ok"><?= h($msg) ?></div><?php endif; ?>
     <?php if ($err): ?><div class="err"><?= h($err) ?></div><?php endif; ?>
@@ -72,7 +72,7 @@ function dt_local_value(?string $dt): string {
       <img class="img" src="<?= h($p['img']) ?>" alt="">
     <?php endif; ?>
 
-    <form method="post" action="/sweetpath/admin/promo_save.php" enctype="multipart/form-data">
+    <form method="post" action="/admin/promo_save.php" enctype="multipart/form-data">
       <?= csrf_input() ?>
       <input type="hidden" name="action" value="<?= $id>0 ? 'update' : 'create' ?>">
       <input type="hidden" name="id" value="<?= $id ?>">

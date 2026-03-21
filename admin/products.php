@@ -297,7 +297,7 @@ $err = trim($_GET['err'] ?? '');
       <i class="fas fa-sliders-h"></i> Filtros
       <?php if ($type || $active !== ''): ?><span class="filter-dot"></span><?php endif; ?>
     </button>
-    <a href="/sweetpath/admin/product_form.php" style="text-decoration:none;">
+    <a href="/admin/product_form.php" style="text-decoration:none;">
       <button class="toolbar-btn primary"><i class="fas fa-plus"></i> Nuevo Producto</button>
     </a>
   </div>
@@ -326,7 +326,7 @@ $err = trim($_GET['err'] ?? '');
     </div>
     <div class="adv-filters-actions">
       <button class="toolbar-btn primary" type="submit"><i class="fas fa-filter"></i> Aplicar</button>
-      <a href="/sweetpath/admin/products.php"><button type="button" class="toolbar-btn"><i class="fas fa-undo"></i> Limpiar</button></a>
+      <a href="/admin/products.php"><button type="button" class="toolbar-btn"><i class="fas fa-undo"></i> Limpiar</button></a>
     </div>
   </form>
 </div>
@@ -356,11 +356,11 @@ $err = trim($_GET['err'] ?? '');
     </div>
 
     <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
-      <a href="/sweetpath/admin/product_form.php?id=<?= (int)$p['id'] ?>" class="toolbar-btn" style="justify-content:center;">
+      <a href="/admin/product_form.php?id=<?= (int)$p['id'] ?>" class="toolbar-btn" style="justify-content:center;">
         <i class="fas fa-edit"></i> Editar
       </a>
 
-      <form method="post" action="/sweetpath/admin/product_save.php" style="display:contents">
+      <form method="post" action="/admin/product_save.php" style="display:contents">
         <?= csrf_input() ?>
         <input type="hidden" name="action" value="toggle_active">
         <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
@@ -370,7 +370,7 @@ $err = trim($_GET['err'] ?? '');
         </button>
       </form>
 
-      <form method="post" action="/sweetpath/admin/product_save.php" style="display:contents" onsubmit="return confirm('¿Seguro que deseas eliminar este producto permanentemente (soft-delete)?');">
+      <form method="post" action="/admin/product_save.php" style="display:contents" onsubmit="return confirm('¿Seguro que deseas eliminar este producto permanentemente (soft-delete)?');">
         <?= csrf_input() ?>
         <input type="hidden" name="action" value="delete">
         <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">

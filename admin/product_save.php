@@ -5,7 +5,7 @@ require __DIR__ . '/_csrf.php';
 csrf_verify_or_die();
 require __DIR__ . '/../db.php';
 
-function back($ok, $msg, $to='/sweetpath/admin/products.php'){
+function back($ok, $msg, $to='/admin/products.php'){
   $k = $ok ? 'msg' : 'err';
   header("Location: {$to}?{$k}=" . rawurlencode($msg));
   exit;
@@ -67,7 +67,7 @@ if ($f && ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
   if (!in_array($mime, $allowed, true)) back(false, "Imagen no permitida (JPG/PNG/WebP)");
 
   $uploadDirFs = __DIR__ . '/../storage/uploads';
-  $uploadDirWeb = '/sweetpath/storage/uploads';
+  $uploadDirWeb = '/storage/uploads';
   if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0777, true);
 
   $ext = ($mime === 'image/png') ? 'png' : (($mime === 'image/webp') ? 'webp' : 'jpg');
@@ -88,7 +88,7 @@ $gallery_ids = [];
 $gf = $_FILES['gallery'] ?? null;
 if ($gf && !empty($gf['name'][0])) {
     $uploadDirFs = __DIR__ . '/../storage/uploads';
-    $uploadDirWeb = '/sweetpath/storage/uploads';
+    $uploadDirWeb = '/storage/uploads';
     if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0777, true);
 
     foreach ($gf['name'] as $i => $name) {

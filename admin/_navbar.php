@@ -201,8 +201,8 @@ function is_active_c($page, $current) {
 <div class="nav-overlay" id="navOverlay"></div>
 
 <nav class="admin-nav">
-    <a href="/sweetpath/admin/orders.php" class="admin-nav-brand">
-        <img src="/sweetpath/public/img/logo_white.png" alt="ESENCIA" class="admin-logo">
+    <a href="/admin/orders.php" class="admin-nav-brand">
+        <img src="/public/img/logo_white.png" alt="ESENCIA" class="admin-logo">
         <div class="brand-text">
             <b>ESENCIA</b>
             <small>Panel Administrativo</small>
@@ -210,25 +210,25 @@ function is_active_c($page, $current) {
     </a>
 
     <div class="admin-nav-links" id="adminNavLinks">
-        <a href="/sweetpath/admin/orders.php" class="<?= is_active_c('orders.php', $current_page) ?>">
+        <a href="/admin/orders.php" class="<?= is_active_c('orders.php', $current_page) ?>">
             <i class="fas fa-box"></i> Pedidos
         </a>
-        <a href="/sweetpath/admin/payments.php" class="<?= is_active_c('payments.php', $current_page) ?>">
+        <a href="/admin/payments.php" class="<?= is_active_c('payments.php', $current_page) ?>">
             <i class="fas fa-credit-card"></i> Pagos
         </a>
-        <a href="/sweetpath/admin/estadisticas.php" class="<?= is_active_c('estadisticas.php', $current_page) ?>">
+        <a href="/admin/estadisticas.php" class="<?= is_active_c('estadisticas.php', $current_page) ?>">
             <i class="fas fa-chart-line"></i> Estadísticas
         </a>
-        <a href="/sweetpath/admin/products.php" class="<?= is_active_c('products.php', $current_page) ?>">
+        <a href="/admin/products.php" class="<?= is_active_c('products.php', $current_page) ?>">
             <i class="fas fa-birthday-cake"></i> Productos
         </a>
-        <a href="/sweetpath/admin/promos.php" class="<?= is_active_c('promos.php', $current_page) ?>">
+        <a href="/admin/promos.php" class="<?= is_active_c('promos.php', $current_page) ?>">
             <i class="fas fa-bullhorn"></i> Promos
         </a>
-        <a href="/sweetpath/admin/config.php" class="<?= is_active_c('config.php', $current_page) ?>">
+        <a href="/admin/config.php" class="<?= is_active_c('config.php', $current_page) ?>">
             <i class="fas fa-cog"></i> Config
         </a>
-        <a href="/sweetpath/public/index.html" target="_blank" style="margin-top: 10px; background: rgba(255,211,42,0.2); color: #ffd32a;">
+        <a href="/public/index.html" target="_blank" style="margin-top: 10px; background: rgba(255,211,42,0.2); color: #ffd32a;">
             <i class="fas fa-external-link-alt"></i> Ver Tienda
         </a>
     </div>
@@ -237,7 +237,7 @@ function is_active_c($page, $current) {
         <div class="user-info desktop-only">
             <i class="fas fa-user-circle"></i> <span><?= htmlspecialchars($admin_user) ?></span>
         </div>
-        <a href="/sweetpath/admin/logout.php" class="btn-logout desktop-only">Salir</a>
+        <a href="/admin/logout.php" class="btn-logout desktop-only">Salir</a>
         <button class="mobile-toggle" id="adminNavToggle">
             <i class="fas fa-bars"></i>
         </button>

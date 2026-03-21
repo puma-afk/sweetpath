@@ -167,7 +167,7 @@ $err = trim($_GET['err'] ?? '');
     <!-- COLUMNA 1: Datos Operativos -->
     <div class="card">
       <h3><i class="fab fa-whatsapp"></i> Contacto y Horarios</h3>
-      <form method="post" action="/sweetpath/admin/config_save.php" style="display: flex; flex-direction: column; height: 100%;">
+      <form method="post" action="/admin/config_save.php" style="display: flex; flex-direction: column; height: 100%;">
         <?= csrf_input() ?>
         <input type="hidden" name="action" value="save_main">
 
@@ -237,7 +237,7 @@ $err = trim($_GET['err'] ?? '');
           </div>
         <?php endif; ?>
 
-        <form method="post" action="/sweetpath/admin/config_save.php" enctype="multipart/form-data" style="margin-top: auto;">
+        <form method="post" action="/admin/config_save.php" enctype="multipart/form-data" style="margin-top: auto;">
           <?= csrf_input() ?>
           <input type="hidden" name="action" value="upload_qr">
           
@@ -252,7 +252,7 @@ $err = trim($_GET['err'] ?? '');
         <h3><i class="fas fa-university"></i> Datos Bancarios</h3>
         <span class="help-text" style="margin-bottom: 10px;">Se mostrarán debajo del QR para depósitos o transferencias.</span>
         
-        <form method="post" action="/sweetpath/admin/config_save.php" style="display: flex; flex-direction: column; height: 100%;">
+        <form method="post" action="/admin/config_save.php" style="display: flex; flex-direction: column; height: 100%;">
           <?= csrf_input() ?>
           <input type="hidden" name="action" value="save_qr_info">
           

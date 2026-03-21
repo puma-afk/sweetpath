@@ -199,7 +199,7 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
             <span style="font-size: 13px; color: #64748b; font-weight: 600;">Total: <b style="color: var(--text);">Bs <?= $group['total_final_cents'] ? h(bs($group['total_final_cents'])) : '-' ?></b></span>
         </div>
       </div>
-      <a href="/sweetpath/admin/orders.php?q=<?= h($group['order_code']) ?>" class="btn btn-view">
+      <a href="/admin/orders.php?q=<?= h($group['order_code']) ?>" class="btn btn-view">
         <i class="fas fa-eye"></i> Ver Pedido
       </a>
     </div>
@@ -220,13 +220,13 @@ function bs($c) { return number_format((int)$c / 100, 2, '.', ''); }
         
         <div class="payment-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
           <?php if (!empty($r['proof_url'])): ?>
-            <a href="/sweetpath/admin/ver_comprobante.php?payment_id=<?= h($r['payment_id']) ?>" target="_blank" class="btn btn-view">
+            <a href="/admin/ver_comprobante.php?payment_id=<?= h($r['payment_id']) ?>" target="_blank" class="btn btn-view">
               <i class="fas fa-file-invoice-dollar"></i> Ver comprobante
             </a>
           <?php endif; ?>
 
           <?php if (!$r['verified']): ?>
-            <form method="post" action="/sweetpath/admin/payment_verify.php" style="margin:0" onsubmit="return confirm('¿Confirma que el pago ingresó a su cuenta bancaria/caja?');">
+            <form method="post" action="/admin/payment_verify.php" style="margin:0" onsubmit="return confirm('¿Confirma que el pago ingresó a su cuenta bancaria/caja?');">
                <?= csrf_input() ?>
               <input type="hidden" name="payment_id" value="<?= h($r['payment_id']) ?>">
               <button type="submit" class="primary">

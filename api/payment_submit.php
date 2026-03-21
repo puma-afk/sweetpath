@@ -63,7 +63,7 @@ if (!in_array($mime, $allowed, true)) {
 }
 
 $uploadDirFs = __DIR__ . '/../storage/uploads';
-$uploadDirWeb = '/sweetpath/storage/uploads';
+$uploadDirWeb = '/storage/uploads';
 if (!is_dir($uploadDirFs)) {
   mkdir($uploadDirFs, 0777, true);
 }
@@ -100,5 +100,5 @@ try {
   exit("Error registrando pago. Intenta de nuevo.");
 }
 
-header("Location: /sweetpath/pay_thanks.php?code=" . rawurlencode($order_code));
+header("Location: /pay_thanks.php?code=" . rawurlencode($order_code));
 exit;

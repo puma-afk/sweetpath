@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
         $_SESSION['admin_last_activity'] = time();
 
-        header("Location: /sweetpath/admin/orders.php");
+        header("Location: /admin/orders.php");
         exit;
       } else {
         // 3) Incrementar intentos + lock si excede

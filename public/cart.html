@@ -142,7 +142,7 @@
     <div class="buscador-panel">
       <div class="buscador-barra">
         <i class="fas fa-magnifying-glass buscador-icono"></i>
-        <input type="search" id="buscadorInput" class="buscador-input" placeholder="Buscar productos, packs..." autocomplete="off">
+        <input type="search" id="buscadorInput" class="buscador-input" placeholder="Buscar productos, paquetes..." autocomplete="off">
         <button class="buscador-cerrar" id="buscadorCerrar"><i class="fas fa-times"></i></button>
       </div>
       <div id="buscadorResultados" class="buscador-resultados"></div>
@@ -211,7 +211,7 @@
       document.getElementById('modalImg').innerHTML = p.image_url
         ? `<img src="${p.image_url}" alt="${p.name}">`
         : `<div class="modal-img-placeholder"><i class="fas fa-cake-candles"></i></div>`;
-      let tipo = p.type === 'EXPRESS' ? 'RÁPIDO' : p.type === 'CUSTOM' ? 'PERSONALIZADO' : 'PACK';
+      let tipo = p.type === 'EXPRESS' ? 'RÁPIDO' : p.type === 'CUSTOM' ? 'PERSONALIZADO' : 'PAQUETE';
       let disponible = p.availability === 'OUT' ? 'AGOTADO' : 'DISPONIBLE';
       document.getElementById('modalEtiqueta').textContent = `${tipo} • ${disponible}`;
       document.getElementById('modalTitulo').textContent = p.name;
@@ -261,7 +261,7 @@
     async function obtenerProductos() {
       if (_todosProductos) return _todosProductos;
       try {
-        const res = await fetch('/sweetpath/api/products_list.php?limit=200');
+        const res = await fetch('/api/products_list.php?limit=200');
         const data = await res.json();
         _todosProductos = window._todosProductos = data.products || [];
       } catch { _todosProductos = window._todosProductos = []; }
@@ -294,7 +294,7 @@
         const imgHtml = p.image_url
           ? `<img src="${p.image_url}" class="resultado-img" alt="">`
           : `<div class="resultado-img" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--linea)"><i class="fas fa-cake-candles"></i></div>`;
-        const tipo = p.type === 'EXPRESS' ? 'Rápido' : p.type === 'CUSTOM' ? 'Personalizado' : 'Pack';
+        const tipo = p.type === 'EXPRESS' ? 'Rápido' : p.type === 'CUSTOM' ? 'Personalizado' : 'Paquete';
         const precio = p.price_bs ? `Bs ${p.price_bs}` : 'Cotizar por WA';
         const dest = `./products.html?q=${encodeURIComponent(p.name)}`;
         return `<a class="resultado-item" href="${dest}" onclick="cerrarBuscador()">

@@ -7,7 +7,7 @@ require __DIR__ . '/../db.php';
 
 function back($ok, $msg){
   $k = $ok ? 'msg' : 'err';
-  header("Location: /sweetpath/admin/promos.php?{$k}=" . rawurlencode($msg));
+  header("Location: /admin/promos.php?{$k}=" . rawurlencode($msg));
   exit;
 }
 
@@ -23,7 +23,7 @@ function upload_banner(PDO $pdo, array $f): int {
   }
 
   $uploadDirFs = __DIR__ . '/../storage/uploads';
-  $uploadDirWeb = '/sweetpath/storage/uploads';
+  $uploadDirWeb = '/storage/uploads';
   if (!is_dir($uploadDirFs)) mkdir($uploadDirFs, 0777, true);
 
   $ext = ($mime === 'image/png') ? 'png' : (($mime === 'image/webp') ? 'webp' : 'jpg');
