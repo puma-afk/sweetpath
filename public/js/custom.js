@@ -67,6 +67,7 @@ document.getElementById("btnSend").addEventListener("click", async ()=>{
       customer_phone: phone,
       pickup_date: date,
       pickup_time: time,
+      payment_method: "qr", // Forzado por regla de negocio
       details
     });
 

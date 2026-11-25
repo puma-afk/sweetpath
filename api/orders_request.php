@@ -93,6 +93,7 @@ $customer_name  = trim((string)($data['customer_name'] ?? ''));
 $customer_phone = trim((string)($data['customer_phone'] ?? ''));
 $pickup_date    = trim((string)($data['pickup_date'] ?? ''));
 $pickup_time    = trim((string)($data['pickup_time'] ?? ''));
+$payment_method = strtolower(trim((string)($data['payment_method'] ?? 'qr')));
 $details        = $data['details'] ?? null;
 
 if ($customer_phone === '') {
@@ -123,16 +124,17 @@ $order_code = make_order_code();
 try {
   $pdo->beginTransaction();
 
-  // status starts as SOLICITADO (request). No QR, no payment.
+  // status starts as Esperando confirmación WA
   $stmt = $pdo->prepare("INSERT INTO orders
-    (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json)
+    (order_code, type, channel, payment_method, status, customer_name, customer_phone, pickup_date, pickup_time, custom_json)
     VALUES
-    (?, ?, 'WEB', 'SOLICITADO', ?, ?, NULLIF(?,''), NULLIF(?,''), ?)
+    (?, ?, 'WEB', ?, 'Esperando confirmación WA', ?, ?, NULLIF(?,''), NULLIF(?,''), ?)
   ");
 
   $stmt->execute([
     $order_code,
     $type,
+    $payment_method,
     $customer_name ?: null,
     $customer_phone,
     $pickup_date,
@@ -171,7 +173,8 @@ foreach ($details as $k => $v) {
   $msg .= "- {$key}: {$val}\n";
 }
 
-$msg .= "\nPor favor confirmar disponibilidad y precio. (No realizaré pago hasta su aprobación)";
+$msg .= "\nPagaré con: Adelanto por QR 📱\n";
+$msg .= "\nPor favor confirmar disponibilidad y cotización. (No realizaré pago hasta su aprobación)";
 
 $wa = $bizPhone ? wa_link($bizPhone, $msg) : null;
 

@@ -21,7 +21,7 @@ if ($status !== '') {
 
 $sql = "
 SELECT
-  o.id, o.order_code, o.type, o.channel, o.status,
+  o.id, o.order_code, o.type, o.channel, o.payment_method, o.status,
   o.customer_name, o.customer_phone,
   o.pickup_date, o.pickup_time,
   o.total_final_cents,
@@ -138,6 +138,9 @@ $msg = trim($_GET['msg'] ?? '');
       <div class="pill"><?= h($o['type']) ?></div>
       <div class="pill"><?= h($o['status']) ?></div>
       <div class="pill"><?= h($o['channel']) ?></div>
+      <div class="pill" style="<?= (strtolower($o['payment_method'] ?? 'qr') === 'efectivo') ? 'background:#e6f4ea;color:#137333;' : 'background:#e8eaed;color:#3c4043;' ?>">
+        <?= strtoupper(h($o['payment_method'] ?? 'QR')) ?>
+      </div>
       <?php if ($canPay): ?>
         <div class="pill">Pago habilitado ✅</div>
       <?php endif; ?>
@@ -226,8 +229,11 @@ $msg = trim($_GET['msg'] ?? '');
         <?= csrf_input() ?>
         <input type="hidden" name="id" value="<?= h($o['id']) ?>">
         <input type="hidden" name="status" value="ENTREGADO">
-        <button type="submit">✅ ENTREGADO</button>
-      </form>
+        <?php if ($remaining === null || $remaining > 0): ?>
+          <button type="button" onclick="alert('Candado activado: No se puede cambiar a ENTREGADO porque el pedido no está pagado al 100%.');" style="opacity:0.5; cursor:not-allowed">🔒 ENTREGADO</button>
+        <?php else: ?>
+          <button type="submit">✅ ENTREGADO</button>
+        <?php endif; ?>      </form>
     </div>
   </div>
 <?php endforeach; ?>

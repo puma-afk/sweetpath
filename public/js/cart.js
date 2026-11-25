@@ -2,6 +2,8 @@ import { apiPost } from "./api.js";
 import { getCart, setCart, clearCart } from "./cart-manager.js";
 import { validatePhone, getMinDate } from "./ui-utils.js";
 
+const MAX_CASH_AMOUNT = 50;
+
 const cartBox = document.getElementById("cartBox");
 const msg = document.getElementById("msg");
 const dateEl = document.getElementById("date");
@@ -18,7 +20,12 @@ function render() {
     return;
   }
 
-  cartBox.innerHTML = cart.map((it, idx) => `
+  let totalBs = 0;
+
+  cartBox.innerHTML = cart.map((it, idx) => {
+    const pBs = it.price_bs ? parseFloat(it.price_bs) : 0;
+    totalBs += (pBs * it.qty);
+    return `
     <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
       <div>
         <b>${it.name}</b><br>
@@ -30,7 +37,27 @@ function render() {
         <button class="btn danger" data-del="${idx}">Quitar</button>
       </div>
     </div>
-  `).join("");
+  `}).join("");
+
+  cartBox.innerHTML += `<div style="text-align:right; font-weight:bold; margin-top:10px; padding-top:10px; border-top:1px solid var(--line);">Total Estimado: Bs ${totalBs.toFixed(2)}</div>`;
+
+  const labelEfectivo = document.getElementById("labelEfectivo");
+  const radioEfectivo = document.getElementById("radioEfectivo");
+  const efectivoMsg = document.getElementById("efectivoMsg");
+
+  if (labelEfectivo && radioEfectivo) {
+    if (totalBs > MAX_CASH_AMOUNT) {
+      labelEfectivo.style.opacity = "0.4";
+      radioEfectivo.disabled = true;
+      radioEfectivo.checked = false;
+      document.querySelector('input[name="payMethod"][value="qr"]').checked = true;
+      efectivoMsg.style.display = "block";
+    } else {
+      labelEfectivo.style.opacity = "1";
+      radioEfectivo.disabled = false;
+      efectivoMsg.style.display = "none";
+    }
+  }
 
   cartBox.querySelectorAll("[data-minus]").forEach(b=>{
     b.addEventListener("click", ()=>{
@@ -86,6 +113,7 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
   }
 
   const items = cart.map(it => ({ product_id: it.id, qty: it.qty }));
+  const selectedPayMethod = document.querySelector('input[name="payMethod"]:checked')?.value || 'qr';
 
   try {
     const data = await apiPost("/orders_create.php", {
@@ -94,6 +122,7 @@ document.getElementById("btnConfirm").addEventListener("click", async ()=>{
       customer_phone: phone,
       pickup_date: date,
       pickup_time: time,
+      payment_method: selectedPayMethod,
       items
     });
 

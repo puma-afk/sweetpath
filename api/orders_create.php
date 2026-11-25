@@ -60,6 +60,7 @@ $customer_name  = trim((string)($data['customer_name'] ?? ''));
 $customer_phone = trim((string)($data['customer_phone'] ?? ''));
 $pickup_date    = trim((string)($data['pickup_date'] ?? ''));
 $pickup_time    = trim((string)($data['pickup_time'] ?? ''));
+$payment_method = strtolower(trim((string)($data['payment_method'] ?? 'qr')));
 
 if ($customer_phone === '') {
   respond(400, ["ok"=>false, "error"=>"MISSING_PHONE", "message"=>"Falta customer_phone (WhatsApp)."]);
@@ -131,6 +132,11 @@ foreach ($products as $p) {
   ];
 }
 
+$MAX_CASH_AMOUNT_CENTS = 5000;
+if ($payment_method === 'efectivo' && $total_est_cents > $MAX_CASH_AMOUNT_CENTS) {
+  respond(403, ["ok"=>false, "error"=>"SECURITY_RISK", "message"=>"El monto excede el límite para pagos en efectivo. Elija pago por QR."]);
+}
+
 // Create order_code
 $now = now_la_paz();
 $order_code = "SP-" . $now->format('Ymd') . "-" . random_int(1000, 9999);
@@ -139,9 +145,9 @@ $order_code = "SP-" . $now->format('Ymd') . "-" . random_int(1000, 9999);
 try {
   $pdo->beginTransaction();
 
-  $o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, status, customer_name, customer_phone, pickup_date, pickup_time)
-                      VALUES (?, 'EXPRESS', 'WEB', 'CREATED', ?, ?, NULLIF(?,''), NULLIF(?,''))");
-  $o->execute([$order_code, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time]);
+  $o = $pdo->prepare("INSERT INTO orders (order_code, type, channel, payment_method, status, customer_name, customer_phone, pickup_date, pickup_time)
+                      VALUES (?, 'EXPRESS', 'WEB', ?, 'Esperando confirmación WA', ?, ?, NULLIF(?,''), NULLIF(?,''))");
+  $o->execute([$order_code, $payment_method, $customer_name ?: null, $customer_phone, $pickup_date, $pickup_time]);
   $order_id = (int)$pdo->lastInsertId();
 
   $itStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price_cents)
@@ -172,6 +178,8 @@ foreach ($lines as $ln) {
 if ($total_est_cents > 0) {
   $msg .= "Total estimado: Bs " . format_bs($total_est_cents) . "\n";
 }
+$pay_text = ($payment_method === 'efectivo') ? "Efectivo al recoger 💵" : "Adelanto por QR 📱";
+$msg .= "Pagaré con: {$pay_text}\n";
 $msg .= "\nPor favor confirmar disponibilidad antes de pago QR. Gracias!";
 
 $wa = $bizPhone ? wa_link($bizPhone, $msg) : null;

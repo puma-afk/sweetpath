@@ -62,10 +62,29 @@ $allowed = [
   'ENTREGADO',
   'CANCELADO',
   'VENCIDO',
-  'CREATED'
+  'CREATED',
+  'Esperando confirmación WA'
 ];
 
 if (!in_array($status, $allowed, true)) back("Estado no permitido");
+
+if ($status === 'ENTREGADO') {
+  $chk = $pdo->prepare("
+    SELECT o.total_final_cents, 
+           COALESCE(SUM(CASE WHEN p.verified=1 THEN p.amount_cents ELSE 0 END),0) AS paid_cents
+    FROM orders o
+    LEFT JOIN payments p ON p.order_id = o.id
+    WHERE o.id = ?
+    GROUP BY o.id
+  ");
+  $chk->execute([$id]);
+  $oData = $chk->fetch();
+  $total = $oData['total_final_cents'] !== null ? (int)$oData['total_final_cents'] : null;
+  $paid = (int)$oData['paid_cents'];
+  if ($total === null || $paid < $total) {
+    back("Error de Seguridad: No puedes marcar como ENTREGADO un pedido que no está totalmente pagado.");
+  }
+}
 
 $stmt = $pdo->prepare("UPDATE orders SET status=?, updated_at=NOW() WHERE id=?");
 $stmt->execute([$status, $id]);
