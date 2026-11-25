@@ -1,1 +1,6 @@
 db.php
+# --- Contexto y agentes ---
+.claude/settings.local.json
+.obsidian/
+salidas/tmp/
+*.log
